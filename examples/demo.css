@@ -1,0 +1,27 @@
+body {
+    padding-left: 20%;
+    padding-right: 20%;
+    padding-top: 50px;
+    background-color: #eeeeec;
+}
+
+article h1, h2 {
+    font-family: "Georgia", serif;
+    font-variant: small-caps;
+    margin-bottom: 0px;
+    padding-bottom: 0.5em;
+}
+
+article h1 {
+    font-size: 24pt;
+}
+
+article h2 {
+    font-size: 20pt;
+}
+
+article p {
+    margin-top: 0px;
+    margin-bottom: 0.5em;
+    text-indent: 2em;
+}
