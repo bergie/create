@@ -75,12 +75,12 @@
                 return true;
             }
             if (this.options.model.get(propertyName) instanceof Array) {
-                // For now we don't deal with multivalued properties in Aloha
+                // For now we don't deal with multivalued properties in the editable
                 return true;
             }
 
             if (this.options.editor === "aloha") {
-                return this._enableAloha(element);
+                return this._enableAloha(element, propertyName);
             }
 
             // Default to Hallo
@@ -90,11 +90,48 @@
                 },
                 editable: true
             });
+
+            var widget = this;
             jQuery(element).bind('halloactivated', function(event, data) {
+                widget._trigger('activated', null, {
+                    editable: null,
+                    property: propertyName,
+                    instance: widget.options.model,
+                    element: element,
+                    entityElement: widget.element
+                });
             });
+            jQuery(element).bind('hallodeactivated', function(event, data) {
+                widget._trigger('deactivated', null, {
+                    editable: null,
+                    property: propertyName,
+                    instance: widget.options.model,
+                    element: element,
+                    entityElement: widget.element
+                });
+            });
+            jQuery(element).bind('hallomodified', function(event, data) {
+                widget._trigger('changed', null, {
+                    editable: null,
+                    property: propertyName,
+                    instance: widget.options.model,
+                    element: element,
+                    entityElement: widget.element
+                });
+            });
+
+            this._trigger('enableproperty', null, {
+                editable: null,
+                property: propertyName,
+                instance: this.options.model,
+                element: element,
+                entityElement: this.element
+            });
+
+            this.options.editables.push(element);
         },
 
-        _enableAloha: function(element) {
+        _enableAloha: function(element, propertyName) {
             var editable = new GENTICS.Aloha.Editable(element);
             editable.vieEntity = this.options.model;
 
@@ -106,7 +143,7 @@
                     property: propertyName,
                     instance: widget.options.model,
                     element: element,
-                    entityElement: this.element
+                    entityElement: widget.element
                 });
             });
             GENTICS.Aloha.EventRegistry.subscribe(editable, 'editableDeactivated', function() {
@@ -115,7 +152,7 @@
                     property: propertyName,
                     instance: widget.options.model,
                     element: element,
-                    entityElement: this.element
+                    entityElement: widget.element
                 });
             });
 

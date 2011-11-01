@@ -42,7 +42,7 @@
         _bindEditables: function() {
             var widget = this;
 
-            widget.element.bind('editablechanged', function(event, options) {
+            widget.element.bind('midgardeditablechanged', function(event, options) {
                 if (_.indexOf(widget.options.changedModels, options.instance) === -1) {
                     widget.options.changedModels.push(options.instance);
                 }
@@ -50,15 +50,15 @@
                 jQuery('#midgardcreate-save').button({disabled: false});
             });
             
-            widget.element.bind('editabledisable', function(event, options) {
+            widget.element.bind('midgardeditabledisable', function(event, options) {
                 widget._restoreLocal(options.instance);
                 jQuery('#midgardcreate-save').button({disabled: true});
             });
             
-            widget.element.bind('editableenable', function(event, options) {
+            widget.element.bind('midgardeditableenable', function(event, options) {
                 widget._readLocal(options.instance);
                 _.each(options.instance.attributes, function(attributeValue, property) {
-                    if (attributeValue instanceof widget.vie.RDFEntityCollection) {
+                    if (attributeValue instanceof widget.vie.Collection) {
                         //widget._readLocalReferences(options.instance, property, attributeValue);
                     }
                 });
@@ -178,7 +178,7 @@
             var widget = this;
             // Remove unsaved collection members
             _.each(model.attributes, function(attributeValue, property) {
-                if (attributeValue instanceof widget.vie.RDFEntityCollection) {
+                if (attributeValue instanceof widget.vie.Collection) {
                     attributeValue.forEach(function(model) {
                         if (typeof model.id === 'object') {
                             attributeValue.remove(model);

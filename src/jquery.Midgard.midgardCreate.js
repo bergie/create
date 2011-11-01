@@ -73,7 +73,7 @@
         
         _enableToolbar: function() {
             var widget = this;
-            this.element.bind('toolbarstatechange', function(event, options) {
+            this.element.bind('midgardtoolbarstatechange', function(event, options) {
                 if (Modernizr.sessionstorage) {
                     sessionStorage.setItem('Midgard.create.toolbar', options.display);
                 }
@@ -97,9 +97,9 @@
                     options.element.effect('highlight', {color: widget.options.highlightColor}, 3000);
                 };
                 
-                jQuery(this).bind('editableenableproperty', highlightEditable);
-                jQuery(this).bind('editabledisable', function() {
-                    jQuery(this).unbind('editableenableproperty', highlightEditable);
+                jQuery(this).bind('midgardeditableenableproperty', highlightEditable);
+                jQuery(this).bind('midgardeditabledisable', function() {
+                    jQuery(this).unbind('midgardeditableenableproperty', highlightEditable);
                 });
                 jQuery(this).midgardEditable({disabled: false, vie: widget.vie});
             });
