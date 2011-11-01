@@ -34,6 +34,12 @@ In nutshell, you have to do the following:
 * Include the Create JavaScript file(s)
 * Implement [Backbone.sync](http://documentcloud.github.com/backbone/#Sync) for your back-end
 
+## Read more
+
+* [Introducing the Midgard Create user interface](http://bergie.iki.fi/blog/introducing_the_midgard_create_user_interface/)
+* [Using RDFa to make a web page editable](http://bergie.iki.fi/blog/using_rdfa_to_make_a_web_page_editable/)
+* [Midgard Create and VIE presentation in the Aloha Editor conference](http://bergie.iki.fi/blog/midgard_create_and_vie_in_the_aloha_editor_conference/)
+
 ## Status
 
 This repository contains the new version of Create that is having its dependencies on [Midgard MVC](http://new.midgard-project.org/midgardmvc/) removed so that it can work with any back-end system. This work is still ongoing, and so most of the functionality doesn't work yet.
