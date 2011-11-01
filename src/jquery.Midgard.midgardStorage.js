@@ -16,10 +16,7 @@
 
             this.vie = this.options.vie;
 
-            this.vie.EntityManager.initializeCollection();
-            
-            // TODO: This won't be necessary when we have our own Backbone.sync
-            this.vie.EntityManager.entities.bind('add', function(model) {
+            this.vie.entities.bind('add', function(model) {
                 // Add the Midgard-specific save URL used by Backbone.sync
                 model.url = '/mgd:create/object/';
                 model.toJSON = model.toJSONLD;

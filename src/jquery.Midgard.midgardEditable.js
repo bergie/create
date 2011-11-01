@@ -46,15 +46,13 @@
         },
         
         disable: function() {
+            var widget = this;
             jQuery.each(this.options.editables, function(index, editable) {
-                editable.setUnmodified();
-                if (typeof editable.changeTimer !== 'undefined') {
-                    window.clearInterval(editable.changeTimer);
+                if (widget.options.editor === "aloha") {
+                    widget._disableAloha(editable);
+                    return true;
                 }
-                try {
-                    editable.destroy();
-                } catch (err) {
-                }
+                jQuery(editable).hallo({editable: false}); 
             });
             this.options.editables = [];
             
@@ -176,6 +174,19 @@
             });
             
             this.options.editables.push(editable);
+        },
+
+        _disableAloha: function(editable) {
+            editable.setUnmodified();
+            
+            if (typeof editable.changeTimer !== 'undefined') {
+                window.clearInterval(editable.changeTimer);
+            }
+
+            try {
+                editable.destroy();
+            } catch (err) {
+            }
         },
         
         _enableCollection: function(collectionView) {
