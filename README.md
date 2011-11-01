@@ -15,6 +15,7 @@ Create, from the [Midgard Project](http://www.midgard-project.org/) is a compreh
 * Adaptable connector for communicating with the back-end system
 * Running workflows (approval, etc.) for content items
 * Browsing and reverting content history
+* Easy rebranding of the interface with some CSS
 
 ## Future plans
 
