@@ -109,7 +109,6 @@
                 }
                 return this._saveLocalReferences(model.primaryCollection.subject, model.primaryCollection.predicate, model);
             }
-            
             localStorage.setItem(model.getSubject(), JSON.stringify(model.toJSONLD()));
         },
         
