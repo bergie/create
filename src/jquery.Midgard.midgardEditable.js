@@ -111,6 +111,11 @@
                 });
             });
             jQuery(element).bind('hallomodified', function(event, data) {
+                var changedProperties = {};
+                changedProperties[propertyName] = data.content;
+                data.editable.setUnmodified();
+                widget.options.model.set(changedProperties, {silent: true});
+
                 widget._trigger('changed', null, {
                     editable: null,
                     property: propertyName,
