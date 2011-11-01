@@ -3,6 +3,8 @@ Create - On-site web editing interface
 
 Create, from the [Midgard Project](http://www.midgard-project.org/) is a comprehensive web editing interface for Content Management Systems. It is designed to provide a modern, fully browser-based HTML5 environment for managing content. Create can be adapted to work on almost any content management backend.
 
+![Midgard Create user interface, in March 2011](http://bergie.iki.fi/static/1/1e04599abfee694459911e0bf1021b4fddbed1bed1b_midgardcreate-save-transition-small.png)
+
 ## Features
 
 * Making RDFa-annotated content on pages editable
