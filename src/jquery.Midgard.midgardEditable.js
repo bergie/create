@@ -35,7 +35,6 @@
                 return widget._enableProperty(jQuery(this));
             });
            
-            console.log(this.vie.services.rdfa.views);
             _.forEach(this.vie.RDFaEntities.CollectionViews, function(view) {
                 widget._enableCollection(view);
             });
