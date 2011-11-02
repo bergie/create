@@ -28,7 +28,6 @@ Create, from the [Midgard Project](http://www.midgard-project.org/) is a compreh
 * [VIE](https://github.com/bergie/vie) - editable RDFa library
 * [Backbone.js](http://documentcloud.github.com/backbone/) - client-side management of models, views, and collections
 * [jQuery UI](http://jqueryui.com/) - widget and effect library
-* [Bootstrap](http://twitter.github.com/bootstrap/) - CSS UI framework
 * [Modernizr](http://www.modernizr.com/) - HTML5 browser compatibility library
 
 ## Integrating Create with your CMS
