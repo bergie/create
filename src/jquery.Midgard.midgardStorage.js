@@ -154,7 +154,7 @@
             var entity = this.vie.EntityManager.getByJSONLD(JSON.parse(local));
             
             this._trigger('loaded', null, {
-                instance: entity,
+                instance: entity
             });
         },
         
@@ -202,5 +202,5 @@
             
             localStorage.removeItem(model.getSubject());
         }
-    })
+    });
 })(jQuery);

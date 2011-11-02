@@ -52,7 +52,7 @@
             
             jQuery('#midgard-bar .toolbarcontent-right').append(jQuery('<button id="midgardcreate-save">Save</button>'));
             this.options.saveButton = jQuery('#midgardcreate-save');
-            this.options.saveButton.button({disabled: true})
+            this.options.saveButton.button({disabled: true});
             return this.options.saveButton;
         },
         
@@ -117,5 +117,5 @@
             this._setOption('state', 'browse');
             this._trigger('statechange', null, 'browse');
         }
-    })
+    });
 })(jQuery);
