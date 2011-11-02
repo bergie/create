@@ -106,7 +106,7 @@
                 jQuery(this).midgardEditable({disabled: false, vie: widget.vie, editor: widget.options.editor});
             });
             this._setOption('state', 'edit');
-            this._trigger('statechange', null, 'edit');
+            this._trigger('statechange', null, {state: 'edit'});
         },
         
         _disableEdit: function() {
@@ -115,7 +115,7 @@
                 jQuery(this).midgardEditable({disabled: true, vie: widget.vie, editor: widget.options.editor}).removeClass('ui-state-disabled');
             });
             this._setOption('state', 'browse');
-            this._trigger('statechange', null, 'browse');
+            this._trigger('statechange', null, {state: 'browse'});
         }
     });
 })(jQuery);
