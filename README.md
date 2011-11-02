@@ -39,6 +39,59 @@ In nutshell, you have to do the following:
 * Include the Create JavaScript file(s)
 * Implement [Backbone.sync](http://documentcloud.github.com/backbone/#Sync) for your back-end
 
+### Starting Create
+
+Starting Create:
+
+    jQuery(document).ready(function() {
+        jQuery('body').midgardCreate({
+            url: '/some/backend/url'
+        });
+    });
+
+You can pass Create configuration options when calling the `midgardCreate` widget. For example, to use Aloha Editor instead of Hallo, do:
+
+    jQuery('body').midgardCreate({
+        url: '/some/backend/url',
+        editor: 'aloha'
+    });
+
+### Communications with the back-end
+
+Create communicates with your server-side system using [Backbone.sync](http://documentcloud.github.com/backbone/#Sync). By default this means that we send and retrieve content encoded in [JSON-LD](http://json-ld.org/) over XmlHttpRequest calls.
+
+If you're using this default approach, it is important to provide the URL of the endpoint on your server that you want Backbone and Create to talk with. This can be done by passing a string when initializing `midgardCreate`:
+
+    jQuery('body').midgardCreate({
+        url: '/some/backend/url'
+    });
+
+When implemented this way, all communications from Create will happen using normal RESTful HTTP calls to that URL.
+
+* Creating a new object makes a `HTTP POST` to the URL
+* Updating or fetching an object makes a `HTTP PUT` or `HTTP GET` to that URL with the `id` of the object appended (for example `/some/backend/url/objectId`)
+
+If you need more flexibility with your URL structure, you can also pass a function that returns the URL for an object.
+
+You can override this default communications layer by [implementing your own](http://stackoverflow.com/questions/5096549/how-to-override-backbone-sync) `Backbone.sync` method. Some examples:
+
+* [Backbone.sync with CouchDB](https://github.com/janmonschke/backbone-couchdb)
+* [Backbone.sync with Amazon SimpleDB](https://github.com/developmentseed/backbone-simpledb)
+
+### Events
+
+Create is an event-based user interface. Normally integrators shouldn't need to deal with these events, but they're explained here in case of some customization needs.
+
+* `midgardcreatestatechange`: when user switches between _browse_ and _edit_ modes. Event data contains an object with key `state` telling the state being changed to
+* `midgardtoolbarstatechange`: when user opens or minimizes the toolbar. Event data contains an object with key `display` telling the new state
+* `midgardeditableenable`: when an object has been made editable. Event data contains an object with key `instance` providing the Backbone model instance and `entityElement` providing the element containing the object
+* `midgardeditabledisable`: when an object has been made non-editable. Event data contains an object with key `instance` providing the Backbone model instance and `entityElement` providing the element containing the object
+* `midgardeditableactivated`: when a particular property of an object has been activated in an editor. Event data contains keys `property`, `instance`, `element` and `entityElement`
+* `midgardeditabledeactivated`: when a particular property of an object has been deactivated in an editor. Event data contains keys `property`, `instance`, `element` and `entityElement`
+* `midgardeditablechanged`: when a particular property of an object has been changed in an editor. Event data contains keys `property`, `instance`, `element` and `entityElement`
+
+You can use normal [jQuery event methods](http://api.jquery.com/category/events/) to deal with these events.
+
 ## Read more
 
 * [Introducing the Midgard Create user interface](http://bergie.iki.fi/blog/introducing_the_midgard_create_user_interface/)
