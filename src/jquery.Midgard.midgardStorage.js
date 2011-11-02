@@ -4,7 +4,8 @@
             localStorage: false,
             vie: null,
             changedModels: [],
-            loaded: function() {}
+            loaded: function() {},
+            url: ''
         },
     
         _create: function() {
@@ -17,8 +18,8 @@
             this.vie = this.options.vie;
 
             this.vie.entities.bind('add', function(model) {
-                // Add the Midgard-specific save URL used by Backbone.sync
-                model.url = '/mgd:create/object/';
+                // Add the back-end URL used by Backbone.sync
+                model.url = widget.options.url;
                 model.toJSON = model.toJSONLD;
             });
             

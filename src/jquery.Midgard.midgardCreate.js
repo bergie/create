@@ -6,7 +6,8 @@
             saveButton: null,
             state: 'browse',
             highlightColor: '#67cc08',
-            editor: 'hallo'
+            editor: 'hallo',
+            url: ''
         },
     
         _create: function() {
@@ -15,7 +16,7 @@
             this._enableToolbar();
             this._saveButton();
             this._editButton();
-            this.element.midgardStorage({vie: this.vie});
+            this.element.midgardStorage({vie: this.vie, url: this.options.url});
         },
         
         _init: function() {
