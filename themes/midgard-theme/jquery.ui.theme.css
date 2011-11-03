@@ -1,5 +1,4 @@
 
-
 /*
  * jQuery UI CSS Framework 1.8.7
  *
@@ -24,7 +23,7 @@
 .midgard-create .ui-widget-header a { color: #ffffff; }
 .midgard-create .ui-widget-midgardbar { border: 0px solid #555555; background: transparent url(images/ui-bg-midgardbar.png) 50% top repeat-x; color: #ffffff; }
 .midgard-create .ui-widget-midgardbar a { color: #ffffff; }
-.midgard-create .ui-widget-hidebut { background: transparent url(images/midgard_logo.png) 50% 50% no-repeat; margin: 0px 2px 10px 3px; padding: 10px 15px; text-decoration: none; }
+.midgard-create .ui-widget-hidebut { background: transparent url(images/midgard_logo.png) top left no-repeat; margin: 0; padding: 0 0 20px 40px; text-decoration: none; }
 .ui-widget-showbut { background: transparent url(images/midgard_logo_slice.png) 0% 0% no-repeat; margin: 0px 0px 0px 0px; padding: 0px 15px; text-decoration: none; }
 
 
