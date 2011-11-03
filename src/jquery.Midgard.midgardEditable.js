@@ -88,7 +88,8 @@
                 plugins: {
                     halloformat: {}
                 },
-                editable: true
+                editable: true,
+                placeholder: '[' + propertyName + ']'
             });
 
             var widget = this;

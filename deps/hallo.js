@@ -18,7 +18,8 @@
         activated: function() {},
         deactivated: function() {},
         selected: function() {},
-        unselected: function() {}
+        unselected: function() {},
+        placeholder: ''
       },
       _create: function() {
         var options, plugin, _ref, _results;
@@ -57,6 +58,9 @@
       enable: function() {
         var widget;
         this.element.attr("contentEditable", true);
+        if (!this.element.html()) {
+          this.element.html(this.options.placeholder);
+        }
         if (!this.bound) {
           this.element.bind("focus", this, this._activated);
           this.element.bind("blur", this, this._deactivated);
@@ -122,6 +126,9 @@
       },
       getContents: function() {
         return this.element.html();
+      },
+      setContents: function(contents) {
+        return this.element.html(contents);
       },
       isModified: function() {
         return this.originalContent !== this.getContents();
@@ -257,7 +264,10 @@
       _activated: function(event) {
         var widget;
         widget = event.data;
-        if (widget.toolbar.html() !== "") {
+        if (widget.getContents() === widget.options.placeholder) {
+          widget.setContents('');
+        }
+        if (widget.toolbar.html() !== '') {
           widget.toolbar.css("top", widget.element.offset().top - widget.toolbar.height() + 10);
         }
         return widget._trigger("activated", event);
@@ -265,6 +275,9 @@
       _deactivated: function(event) {
         var widget;
         widget = event.data;
+        if (!widget.getContents()) {
+          widget.setContents(widget.options.placeholder);
+        }
         widget.toolbar.hide();
         return widget._trigger("deactivated", event);
       }
