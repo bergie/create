@@ -35,8 +35,10 @@
                 return widget._enableProperty(jQuery(this));
             });
            
-            _.forEach(this.vie.RDFaEntities.CollectionViews, function(view) {
-                widget._enableCollection(view);
+            _.forEach(this.vie.services.rdfa.views, function(view) {
+                if (view instanceof widget.vie.view.Collection) {
+                    widget._enableCollection(view);
+                }
             });
             
             this._trigger('enable', null, {
@@ -192,7 +194,7 @@
         _enableCollection: function(collectionView) {
             var widget = this;
 
-            if (this.vie.RDFa.getSubject(collectionView.el) !== this.vie.RDFa._toReference(widget.options.model.id)) {
+            if (this.vie.RDFa.getSubject(collectionView.el) !== widget.options.model.getSubject()) {
                 return;
             }
 
@@ -203,7 +205,7 @@
             collectionView.bind('add', function(itemView) {
                 //itemView.el.effect('slide');
                 itemView.model.primaryCollection = collectionView.collection;
-                itemView.el.editable({disabled: widget.options.disabled, model: itemView.model});
+                itemView.el.midgardEditable({disabled: widget.options.disabled, model: itemView.model, vie: widget.vie, editor: widget.options.editor});
             });
             
             collectionView.bind('remove', function(itemView) {
