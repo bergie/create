@@ -19,6 +19,8 @@
         deactivated: function() {},
         selected: function() {},
         unselected: function() {},
+        enabled: function() {},
+        disabled: function() {},
         placeholder: ''
       },
       _create: function() {
@@ -51,9 +53,10 @@
         this.element.attr("contentEditable", false);
         this.element.unbind("focus", this._activated);
         this.element.unbind("blur", this._deactivated);
-        this.element.unbind("keyup paste change", this, this._checkModified);
-        this.element.unbind("keyup mouseup", this, this._checkSelection);
-        return this.bound = false;
+        this.element.unbind("keyup paste change", this._checkModified);
+        this.element.unbind("keyup mouseup", this._checkSelection);
+        this.bound = false;
+        return this._trigger("disabled", null);
       },
       enable: function() {
         var widget;
@@ -67,8 +70,9 @@
           this.element.bind("keyup paste change", this, this._checkModified);
           this.element.bind("keyup mouseup", this, this._checkSelection);
           widget = this;
-          return this.bound = true;
+          this.bound = true;
         }
+        return this._trigger("enabled", null);
       },
       activate: function() {
         return this.element.focus();
