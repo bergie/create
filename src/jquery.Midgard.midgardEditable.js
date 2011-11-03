@@ -210,7 +210,7 @@
             });
             
             collectionView.bind('remove', function(itemView) {
-                itemView.el.hide('drop');
+                //itemView.el.hide('drop');
             });
             
             widget.options.addButton = jQuery('<button>Add</button>').button();
