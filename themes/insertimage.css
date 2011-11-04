@@ -1,0 +1,41 @@
+button.midgardCreate_button_img {
+    background: url('../images/insert-image.gif') no-repeat !important;
+    background-position: 0px 0px;
+}
+
+#midgardmvc-image-list input {
+    padding: 2px;
+    margin: 4px;
+    width: 200px;
+}
+
+#midgardmvc-image-list .midgardmvc-image-list {
+    padding: 0px;
+    margin: 0px;
+}
+
+#midgardmvc-image-list .midgardmvc-image-list li {
+    list-style: none;
+    display: inline;
+}
+
+#midgardmvc-image-list .midgardmvc-image-list li img
+{
+    margin: 2px;
+}
+
+#midgardmvc-image-upload h2 {
+    margin-top: 0px;
+    color: #000000;
+}
+
+#midgardmvc-image-upload {
+    text-align: center;
+    padding-bottom: 6px;
+    background-color: #ffffff;
+    border-radius: 6px;
+}
+
+div.midgardmvc-image-hover {
+    background-color: #67cc08 !important;
+}

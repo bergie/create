@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Create &mdash; A new kind of web editing interface</title>
+        <script src="deps/jquery-1.6.4.min.js"></script>
+        <script src="deps/jquery-ui-1.8.16.custom.min.js"></script>
+        <script src="deps/modernizr.custom.80485.js"></script>
+        <script src="deps/underscore-min.js"></script>
+        <script src="deps/backbone-min.js"></script>
+        <script src="deps/vie-min.js"></script>
+        <script src="deps/hallo.js"></script>
+        <script src="deps/hallo/format.js"></script>
+        <script src="create/jquery.Midgard.midgardCreate.js"></script>
+        <script src="create/jquery.Midgard.midgardToolbar.js"></script>
+        <script src="create/jquery.Midgard.midgardStorage.js"></script>
+        <script src="create/jquery.Midgard.midgardEditable.js"></script>        <script>
+            jQuery(document).ready(function() {
+                jQuery('#tryit').button({disabled: false}).click(function() {
+                    jQuery('body').midgardCreate({state: 'edit'});
+                    jQuery('#tryit').button({disabled: true});
+                });
+            });
+        </script>
+        <link rel="stylesheet" href="deps/hallo/vader/jquery-ui-1.8.16.custom.css" />
+        <link rel="stylesheet" href="themes/midgard-theme/jquery.ui.all.css" />
+        <link rel="stylesheet" href="themes/midgard-toolbar/midgardbar.css" />
+        <link rel="stylesheet" href="create.css" />
+    </head>
+    <body xmlns:doap="http://usefulinc.com/ns/doap#" xmlns:foaf="http://xmlns.com/foaf/0.1/" about="http://bergie.github.com/hallo/" typeof="doap:Project">
+        <header>
+            <a href="https://github.com/bergie/hallo" rel="doap:homepage"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://d3nwyuy0nl342s.cloudfront.net/img/71eeaab9d563c2b3c590319b398dd35683265e85/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub"></a>
+        </header>
+        <aside class="tryit">
+            <button id="tryit" type="button">Try it now</button>
+        </aside>
+        <article>
+            <img src="create.png" class="logo" alt="Create" />
+            <h1 class="editable"><span property="doap:name">Create</span> &mdash; <span property="doap:shortdesc">A new kind of web editing interface</span></h1>
+
+            <div property="doap:description" class="editable">
+                <p>Create, from the Midgard Project is a comprehensive web editing interface for Content Management Systems. It is designed to provide a modern, fully browser-based HTML5 environment for managing content. Create can be adapted to work on almost any content management backend.</p>
+
+                <p>The user interface philosophy behind Create is simple: all content that you are allowed to change becomes editable, right there on the page you're reading. Any modifications you make are retained in your browser and can be sent back to the CMS with a push of a button. With Create, it is time to stop filling forms and to start communicating with your web audience.</p>
+
+                <h2>Integrating Create with your CMS</h2>
+
+                <ul>
+                    <li>Annotate your content with <a href="http://www.w3.org/TR/xhtml-rdfa-primer/#id84624">RDFa</a></li>
+                    <li>Include the Create JavaScript file(s)</li>
+                    <li>Implement <a href="http://documentcloud.github.com/backbone/#Sync">Backbone.sync</a> for your back-end</li>
+                </ul>
+
+                <h2>Developing Create</h2>
+
+                <p>
+                    Create is still in the early stages of its life and there are many more features planned. If you're interested in contributing, simply fork the <a href="https://github.com/bergie/create">Create repository on GitHub</a> and send <a href="http://help.github.com/pull-requests/">pull requests</a>. Make sure to check out the <a href="https://github.com/bergie/create/issues" rel="doap:bug-database">current list of issues</a>.
+                </p>
+
+                <p>
+                    The Create user interface operates as a <a href="http://jqueryui.com/">jQuery UI</a> plugin that is easy to include to any web page.
+                </p>
+            </div>
+        </article>
+        <footer>
+            <p>Create is <a href="http://www.opensource.org/licenses/mit-license.php" rel="doap:license">free software</a> developed by <span property="doap:maintainer"><a rel="foaf:homepage" typeof="foaf:Person" href="http://bergie.iki.fi/" property="foaf:name">Henri Bergius</a></span> and the <a href="http://www.midgard-project.org/">Midgard Project</a> in collaboration with <a href="http://iks-project.eu/">IKS</a> and co-funded by the European Union</p>
+        </footer>
+    </body>
+</html> 
