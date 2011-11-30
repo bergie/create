@@ -17,7 +17,8 @@
         _create: function() {
             this.vie = this.options.vie;
             if (!this.options.model) {
-                this.options.model = this.vie.RDFaEntities.getInstance(this.element);
+                var models = this.vie.RDFaEntities.getInstances(this.element);
+                this.options.model = models[0];
             }
         },
         
@@ -34,7 +35,6 @@
             this.vie.RDFa.findPredicateElements(this.options.model.id, jQuery('[property]', this.element), false).each(function() {
                 return widget._enableProperty(jQuery(this));
             });
-           
             _.forEach(this.vie.services.rdfa.views, function(view) {
                 if (view instanceof widget.vie.view.Collection) {
                     widget._enableCollection(view);
@@ -195,7 +195,7 @@
         _enableCollection: function(collectionView) {
             var widget = this;
 
-            if (this.vie.RDFa.getSubject(collectionView.el) !== widget.options.model.getSubject()) {
+            if (!collectionView.owner || collectionView.owner.getSubject() !== widget.options.model.getSubject()) {
                 return;
             }
 
