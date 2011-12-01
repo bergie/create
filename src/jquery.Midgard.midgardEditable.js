@@ -4,6 +4,7 @@
             editables: [],
             model: null,
             editor: 'hallo',
+            editorOptions: {},
             addButton: null,
             enable: function() {},
             enableproperty: function() {},
@@ -84,13 +85,21 @@
             }
 
             // Default to Hallo
-            jQuery(element).hallo({
+            var options = {
                 plugins: {
                     halloformat: {}
                 },
                 editable: true,
                 placeholder: '[' + propertyName + ']'
-            });
+            };
+            var editorOptions = {};
+            if (this.options.editorOptions[propertyName]) {
+                editorOptions = this.options.editorOptions[propertyName];
+            } else if (this.options.editorOptions['default']) {
+                editorOptions = this.options.editorOptions['default'];
+            }
+            $.extend(options, editorOptions);
+            jQuery(element).hallo(options);
 
             var widget = this;
             jQuery(element).bind('halloactivated', function(event, data) {
