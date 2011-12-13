@@ -20,6 +20,15 @@
                     jQuery('#tryit').button({disabled: true});
                 });
             });
+            Backbone.sync = function(method, model, success, error) {
+                var message = "Backbone.sync triggered for model " + model.id;
+                if (console) {
+                    console.log("Model contents", model.toJSONLD());
+                    message += '. See JavaScript Console for details';
+                }
+                alert(message);
+
+            };
         </script>
         <link rel="stylesheet" href="deps/hallo/vader/jquery-ui-1.8.16.custom.css" />
         <link rel="stylesheet" href="themes/midgard-theme/jquery.ui.all.css" />
