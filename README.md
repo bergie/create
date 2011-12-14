@@ -38,6 +38,43 @@ In nutshell, you have to do the following:
 * Include the Create JavaScript file(s)
 * Implement [Backbone.sync](http://documentcloud.github.com/backbone/#Sync) for your back-end
 
+### RDFa annotations
+
+Create uses the [VIE](http://viejs.org/) library to turn content in your pages into editable [Backbone models](http://documentcloud.github.com/backbone/#Model). This process is guided by [RDFa annotations](http://www.w3.org/TR/xhtml-rdfa-primer/#id84624) that let your web framework to explain the content model being shown on the pages.
+
+#### Annotating entities
+
+The main editable unit in Create is an entity. For example, you could make a blog post editable with this mark-up:
+
+    <div about="http://example.net/blog/my-post" typeof="sioc:Post">
+      <h1 property="dcterms:title">Blog post title</h1>
+      <div property="sioc:content">
+        ...
+      </div>
+    </div>
+
+This is enough to tell Create that the div contains an editable blog post entity. The important points here are:
+
+* `about` gives the identifier of an object. The identifiers should be [URIs](http://en.wikipedia.org/wiki/Uniform_resource_identifier), but basically anything that your back-end will understand is fine
+* `typeof` is not necessary, but it tells us that the editable entity is a [blog post](http://rdfs.org/sioc/spec/#term_Post)
+* `property` tells that the h1 contains the title of the post, and the div contains the contents. These become attributes of our Backbone model instance
+
+#### Annotating collections
+
+Relationships between entities allow you to communicate structured content to Create, which will turn them into [Backbone collections](http://documentcloud.github.com/backbone/#Collection). For example, to annotate a list of blog posts:
+
+    <div about="http://example.net/blog/" rel="dcTerms:hasPart">
+      <div about="http://example.net/my-post">...</div>
+      <div about="http://example.net/second-post">...</div>
+    </div>
+
+This tells Create that there is a blog entity, which contains a collection of two posts. The important things here are:
+
+* The first `about` identifies also the blog post container as an entity
+* `rel` tells that there is a relation between the blog container, and the blog posts under it
+
+Create will use the first entity inside a collection as a "template", and knows how to add or remove entities from the collection. In _Edit_ mode the user would see an _Add_ button next to the collection.
+
 ### Starting Create
 
 Starting Create:
