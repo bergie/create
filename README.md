@@ -21,6 +21,7 @@ Create, from the [Midgard Project](http://www.midgard-project.org/), is a compre
 
 * Adopt the [Web Intents](http://webintents.org/) specification for better image and link handling
 * Content annotation and auto-tagging with [Apache Stanbol](http://incubator.apache.org/stanbol/)
+* Wrapper for using Create inside [Google Web Toolkit](http://code.google.com/webtoolkit/) via [VIE-GWT](https://github.com/alkacon/vie-gwt)
 
 ## Dependencies
 
