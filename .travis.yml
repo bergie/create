@@ -6,3 +6,8 @@ before_script:
   - npm install --dev
 
 script: npm test
+
+notifications:
+  irc:
+    - "irc.freenode.org#iks"
+    - "irc.freenode.org#midgard"
