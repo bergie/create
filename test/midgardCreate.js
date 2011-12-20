@@ -5,9 +5,9 @@ test('Create widget', function() {
 });
 
 test('Toolbar state', function() {
-  jQuery('body').midgardCreate();
+  jQuery('#qunit-fixture .toolbar-state').midgardCreate();
   equal(jQuery('#midgard-bar').length, 1);
-  ok(jQuery('#midgard-bar').css('display') !== 'block');
+  ok(jQuery('#midgard-bar').css('display') !== 'none');
   equal(jQuery('#midgard-bar-minimized').css('display'), 'none');
 
 
@@ -16,7 +16,8 @@ test('Toolbar state', function() {
   stop();
   setTimeout(function() {
     equal(jQuery('#midgard-bar').css('display'), 'none');
-    ok(jQuery('#midgard-bar-minimized').css('display') !== 'block');
+    ok(jQuery('#midgard-bar-minimized').css('display') !== 'none');
+    jQuery('#qunit-fixture .toolbar-state').empty();
     start();
   }, 2000);
 });
