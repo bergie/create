@@ -143,3 +143,20 @@ You can use normal [jQuery event methods](http://api.jquery.com/category/events/
 ## Status
 
 This repository contains the new version of Create that is having its dependencies on [Midgard MVC](http://new.midgard-project.org/midgardmvc/) removed so that it can work with any back-end system. This work is still ongoing, and so most of the functionality doesn't work yet.
+
+### Running Unit Tests
+
+Direct your browser to the `test/index.html` file to run Create's [QUnit](http://docs.jquery.com/Qunit) tests.
+
+#### Unit tests on Node.js
+
+You need Node.js and [NPM](http://npmjs.org/). Then just run:
+
+    $ npm install --dev
+    $ npm test
+
+#### Continuous integration
+
+Create uses [Travis](http://travis-ci.org/) for continuous integration. Simply add your fork there and every time you push you'll get the tests run.
+
+[![Build Status](https://secure.travis-ci.org/bergie/create.png)](http://travis-ci.org/bergie/create)
