@@ -65,11 +65,12 @@
                 editButton.button('refresh');
             }
             editButton.bind('change', function() {
-                if (editButton.attr('checked')) {
-                    widget._enableEdit();
-                    return;
+                if (widget.options.state === 'edit') {
+                  editButton.attr('checked', false);
+                  widget._disableEdit();
+                  return;
                 }
-                widget._disableEdit();
+                widget._enableEdit();
             });
         },
         

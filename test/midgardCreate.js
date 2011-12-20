@@ -19,5 +19,29 @@ test('Toolbar state', function() {
     ok(jQuery('#midgard-bar-minimized').css('display') !== 'none');
     jQuery('#qunit-fixture .toolbar-state').empty();
     start();
-  }, 2000);
+  }, 1500);
+});
+
+test('Toolbar edit', function() {
+  jQuery('#qunit-fixture .toolbar-edit').midgardCreate();
+
+  var checkEdit = function(event, options) {
+    equal(options.state, 'edit');
+    start();
+    jQuery('#qunit-fixture .toolbar-edit').unbind('midgardcreatestatechange', checkEdit);
+  };
+
+  var checkBrowse = function(event, options) {
+    equal(options.state, 'browse');
+    start();
+    jQuery('#qunit-fixture .toolbar-edit').unbind('midgardcreatestatechange', checkBrowse);
+  };
+
+  stop();
+  jQuery('#qunit-fixture .toolbar-edit').bind('midgardcreatestatechange', checkEdit);
+  jQuery('#qunit-fixture .toolbar-edit #midgard-bar #midgardcreate-edit').click();
+
+  stop();
+  jQuery('#qunit-fixture .toolbar-edit').bind('midgardcreatestatechange', checkBrowse);
+  jQuery('#qunit-fixture .toolbar-edit #midgard-bar #midgardcreate-edit').click();
 });

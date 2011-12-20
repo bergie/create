@@ -30,7 +30,7 @@ exports.setUp = function(callback) {
     });
 };
 
-exports['Client-side VIE tests with a headless browser'] = function(test) {
+exports['Client-side CreateJS tests with a headless browser'] = function(test) {
     _.each(qunitResults, function(listItem) {
         var group = listItem.childNodes.item(0);
         var groupName = group.childNodes.item(0).textContent;
