@@ -31,20 +31,19 @@
             this.enable();
         },
         
-        enable: function() {      
+        enable: function() {  
             var widget = this;
             this.vie.RDFa.findPredicateElements(this.options.model.id, jQuery('[property]', this.element), false).each(function() {
                 return widget._enableProperty(jQuery(this));
+            });
+            this._trigger('enable', null, {
+                instance: this.options.model,
+                entityElement: this.element
             });
             _.forEach(this.vie.services.rdfa.views, function(view) {
                 if (view instanceof widget.vie.view.Collection) {
                     widget._enableCollection(view);
                 }
-            });
-            
-            this._trigger('enable', null, {
-                instance: this.options.model,
-                entityElement: this.element
             });
         },
         
@@ -134,7 +133,6 @@
                     entityElement: widget.element
                 });
             });
-
             this._trigger('enableproperty', null, {
                 editable: null,
                 property: propertyName,
@@ -223,6 +221,7 @@
             });
             
             widget.options.addButton = jQuery('<button>Add</button>').button();
+            widget.options.addButton.addClass('midgard-create-add');
             widget.options.addButton.click(function() {
                 collectionView.collection.add({});
             });
