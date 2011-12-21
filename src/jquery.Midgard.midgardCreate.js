@@ -5,9 +5,11 @@
             toolbar: 'full',
             saveButton: null,
             state: 'browse',
+            highlight: true,
             highlightColor: '#67cc08',
             editor: 'hallo',
-            url: ''
+            url: '',
+            storagePrefix: ''
         },
     
         _create: function() {
@@ -32,16 +34,18 @@
                 return;
             }
             
-            if (sessionStorage.getItem('Midgard.create.toolbar')) {
-                this._setOption('toolbar', sessionStorage.getItem('Midgard.create.toolbar'));
+            var toolbarID = this.options.storagePrefix + 'Midgard.create.toolbar';
+            if (sessionStorage.getItem(toolbarID)) {
+                this._setOption('toolbar', sessionStorage.getItem(toolbarID));
             }
             
-            if (sessionStorage.getItem('Midgard.create.state')) {
-                this._setOption('state', sessionStorage.getItem('Midgard.create.state'));
+            var stateID = this.options.storagePrefix + 'Midgard.create.state';
+            if (sessionStorage.getItem(stateID)) {
+                this._setOption('state', sessionStorage.getItem(stateID));
             }
-            
+           
             this.element.bind('midgardcreatestatechange', function(event, state) {
-                sessionStorage.setItem('Midgard.create.state', state);
+                sessionStorage.setItem(stateID, state);
             });
         },
         
@@ -50,23 +54,23 @@
                 return this.options.saveButton;
             }
             
-            jQuery('#midgard-bar .toolbarcontent-right').append(jQuery('<button id="midgardcreate-save">Save</button>'));
-            this.options.saveButton = jQuery('#midgardcreate-save');
+            jQuery('#midgard-bar .toolbarcontent-right', this.element).append(jQuery('<button id="midgardcreate-save">Save</button>'));
+            this.options.saveButton = jQuery('#midgardcreate-save', this.element);
             this.options.saveButton.button({disabled: true});
             return this.options.saveButton;
         },
         
         _editButton: function() {
             var widget = this;
-            jQuery('#midgard-bar .toolbarcontent-right').append(jQuery('<input type="checkbox" id="midgardcreate-edit" /><label for="midgardcreate-edit">Edit</label>'));
-            var editButton = jQuery('#midgardcreate-edit').button();
+            jQuery('#midgard-bar .toolbarcontent-right', this.element).append(jQuery('<input type="checkbox" id="midgardcreate-edit" /><label for="midgardcreate-edit">Edit</label>'));
+            var editButton = jQuery('#midgardcreate-edit', this.element).button();
             if (this.options.state === 'edit') {
                 editButton.attr('checked', true);
                 editButton.button('refresh');
             }
             editButton.bind('change', function() {
                 if (widget.options.state === 'edit') {
-                  editButton.attr('checked', false);
+                  //editButton.attr('checked', false);
                   widget._disableEdit();
                   return;
                 }
@@ -78,7 +82,7 @@
             var widget = this;
             this.element.bind('midgardtoolbarstatechange', function(event, options) {
                 if (Modernizr.sessionstorage) {
-                    sessionStorage.setItem('Midgard.create.toolbar', options.display);
+                    sessionStorage.setItem(widget.options.storagePrefix + 'Midgard.create.toolbar', options.display);
                 }
                 widget._setOption('toolbar', options.display);
             });
@@ -87,32 +91,34 @@
         },
         
         _enableEdit: function() {
+            this._setOption('state', 'edit');
             var widget = this;
-            jQuery('[about]').each(function() {
+            jQuery('[about]', this.element).each(function() {
                 var element = this;
-                var highlightEditable = function(event, options) {
-                    if (options.entityElement.get(0) !== element) {
-                        // Propagated event from another entity, ignore
-                        return;
-                    }
+                if (widget.options.highlight) {
+                    var highlightEditable = function(event, options) {
+                        if (options.entityElement.get(0) !== element) {
+                            // Propagated event from another entity, ignore
+                            return;
+                        }
 
-                    // Highlight the editable
-                    options.element.effect('highlight', {color: widget.options.highlightColor}, 3000);
-                };
+                        // Highlight the editable
+                        options.element.effect('highlight', {color: widget.options.highlightColor}, 3000);
+                    };
                 
-                jQuery(this).bind('midgardeditableenableproperty', highlightEditable);
+                    jQuery(this).bind('midgardeditableenableproperty', highlightEditable);
+                }
                 jQuery(this).bind('midgardeditabledisable', function() {
                     jQuery(this).unbind('midgardeditableenableproperty', highlightEditable);
                 });
                 jQuery(this).midgardEditable({disabled: false, vie: widget.vie, editor: widget.options.editor});
             });
-            this._setOption('state', 'edit');
             this._trigger('statechange', null, {state: 'edit'});
         },
         
         _disableEdit: function() {
             var widget = this;
-            jQuery('[about]').each(function() {
+            jQuery('[about]', this.element).each(function() {
                 jQuery(this).midgardEditable({disabled: true, vie: widget.vie, editor: widget.options.editor}).removeClass('ui-state-disabled');
             });
             this._setOption('state', 'browse');
