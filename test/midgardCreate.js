@@ -5,7 +5,9 @@ test('Create widget', function() {
 });
 
 test('Toolbar state', function() {
-  jQuery('#qunit-fixture .toolbar-state').midgardCreate();
+  jQuery('#qunit-fixture .toolbar-state').midgardCreate({
+    storagePrefix: 'toolbar-state'
+  });
   equal(jQuery('#midgard-bar').length, 1);
   ok(jQuery('#midgard-bar').css('display') !== 'none');
   equal(jQuery('#midgard-bar-minimized').css('display'), 'none');
@@ -23,7 +25,9 @@ test('Toolbar state', function() {
 });
 
 test('Toolbar edit', function() {
-  jQuery('#qunit-fixture .toolbar-edit').midgardCreate();
+  jQuery('#qunit-fixture .toolbar-edit').midgardCreate({
+    storagePrefix: 'toolbar-edit'
+  });
 
   var checkEdit = function(event, options) {
     equal(options.state, 'edit');

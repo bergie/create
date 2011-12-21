@@ -21,7 +21,7 @@ exports.setUp = function(callback) {
         browser.visit(location, function(err, browser, status) {
             // Start QUnit
             browser.fire('load', browser.window);
-            browser.wait(10000, function(err, browser) {
+            browser.wait(20000, function(err, browser) {
                 qunitResults = browser.queryAll('#qunit-tests > li');
                 server.close();
                 callback();

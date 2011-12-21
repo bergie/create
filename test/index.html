@@ -22,9 +22,10 @@
 
         <!-- load test scripts -->
         <script type="text/javascript" src="midgardCreate.js"></script>
+        <script type="text/javascript" src="midgardEditable.js"></script>
 
     </head>
-    <body>
+    <body xmlns:dcterms="http://purl.org/dc/terms/">
         <h1 id="qunit-header">Unit tests for Create - using QUnit</h1>
         <h2 id="qunit-banner"></h2>
         <div id="qunit-testrunner-toolbar"></div>
@@ -34,6 +35,13 @@
           <div class="toolbar-state">
           </div>
           <div class="toolbar-edit">
+          </div>
+          <div class="edit-add">
+            <div about="#blog" rel="dcterms:hasPart">
+              <div about="#first">
+                <h2 property="dcterms:title">Foo</h2>
+              </div>
+            </div>
           </div>
         </div>
     </body>
