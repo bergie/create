@@ -140,6 +140,13 @@ You can use normal [jQuery event methods](http://api.jquery.com/category/events/
 
 * [Etch](http://etchjs.com/)
 
+## Using Aloha Editor
+
+To use Create with Aloha Editor you need to
+* [Download the latest version of Aloha Editor](http://aloha-editor.org/builds/development/latest.zip)
+* Extract the archive file and move the "aloha" directory into the "create/deps" folder -- check to have it like this: "create/deps/aloha/lib/aloha.js"
+* For more information about using Aloha Editor see the [Aloha Editor Guides](http://aloha-editor.org/builds/development/latest/doc/guides/output/)
+
 ## Status
 
 This repository contains the new version of Create that is having its dependencies on [Midgard MVC](http://new.midgard-project.org/midgardmvc/) removed so that it can work with any back-end system. This work is still ongoing, and so most of the functionality doesn't work yet.

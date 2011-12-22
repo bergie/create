@@ -145,12 +145,12 @@
         },
 
         _enableAloha: function(element, propertyName) {
-            var editable = new GENTICS.Aloha.Editable(element);
+            var editable = new Aloha.Editable(Aloha.jQuery(element.get(0)));
             editable.vieEntity = this.options.model;
 
             // Subscribe to activation and deactivation events
             var widget = this;
-            GENTICS.Aloha.EventRegistry.subscribe(editable, 'editableActivated', function() {
+            Aloha.bind('aloha-editable-activated', function() {
                 widget._trigger('activated', null, {
                     editable: editable,
                     property: propertyName,
@@ -159,7 +159,7 @@
                     entityElement: widget.element
                 });
             });
-            GENTICS.Aloha.EventRegistry.subscribe(editable, 'editableDeactivated', function() {
+            Aloha.bind('aloha-editable-deactivated', function() {
                 widget._trigger('deactivated', null, {
                     editable: editable,
                     property: propertyName,
@@ -169,11 +169,9 @@
                 });
             });
 
-            // Register a timer to copy any modified contents
-            // TODO: Replace with smartContentChange when Aloha .10 is out
-            editable.changeTimer = window.setInterval(function() {
+            Aloha.bind('aloha-smart-content-changed', function() {
                 widget._checkModified(propertyName, editable);
-            }, 2000);
+            });
 
             this._trigger('enableproperty', null, {
                 editable: editable,
@@ -188,10 +186,6 @@
 
         _disableAloha: function(editable) {
             editable.setUnmodified();
-            
-            if (typeof editable.changeTimer !== 'undefined') {
-                window.clearInterval(editable.changeTimer);
-            }
 
             try {
                 editable.destroy();
