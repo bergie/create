@@ -44,8 +44,8 @@
                 this._setOption('state', sessionStorage.getItem(stateID));
             }
            
-            this.element.bind('midgardcreatestatechange', function(event, state) {
-                sessionStorage.setItem(stateID, state);
+            this.element.bind('midgardcreatestatechange', function(event, options) {
+                sessionStorage.setItem(stateID, options.state);
             });
         },
         
