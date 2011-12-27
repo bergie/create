@@ -142,10 +142,15 @@ You can use normal [jQuery event methods](http://api.jquery.com/category/events/
 
 ## Using Aloha Editor
 
-To use Create with Aloha Editor you need to
+By default, Create uses the [Hallo Editor](http://bergie.github.com/hallo/). To use Create with [Aloha Editor](http://aloha-editor.org/) you need to:
+
 * [Download the latest version of Aloha Editor](http://aloha-editor.org/builds/development/latest.zip)
-* Extract the archive file and move the "aloha" directory into the "create/deps" folder -- check to have it like this: "create/deps/aloha/lib/aloha.js"
+* Extract the archive file and move the `aloha` directory into the `create/deps` folder -- check to have it like this: `create/deps/aloha/lib/aloha.js`
 * For more information about using Aloha Editor see the [Aloha Editor Guides](http://aloha-editor.org/builds/development/latest/doc/guides/output/)
+
+Using Aloha Editor with Create is covered by Aloha's FOSS License Exception:
+
+> Aloha Editor’s Free and Open Source Software ("FOSS") License Exception allows developers of FOSS applications to include Aloha Editor with their FOSS applications. Aloha Editor is typically licensed pursuant to version 3 of the General Afero Public License ("AGPLv3"), but this exception permits distribution of Aloha Editor with a developer’s FOSS applications licensed under the terms of another FOSS license listed below [MIT license is included], even though such other FOSS license may be incompatible with the AGPLv3.
 
 ## Status
 
