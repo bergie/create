@@ -97,7 +97,7 @@
             } else if (this.options.editorOptions['default']) {
                 editorOptions = this.options.editorOptions['default'];
             }
-            $.extend(options, editorOptions);
+            jQuery.extend(options, editorOptions);
             jQuery(element).hallo(options);
 
             var widget = this;

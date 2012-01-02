@@ -9,7 +9,7 @@
             highlightColor: '#67cc08',
             editor: 'hallo',
             url: '',
-            storagePrefix: ''
+            storagePrefix: 'node'
         },
     
         _create: function() {
