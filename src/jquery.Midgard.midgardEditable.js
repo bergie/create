@@ -204,10 +204,17 @@
                 return;
             }
 
+            collectionView.collection.url = widget.options.model.url();
+
             collectionView.bind('add', function(itemView) {
                 //itemView.el.effect('slide');
                 itemView.model.primaryCollection = collectionView.collection;
                 itemView.el.midgardEditable({disabled: widget.options.disabled, model: itemView.model, vie: widget.vie, editor: widget.options.editor});
+            });
+
+            collectionView.collection.bind('add', function(model) {
+                widget.vie.entities.add(model);
+                model.collection = collectionView.collection;
             });
             
             collectionView.bind('remove', function(itemView) {
