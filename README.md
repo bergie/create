@@ -39,6 +39,8 @@ In nutshell, you have to do the following:
 * Include the Create JavaScript file(s)
 * Implement [Backbone.sync](http://documentcloud.github.com/backbone/#Sync) for your back-end
 
+[Blogsiple](https://github.com/bergie/blogsiple) is a [Node.js](http://nodejs.org/) based CMS integration testbed for Create. It may provide useful examples on how the connection between Create and a REST-capable web tool works.
+
 ### RDFa annotations
 
 Create uses the [VIE](http://viejs.org/) library to turn content in your pages into editable [Backbone models](http://documentcloud.github.com/backbone/#Model). This process is guided by [RDFa annotations](http://www.w3.org/TR/xhtml-rdfa-primer/#id84624) that let your web framework to explain the content model being shown on the pages.
