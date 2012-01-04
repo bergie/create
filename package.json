@@ -7,7 +7,8 @@
     "underscore": ">=1.2.0",
     "nodeunit": ">=0.6.0",
     "zombie": ">=0.12.0",
-    "express": ">=2.5.0"
+    "express": ">=2.5.0",
+    "request": ">=2.9.3"
   },
   "scripts":    {
     "test": "./node_modules/nodeunit/bin/nodeunit test/nodejs"
