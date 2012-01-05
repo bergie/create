@@ -1,4 +1,5 @@
 (function(jQuery, undefined) {
+    
     jQuery.widget('Midgard.midgardCreate', {
         options: {
             statechange: function() {},
@@ -12,7 +13,10 @@
             enableEditor: null,
             disableEditor: null,
             url: function() {},
-            storagePrefix: 'node'
+            storagePrefix: 'node',            
+            workflows: {
+                url: null
+            }
         },
     
         _create: function() {
@@ -21,7 +25,10 @@
             this._enableToolbar();
             this._saveButton();
             this._editButton();
-            this.element.midgardStorage({vie: this.vie, url: this.options.url});
+            this.element.midgardStorage({vie: this.vie, url: this.options.url});          
+            if (this.element.midgardWorkflows) {
+                this.element.midgardWorkflows(this.options.workflows);
+            }
         },
         
         _init: function() {

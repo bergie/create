@@ -92,7 +92,12 @@ You can pass Create configuration options when calling the `midgardCreate` widge
 
     jQuery('body').midgardCreate({
         url: '/some/backend/url',
-        editor: 'aloha'
+        editor: 'aloha',
+        workflows: {
+            url: function(model) {
+                return '/some/backend/workflows/fetch/url/' + model.id;
+            }
+        }
     });
 
 ### Communications with the back-end
