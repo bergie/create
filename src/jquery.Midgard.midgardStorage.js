@@ -54,7 +54,9 @@
             });
             
             widget.element.bind('midgardeditableenable', function(event, options) {
-                widget._readLocal(options.instance);
+                if (options.instance.id) {
+                    widget._readLocal(options.instance);
+                }
                 _.each(options.instance.attributes, function(attributeValue, property) {
                     if (attributeValue instanceof widget.vie.Collection) {
                         //widget._readLocalReferences(options.instance, property, attributeValue);
@@ -150,7 +152,9 @@
             if (!local) {
                 return;
             }
-            model.originalAttributes = _.clone(model.attributes);
+            if (!model.originalAttributes) {
+              model.originalAttributes = _.clone(model.attributes);
+            }
             var entity = this.vie.EntityManager.getByJSONLD(JSON.parse(local));
             
             this._trigger('loaded', null, {
