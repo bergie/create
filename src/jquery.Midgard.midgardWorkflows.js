@@ -49,10 +49,13 @@
         },
         
         _generateCollectionFor: function(model) {
-            collection = Backbone.Collection.extend({
-                model: this.ModelWorkflowModel,
-                url: this.options.url(model)
-            });
+            var collectionSettings = {
+                model: this.ModelWorkflowModel
+            };
+            if (this.options.url) {
+                collectionSettings['url'] = this.options.url(model);
+            }
+            collection = Backbone.Collection.extend(collectionSettings);
             return collection;
         },
         
