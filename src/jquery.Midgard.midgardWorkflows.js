@@ -13,7 +13,9 @@
                   name: '',
                   label: '',
                   type: 'button',
-                  action: ''          
+                  action: {
+                    type: 'backbone_save'
+                  }
               }
           });
           
@@ -22,7 +24,10 @@
           var widget = this;          
           jQuery(this.element).bind('midgardeditableactivated', function(event, options) {
               model = options.instance;
-            
+              if (model.isNew) {
+                return;
+              }
+              
               if (widget._last_instance == model) {
                   return;
               }
@@ -32,14 +37,14 @@
                   widget._trigger('changed', null, {
                       instance: model,
                       workflows: widget.workflows[model.cid]
-                  });              
+                  });
                   return;
               }
             
               if (widget.options.url) {
                   widget._fetchModelWorkflows(model);
               } else {
-                  flows = new (widget._generateCollectionFor(model))();
+                  flows = new (widget._generateCollectionFor(model))([], {});
                   widget._trigger('changed', null, {
                       instance: model,
                       workflows: flows
@@ -55,17 +60,16 @@
             if (this.options.url) {
                 collectionSettings['url'] = this.options.url(model);
             }
-            collection = Backbone.Collection.extend(collectionSettings);
-            return collection;
+            return Backbone.Collection.extend(collectionSettings);
         },
         
         _fetchModelWorkflows: function(model) {          
           var widget = this;
           
-          widget.workflows[model.cid] = new (this._generateCollectionFor(model))();
+          widget.workflows[model.cid] = new (this._generateCollectionFor(model))([], {});
           widget.workflows[model.cid].fetch({
               success: function(collection) {
-                  widget.workflows[model.cid].reset(collection);
+                  widget.workflows[model.cid].reset(collection.models);
 
                   widget._trigger('changed', null, {
                       instance: model,
