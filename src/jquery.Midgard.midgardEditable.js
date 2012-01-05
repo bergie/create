@@ -219,6 +219,11 @@
                 return;
             }
 
+            if (collectionView.template.length === 0) {
+                // Collection view has no template and so can't add
+                return;
+            }
+
             collectionView.collection.url = widget.options.model.url();
 
             collectionView.bind('add', function(itemView) {
