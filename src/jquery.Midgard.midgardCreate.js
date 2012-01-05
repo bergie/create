@@ -8,7 +8,7 @@
             highlight: true,
             highlightColor: '#67cc08',
             editor: 'hallo',
-            url: '',
+            url: function() {},
             storagePrefix: 'node'
         },
     
