@@ -252,29 +252,32 @@
         return r1.startContainer === r2.startContainer && r1.startOffset === r2.startOffset && r1.endContainer === r2.endContainer && r1.endOffset === r2.endOffset;
       },
       _checkSelection: function(event) {
-        var sel, widget;
+        var widget;
         if (event.keyCode === 27) return;
         widget = event.data;
-        sel = widget.getSelection();
-        if (widget._isEmptySelection(sel) || widget._isEmptyRange(sel)) {
-          if (widget.selection) {
-            widget.selection = null;
-            widget._trigger("unselected", null, {
+        return setTimeout(function() {
+          var sel;
+          sel = widget.getSelection();
+          if (widget._isEmptySelection(sel) || widget._isEmptyRange(sel)) {
+            if (widget.selection) {
+              widget.selection = null;
+              widget._trigger("unselected", null, {
+                editable: widget,
+                originalEvent: event
+              });
+            }
+            return;
+          }
+          if (!widget.selection || !widget._rangesEqual(sel, widget.selection)) {
+            widget.selection = sel.cloneRange();
+            return widget._trigger("selected", null, {
               editable: widget,
+              selection: widget.selection,
+              ranges: [widget.selection],
               originalEvent: event
             });
           }
-          return;
-        }
-        if (!widget.selection || !widget._rangesEqual(sel, widget.selection)) {
-          widget.selection = sel.cloneRange();
-          return widget._trigger("selected", null, {
-            editable: widget,
-            selection: widget.selection,
-            ranges: [widget.selection],
-            originalEvent: event
-          });
-        }
+        }, 0);
       },
       _isEmptySelection: function(selection) {
         if (selection.type === "Caret") return true;
