@@ -8,6 +8,9 @@
             highlight: true,
             highlightColor: '#67cc08',
             editor: 'hallo',
+            editorOptions: {},
+            enableEditor: null,
+            disableEditor: null,
             url: function() {},
             storagePrefix: 'node'
         },
@@ -93,6 +96,19 @@
         _enableEdit: function() {
             this._setOption('state', 'edit');
             var widget = this;
+            var editableOptions = {
+                disabled: false,
+                vie: widget.vie,
+                editor: widget.options.editor,
+                editorOptions: widget.options.editorOptions,
+            };
+            if (widget.options.enableEditor) {
+                editableOptions[enableEditor] = widget.options.enableEditor;
+            }
+            if (widget.options.disableEditor) {
+                editableOptions[disableEditor] = widget.options.disableEditor;
+            }
+
             jQuery('[about]', this.element).each(function() {
                 var element = this;
                 if (widget.options.highlight) {
@@ -111,15 +127,28 @@
                 jQuery(this).bind('midgardeditabledisable', function() {
                     jQuery(this).unbind('midgardeditableenableproperty', highlightEditable);
                 });
-                jQuery(this).midgardEditable({disabled: false, vie: widget.vie, editor: widget.options.editor});
+
+                jQuery(this).midgardEditable(editableOptions);
             });
             this._trigger('statechange', null, {state: 'edit'});
         },
         
         _disableEdit: function() {
             var widget = this;
+            var editableOptions = {
+                disabled: true,
+                vie: widget.vie,
+                editor: widget.options.editor,
+                editorOptions: widget.options.editorOptions,
+            };
+            if (widget.options.enableEditor) {
+                editableOptions[enableEditor] = widget.options.enableEditor;
+            }
+            if (widget.options.disableEditor) {
+                editableOptions[disableEditor] = widget.options.disableEditor;
+            }
             jQuery('[about]', this.element).each(function() {
-                jQuery(this).midgardEditable({disabled: true, vie: widget.vie, editor: widget.options.editor}).removeClass('ui-state-disabled');
+                jQuery(this).midgardEditable(editableOptions).removeClass('ui-state-disabled');
             });
             this._setOption('state', 'browse');
             this._trigger('statechange', null, {state: 'browse'});

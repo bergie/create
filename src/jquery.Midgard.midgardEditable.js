@@ -5,6 +5,21 @@
             model: null,
             editor: 'hallo',
             editorOptions: {},
+            // Override this if you want to use custom widgets for editing
+            enableEditor: function(data) {
+              if (data.widget.options.editor === 'aloha') {
+                return data.widget._enableAloha(data);
+              }
+              return data.widget._enableHallo(data);
+            },
+            // Override this if you want to use custom widgets for editing
+            disableEditor: function(data) {
+              if (data.widget.options.editor === 'aloha') {
+                data.widget._disableAloha(data);
+                return;
+              }
+              data.widget._disableHallo(data);
+            },
             addButton: null,
             enable: function() {},
             enableproperty: function() {},
@@ -50,11 +65,11 @@
         disable: function() {
             var widget = this;
             jQuery.each(this.options.editables, function(index, editable) {
-                if (widget.options.editor === "aloha") {
-                    widget._disableAloha(editable);
-                    return true;
-                }
-                jQuery(editable).hallo({editable: false}); 
+              widget.options.disableEditor({
+                widget: widget,
+                editable: editable,
+                entity: widget.options.model
+              });
             });
             this.options.editables = [];
             
@@ -70,6 +85,7 @@
         },
         
         _enableProperty: function(element) {
+            var widget = this;
             var propertyName = this.vie.RDFa.getPredicate(element);
             if (!propertyName) {
                 return true;
@@ -79,98 +95,39 @@
                 return true;
             }
 
-            if (this.options.editor === "aloha") {
-                return this._enableAloha(element, propertyName);
-            }
-
-            // Default to Hallo
-            var options = {
-                plugins: {
-                    halloformat: {}
-                },
-                editable: true,
-                placeholder: '[' + propertyName + ']'
-            };
-            var editorOptions = {};
-            if (this.options.editorOptions[propertyName]) {
-                editorOptions = this.options.editorOptions[propertyName];
-            } else if (this.options.editorOptions['default']) {
-                editorOptions = this.options.editorOptions['default'];
-            }
-            jQuery.extend(options, editorOptions);
-            jQuery(element).hallo(options);
-
-            var widget = this;
-            jQuery(element).bind('halloactivated', function(event, data) {
-                widget._trigger('activated', null, {
-                    editable: null,
-                    property: propertyName,
-                    instance: widget.options.model,
-                    element: element,
-                    entityElement: widget.element
-                });
-            });
-            jQuery(element).bind('hallodeactivated', function(event, data) {
-                widget._trigger('deactivated', null, {
-                    editable: null,
-                    property: propertyName,
-                    instance: widget.options.model,
-                    element: element,
-                    entityElement: widget.element
-                });
-            });
-            jQuery(element).bind('hallomodified', function(event, data) {
-                var changedProperties = {};
-                changedProperties[propertyName] = data.content;
-                data.editable.setUnmodified();
-                widget.options.model.set(changedProperties, {silent: true});
-
-                widget._trigger('changed', null, {
-                    editable: null,
-                    property: propertyName,
-                    instance: widget.options.model,
-                    element: element,
-                    entityElement: widget.element
-                });
-            });
-            this._trigger('enableproperty', null, {
-                editable: null,
-                property: propertyName,
-                instance: this.options.model,
+            var editable = this.options.enableEditor({
+                widget: this,
                 element: element,
-                entityElement: this.element
-            });
-
-            this.options.editables.push(element);
-        },
-
-        _enableAloha: function(element, propertyName) {
-            var editable = new Aloha.Editable(Aloha.jQuery(element.get(0)));
-            editable.vieEntity = this.options.model;
-
-            // Subscribe to activation and deactivation events
-            var widget = this;
-            Aloha.bind('aloha-editable-activated', function() {
-                widget._trigger('activated', null, {
-                    editable: editable,
-                    property: propertyName,
-                    instance: widget.options.model,
-                    element: element,
-                    entityElement: widget.element
-                });
-            });
-            Aloha.bind('aloha-editable-deactivated', function() {
-                widget._trigger('deactivated', null, {
-                    editable: editable,
-                    property: propertyName,
-                    instance: widget.options.model,
-                    element: element,
-                    entityElement: widget.element
-                });
-            });
-
-            Aloha.bind('aloha-smart-content-changed', function() {
-                widget._checkModified(propertyName, editable);
+                entity: this.options.model,
+                property: propertyName,
+                editorOptions: this.options.editorOptions,
+                modified: function(content) {
+                    var changedProperties = {};
+                    changedProperties[propertyName] = content;
+                    widget.options.model.set(changedProperties, {silent: true});
+                    widget._trigger('changed', null, {
+                        property: propertyName,
+                        instance: widget.options.model,
+                        element: element,
+                        entityElement: widget.element
+                    });
+                },
+                activated: function() {
+                    widget._trigger('activated', null, {
+                        property: propertyName,
+                        instance: widget.options.model,
+                        element: element,
+                        entityElement: widget.element
+                    });
+                },
+                deactivated: function() {
+                    widget._trigger('deactivated', null, {
+                        property: propertyName,
+                        instance: widget.options.model,
+                        element: element,
+                        entityElement: widget.element
+                    });
+                } 
             });
 
             this._trigger('enableproperty', null, {
@@ -180,15 +137,73 @@
                 element: element,
                 entityElement: this.element
             });
-            
+
             this.options.editables.push(editable);
         },
 
-        _disableAloha: function(editable) {
-            editable.setUnmodified();
+        _enableHallo: function(options) {
+            var defaultOptions = {
+                plugins: {
+                    halloformat: {}
+                },
+                editable: true,
+                placeholder: '[' + options.property + ']'
+            };
+            var editorOptions = {};
+            if (options.editorOptions[options.property]) {
+                editorOptions = options.editorOptions[options.property];
+            } else if (options.editorOptions['default']) {
+                editorOptions = options.editorOptions['default'];
+            }
+            jQuery.extend(defaultOptions, editorOptions);
+            jQuery(options.element).hallo(defaultOptions);
 
+            var widget = this;
+            jQuery(options.element).bind('halloactivated', function(event, data) {
+                options.activated();
+            });
+            jQuery(options.element).bind('hallodeactivated', function(event, data) {
+                options.deactivated();
+            });
+            jQuery(options.element).bind('hallomodified', function(event, data) {
+                options.modified(data.content);
+                data.editable.setUnmodified();
+            });
+
+            return options.element;
+        },
+
+        _disableHallo: function(options) {
+            jQuery(options.editable).hallo({editable: false}); 
+        },
+
+        _enableAloha: function(options) {
+            var editable = new Aloha.Editable(Aloha.jQuery(options.element.get(0)));
+            editable.vieEntity = options.entity;
+
+            // Subscribe to activation and deactivation events
+            var widget = this;
+            Aloha.bind('aloha-editable-activated', function() {
+                options.activated();
+            });
+            Aloha.bind('aloha-editable-deactivated', function() {
+                options.deactivated();
+            });
+
+            Aloha.bind('aloha-smart-content-changed', function() {
+                if (!editable.isModified()) {
+                    return true;
+                }
+                options.modified(editable.getContents());
+                editable.setUnmodified();
+            });
+
+            return editable;
+        },
+
+        _disableAloha: function(options) {
             try {
-                editable.destroy();
+                options.editable.destroy();
             } catch (err) {
             }
         },
@@ -228,24 +243,6 @@
             });
             
             collectionView.el.after(widget.options.addButton);
-        },
-        
-        _checkModified: function(propertyName, editable) {
-            if (!editable.isModified()) {
-                return true;
-            }
-            var changedProperties = {};
-            changedProperties[propertyName] = editable.getContents();
-            editable.setUnmodified();
-            this.options.model.set(changedProperties, {silent: true});
-            
-            this._trigger('changed', null, {
-                editable: editable,
-                property: propertyName,
-                instance: this.options.model,
-                element: editable.obj,
-                entityElement: this.element
-            });
         }
     });
 })(jQuery);
