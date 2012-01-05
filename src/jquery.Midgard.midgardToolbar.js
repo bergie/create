@@ -20,6 +20,12 @@
             });
             
             this._setDisplay(this.options.display);
+            
+            jQuery(this.element).bind('midgardworkflowschanged', function(event, options) {
+                //TODO: After this is triggered toolbar should render workflows
+                
+                //console.log('midgardworkflowschanged triggered');
+            });
         },
         
         _setOption: function(key, value) {
@@ -38,15 +44,13 @@
         },
         
         hide: function() {
-            jQuery('#midgard-bar-minimized:hidden', this.element).show();
             jQuery('#midgard-bar:visible', this.element).slideToggle();
+            jQuery('#midgard-bar-minimized:hidden', this.element).slideToggle();
         },
         
         show: function() {
-            var minimizedToolbar = jQuery('#midgard-bar-minimized:visible', this.element);
-            jQuery('#midgard-bar:hidden', this.element).slideToggle(null, function() {
-                minimizedToolbar.hide();
-            });
+            jQuery('#midgard-bar-minimized:visible', this.element).slideToggle();
+            jQuery('#midgard-bar:hidden', this.element).slideToggle();
         },
         
         _getMinimized: function() {
