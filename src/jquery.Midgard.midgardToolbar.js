@@ -38,13 +38,15 @@
         },
         
         hide: function() {
+            jQuery('#midgard-bar-minimized:hidden', this.element).show();
             jQuery('#midgard-bar:visible', this.element).slideToggle();
-            jQuery('#midgard-bar-minimized:hidden', this.element).slideToggle();
         },
         
         show: function() {
-            jQuery('#midgard-bar-minimized:visible', this.element).slideToggle();
-            jQuery('#midgard-bar:hidden', this.element).slideToggle();
+            var minimizedToolbar = jQuery('#midgard-bar-minimized:visible', this.element);
+            jQuery('#midgard-bar:hidden', this.element).slideToggle(null, function() {
+                minimizedToolbar.hide();
+            });
         },
         
         _getMinimized: function() {
