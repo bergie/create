@@ -1,4 +1,5 @@
 (function(jQuery, undefined) {
+    
     jQuery.widget('Midgard.midgardCreate', {
         options: {
             statechange: function() {},
@@ -9,7 +10,10 @@
             highlightColor: '#67cc08',
             editor: 'hallo',
             url: function() {},
-            storagePrefix: 'node'
+            storagePrefix: 'node',            
+            workflows: {
+                url: null
+            }
         },
     
         _create: function() {
@@ -18,7 +22,8 @@
             this._enableToolbar();
             this._saveButton();
             this._editButton();
-            this.element.midgardStorage({vie: this.vie, url: this.options.url});
+            this.element.midgardStorage({vie: this.vie, url: this.options.url});            
+            this.element.midgardWorkflows(this.options.workflows);
         },
         
         _init: function() {
@@ -111,6 +116,7 @@
                 jQuery(this).bind('midgardeditabledisable', function() {
                     jQuery(this).unbind('midgardeditableenableproperty', highlightEditable);
                 });
+                
                 jQuery(this).midgardEditable({disabled: false, vie: widget.vie, editor: widget.options.editor});
             });
             this._trigger('statechange', null, {state: 'edit'});
