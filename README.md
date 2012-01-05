@@ -84,14 +84,14 @@ Starting Create:
 
     jQuery(document).ready(function() {
         jQuery('body').midgardCreate({
-            url: '/some/backend/url'
+            url: function() { return '/some/backend/url'; }
         });
     });
 
 You can pass Create configuration options when calling the `midgardCreate` widget. For example, to use Aloha Editor instead of Hallo, do:
 
     jQuery('body').midgardCreate({
-        url: '/some/backend/url',
+        url: function() { return '/some/backend/url'; },
         editor: 'aloha',
         workflows: {
             url: function(model) {
@@ -107,7 +107,7 @@ Create communicates with your server-side system using [Backbone.sync](http://do
 If you're using this default approach, it is important to provide the URL of the endpoint on your server that you want Backbone and Create to talk with. This can be done by passing a string when initializing `midgardCreate`:
 
     jQuery('body').midgardCreate({
-        url: '/some/backend/url'
+        url: function() { return '/some/backend/url'; }
     });
 
 When implemented this way, all communications from Create will happen using normal RESTful HTTP calls to that URL.
