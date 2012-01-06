@@ -60,13 +60,18 @@
                         }
                     });
                 },
-                ajax_post: function(model, workflow, callback) {
+                ajax: function(model, workflow, callback) {
                     action = workflow.get("action")
                     if (!action.url) {
                         return callback('No action url defined!');
                     }
-
-                    jQuery.ajax({
+                    
+                    wf_opts = {};
+                    if (action.ajax) {
+                      wf_opts = action.ajax;
+                    }
+                    
+                    ajax_options = jQuery.extend({
                         url: action.url,
                         type: 'POST',
                         data: model.toJSON(),
@@ -80,7 +85,9 @@
                               }
                             });
                         }
-                    });
+                    }, wf_opts);
+                    
+                    jQuery.ajax(ajax_options);
                 }
             }
         },
@@ -110,6 +117,10 @@
             jQuery(this.element).bind('midgardeditableactivated', function(event, options) {
                 model = options.instance;
                 if (model.isNew()) {
+                    widget._trigger('changed', null, {
+                        instance: model,
+                        workflows: []
+                    });
                     return;
                 }
               
