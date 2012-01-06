@@ -86,7 +86,7 @@
                             delete model.originalAttributes;
                         }
                         widget._removeLocal(model);
-                        delete widget.options.changedModels[index];
+                        widget.options.changedModels.splice(index, 1);
                         needed--;
                         if (needed <= 0) {
                             // All models were happily saved
