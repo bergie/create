@@ -161,10 +161,15 @@
         },
         
         prepareItem: function(model, workflow, final_cb) {
+            var widget = this;
+
             renderer = this.getRenderer(workflow.get("type"));
             action_type_cb = this.getActionType(workflow.get("action").type);
-            
-            return renderer(model, workflow, action_type_cb, final_cb);
+
+            return renderer(model, workflow, action_type_cb, function(err, m) {
+                delete widget.workflows[model.cid];
+                final_cb(err, m);
+            });
         },
         
         _generateCollectionFor: function(model) {
