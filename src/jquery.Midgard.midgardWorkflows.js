@@ -60,15 +60,15 @@
                         }
                     });
                 },
-                ajax: function(model, workflow, callback) {
+                http: function(model, workflow, callback) {
                     action = workflow.get("action")
                     if (!action.url) {
                         return callback('No action url defined!');
                     }
                     
                     wf_opts = {};
-                    if (action.ajax) {
-                      wf_opts = action.ajax;
+                    if (action.http) {
+                      wf_opts = action.http;
                     }
                     
                     ajax_options = jQuery.extend({
