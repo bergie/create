@@ -16,11 +16,16 @@
             storagePrefix: 'node',            
             workflows: {
                 url: null
-            }
+            },
+            vie: null
         },
     
         _create: function() {
-            this.vie = new VIE({classic: true});
+            if (this.options.vie) {
+              this.vie = this.options.vie;
+            } else {
+              this.vie = new VIE({classic: true});
+            }
             this._checkSession();
             this._enableToolbar();
             this._saveButton();
