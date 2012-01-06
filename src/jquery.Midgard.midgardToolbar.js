@@ -35,6 +35,7 @@
                 if (options.workflows.length) {
                     options.workflows.each(function(workflow) {
                         html = jQuery('body').data().midgardWorkflows.prepareItem(model, workflow, function(err, model) {
+                            widget._clearWorkflows();
                             if (err) {
                                 //console.log('WORKFLOW ACTION FAILED',err);
                                 return;
