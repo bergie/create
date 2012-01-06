@@ -133,6 +133,8 @@ Create is an event-based user interface. Normally integrators shouldn't need to 
 * `midgardeditableactivated`: when a particular property of an object has been activated in an editor. Event data contains keys `property`, `instance`, `element` and `entityElement`
 * `midgardeditabledeactivated`: when a particular property of an object has been deactivated in an editor. Event data contains keys `property`, `instance`, `element` and `entityElement`
 * `midgardeditablechanged`: when a particular property of an object has been changed in an editor. Event data contains keys `property`, `instance`, `element` and `entityElement`
+* `midgardstoragesave`: when save to back-end has been initiated. Event data contains `models` key with all the changed entities
+* `midgardstoragesaved`: when save has completed succesfully
 
 You can use normal [jQuery event methods](http://api.jquery.com/category/events/) to deal with these events.
 
