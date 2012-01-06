@@ -1,3 +1,6 @@
+/**
+ * Extend this base for any editing widget.
+ */
 (function(jQuery, undefined) {
     jQuery.widget("Create.editWidget",{
     	options:{
