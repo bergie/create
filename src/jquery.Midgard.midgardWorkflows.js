@@ -16,35 +16,46 @@
             },
             action_types: {
                 backbone_save: function(model, workflow, callback) {
+                    copy_of_url = model.url;
                     original_model = model.clone();
+                    original_model.url = copy_of_url;
+
                     action = workflow.get("action")
                     if (action.url) {
-                        model.url = action.url
+                        model.url = action.url                        
                     }
-
-                    model.save(null, {
-                        success: function() {
-                            model.url = original_model.url;
+                    original_model.save(null, {
+                        success: function(m) {
+                            model.url = copy_of_url;
+                            model.change();
                             callback(null, model);
                         },
-                        error: function(model, err) {
+                        error: function(m, err) {
+                            model.url = copy_of_url;
+                            model.change();
                             callback(err, model);
                         }
                     });
                 },
                 backbone_destroy: function(model, workflow, callback) {
+                    copy_of_url = model.url;
                     original_model = model.clone();
+                    original_model.url = copy_of_url;
+                    
                     action = workflow.get("action")
                     if (action.url) {
                         model.url = action.url
                     }
 
                     model.destroy({
-                        success: function() {
-                            model.url = original_model.url;
-                            callback(null, model);
+                        success: function(m) {
+                            model.url = copy_of_url;
+                            model.change();
+                            callback(null, m);
                         },
-                        error: function(model, err) {
+                        error: function(m, err) {
+                            model.url = copy_of_url;
+                            model.change();
                             callback(err, model);
                         }
                     });
@@ -161,10 +172,17 @@
         },
         
         prepareItem: function(model, workflow, final_cb) {
+            var widget = this;
+
             renderer = this.getRenderer(workflow.get("type"));
             action_type_cb = this.getActionType(workflow.get("action").type);
             
-            return renderer(model, workflow, action_type_cb, final_cb);
+            return renderer(model, workflow, action_type_cb, function(err, m) {
+                delete widget.workflows[model.cid];
+                widget._last_instance = null;
+                
+                final_cb(err, m);
+            });
         },
         
         _generateCollectionFor: function(model) {
