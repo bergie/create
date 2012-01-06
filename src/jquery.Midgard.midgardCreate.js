@@ -28,7 +28,7 @@
             this.element.midgardStorage({vie: this.vie, url: this.options.url});          
             if (this.element.midgardWorkflows) {
                 this.element.midgardWorkflows(this.options.workflows);
-            }
+            }            
         },
         
         _init: function() {
