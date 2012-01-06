@@ -21,13 +21,27 @@
             
             this._setDisplay(this.options.display);
             
-            this._createWorkflowsHolder();            
+            this._createWorkflowsHolder();
             widget = this;
+            
+            jQuery(this.element).bind('midgardcreatestatechange', function(event, options) {
+                if (options.state == 'browse') {
+                    widget._clearWorkflows();
+                }
+            });
+            
             jQuery(this.element).bind('midgardworkflowschanged', function(event, options) {
                 widget._clearWorkflows();
                 if (options.workflows.length) {
-                    options.workflows.each(function(item) {
-                      widget._renderWorkflowItem(options.instance, item);
+                    options.workflows.each(function(workflow) {
+                        html = jQuery('body').data().midgardWorkflows.prepareItem(model, workflow, function(err, model) {
+                            if (err) {
+                                //console.log('WORKFLOW ACTION FAILED',err);
+                                return;
+                            }
+                            //console.log('WORKFLOW ACTION FINISHED');
+                        });
+                        jQuery('.workflows-holder', this.element).append(html);
                     });
                 }
             });
@@ -75,52 +89,6 @@
         
         _clearWorkflows: function() {
             jQuery('.workflows-holder', this.element).empty();
-        },
-        
-        _renderWorkflowItem: function(model, item) {
-            html = jQuery('<button id="midgardcreate-workflow_'+item.get('name')+'">'+item.get('label')+'</button>').button();
-            
-            backup_model = model.clone();
-            action = item.get("action");
-            
-            html.bind('click', function() {
-              switch(action.type) {
-                case 'backbone_save':
-                  if (action.url) {
-                      model.url = action.url
-                  }
-                  model.save(null, {
-                    success: function() {
-                      model.url = backup_model.url;
-                    }
-                  });
-                break;
-                case 'backbone_destroy':
-                  if (action.url) {
-                      model.url = action.url
-                  }
-                  model.destroy({
-                    success: function() {
-                      model.url = backup_model.url;
-                    }
-                  });
-                break;
-                case 'ajax_post':
-                  if (! action.url) {
-                    return;
-                  }                  
-                  jQuery.ajax({
-                    url: action.url,
-                    type: 'POST',
-                    data: model.toJSON(),
-                    success: function() {
-                      model.fetch();
-                    }
-                  });
-                break;
-              }
-            });
-            jQuery('.workflows-holder', this.element).append(html);
-        }
+        }        
     });
 })(jQuery);
