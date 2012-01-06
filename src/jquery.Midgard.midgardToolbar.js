@@ -21,10 +21,29 @@
             
             this._setDisplay(this.options.display);
             
+            this._createWorkflowsHolder();
+            widget = this;
+            
+            jQuery(this.element).bind('midgardcreatestatechange', function(event, options) {
+                if (options.state == 'browse') {
+                    widget._clearWorkflows();
+                }
+            });
+            
             jQuery(this.element).bind('midgardworkflowschanged', function(event, options) {
-                //TODO: After this is triggered toolbar should render workflows
-                
-                //console.log('midgardworkflowschanged triggered');
+                widget._clearWorkflows();
+                if (options.workflows.length) {
+                    options.workflows.each(function(workflow) {
+                        html = jQuery('body').data().midgardWorkflows.prepareItem(model, workflow, function(err, model) {
+                            if (err) {
+                                //console.log('WORKFLOW ACTION FAILED',err);
+                                return;
+                            }
+                            //console.log('WORKFLOW ACTION FINISHED');
+                        });
+                        jQuery('.workflows-holder', this.element).append(html);
+                    });
+                }
             });
         },
         
@@ -59,6 +78,17 @@
         
         _getFull: function() {
             return jQuery('<div class="midgard-create" id="midgard-bar"><div class="ui-widget-content"><div class="toolbarcontent"><div class="midgard-logo-button"><a id="midgard-bar-hidebutton" class="ui-widget-hidebut"></a></div><div class="toolbarcontent-left"></div><div class="toolbarcontent-center"></div><div class="toolbarcontent-right"></div></div></div>');
-        }
+        },
+        
+        _createWorkflowsHolder: function() {
+            if (jQuery('.workflows-holder', this.element).length) {
+                return;
+            }
+            jQuery('.toolbarcontent-center', this.element).append('<div class="workflows-holder" />');
+        },
+        
+        _clearWorkflows: function() {
+            jQuery('.workflows-holder', this.element).empty();
+        }        
     });
 })(jQuery);
