@@ -133,6 +133,8 @@ Create is an event-based user interface. Normally integrators shouldn't need to 
 * `midgardeditableactivated`: when a particular property of an object has been activated in an editor. Event data contains keys `property`, `instance`, `element` and `entityElement`
 * `midgardeditabledeactivated`: when a particular property of an object has been deactivated in an editor. Event data contains keys `property`, `instance`, `element` and `entityElement`
 * `midgardeditablechanged`: when a particular property of an object has been changed in an editor. Event data contains keys `property`, `instance`, `element` and `entityElement`
+* `midgardstoragesave`: when save to back-end has been initiated. Event data contains `models` key with all the changed entities
+* `midgardstoragesaved`: when save has completed succesfully
 
 You can use normal [jQuery event methods](http://api.jquery.com/category/events/) to deal with these events.
 
@@ -143,6 +145,11 @@ You can use normal [jQuery event methods](http://api.jquery.com/category/events/
 * [Midgard Create and VIE presentation in the Aloha Editor conference](http://bergie.iki.fi/blog/midgard_create_and_vie_in_the_aloha_editor_conference/)
 * [Proposal for using Create as the reference UI in Symfony CMF](http://groups.google.com/group/symfony-cmf-devs/browse_thread/thread/6c609030661cee08)
 * [CreateJS integration module for Drupal](http://drupal.org/sandbox/dominikb1888/1388900)
+
+## Discussion
+
+* [CreateJS Google Groups mailing list](http://groups.google.com/group/createjs)
+* [`#iks` IRC channel on Freenode](irc://irc.freenode.net/iks)
 
 ## Similar projects
 
@@ -159,10 +166,6 @@ By default, Create uses the [Hallo Editor](http://bergie.github.com/hallo/). To 
 Using Aloha Editor with Create is covered by Aloha's FOSS License Exception:
 
 > Aloha Editor’s Free and Open Source Software ("FOSS") License Exception allows developers of FOSS applications to include Aloha Editor with their FOSS applications. Aloha Editor is typically licensed pursuant to version 3 of the General Afero Public License ("AGPLv3"), but this exception permits distribution of Aloha Editor with a developer’s FOSS applications licensed under the terms of another FOSS license listed below [MIT license is included], even though such other FOSS license may be incompatible with the AGPLv3.
-
-## Status
-
-This repository contains the new version of Create that is having its dependencies on [Midgard MVC](http://new.midgard-project.org/midgardmvc/) removed so that it can work with any back-end system. This work is still ongoing, and so most of the functionality doesn't work yet.
 
 ### Running Unit Tests
 

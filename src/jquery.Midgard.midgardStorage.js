@@ -74,6 +74,9 @@
         
         _saveRemote: function(options) {
             var widget = this;
+            widget._trigger('save', null, {
+                models: widget.options.changedModels
+            });
             var needed = widget.options.changedModels.length;
             _.forEach(widget.options.changedModels, function(model, index) {
                 model.save(null, {
@@ -83,10 +86,11 @@
                             delete model.originalAttributes;
                         }
                         widget._removeLocal(model);
-                        delete widget.options.changedModels[index];
+                        widget.options.changedModels.splice(index, 1);
                         needed--;
                         if (needed <= 0) {
                             // All models were happily saved
+                            widget._trigger('saved', null, {});
                             options.success();
                         }
                     },
