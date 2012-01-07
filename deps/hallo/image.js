@@ -208,11 +208,17 @@
           return widget.options.search(null, widget.options.limit, 0, showResults);
         });
       },
-      _iframeUpload: function(data) {
-        var iframe, uploadForm, widget;
-        widget = data.widget;
-        iframe = jQuery("<iframe name=\"postframe\" id=\"postframe\" class=\"hidden\" src=\"about:none\" style=\"display:none\" />");
+      _prepareIframe: function(widget) {
+        var iframe;
+        widget.options.iframeName = "" + widget.options.uuid + "-" + widget.widgetName + "-postframe";
+        iframe = jQuery("<iframe name=\"" + widget.options.iframeName + "\" id=\"" + widget.options.iframeName + "\" class=\"hidden\" src=\"javascript:false;\" style=\"display:none\" />");
         jQuery("#" + widget.options.uuid + "-" + widget.widgetName + "-iframe").append(iframe);
+        return iframe.get(0).name = widget.options.iframeName;
+      },
+      _iframeUpload: function(data) {
+        var uploadForm, widget;
+        widget = data.widget;
+        widget._prepareIframe(widget);
         jQuery("#" + widget.options.uuid + "-" + widget.widgetName + "-tags").val(jQuery(".inEditMode").parent().find(".articleTags input").val());
         uploadForm = jQuery("#" + widget.options.uuid + "-" + widget.widgetName + "-uploadform");
         uploadForm.attr("action", widget.options.uploadUrl);
@@ -220,10 +226,10 @@
         uploadForm.attr("userfile", data.file);
         uploadForm.attr("enctype", "multipart/form-data");
         uploadForm.attr("encoding", "multipart/form-data");
-        uploadForm.attr("target", "postframe");
+        uploadForm.attr("target", widget.options.iframeName);
         uploadForm.submit();
-        return jQuery("#postframe").load(function() {
-          return data.success(jQuery("#postframe")[0].contentWindow.location.href);
+        return jQuery("##postframe").load(function() {
+          return data.success(jQuery("#" + widget.options.iframeName)[0].contentWindow.location.href);
         });
       },
       _addGuiTabUpload: function(tabs, element) {
@@ -242,7 +248,7 @@
             success: function(imageUrl) {
               var imageID;
               imageID = "si" + Math.floor(Math.random() * (400 - 300 + 1) + 400) + "ab";
-              jQuery(".imageThumbnailContainer ul").append("<li><img src=\"" + src + "\" id=\"" + imageID + "\" class=\"imageThumbnail\"></li>");
+              jQuery(".imageThumbnailContainer ul").append("<li><img src=\"" + imageUrl + "\" id=\"" + imageID + "\" class=\"imageThumbnail\"></li>");
               jQuery("#" + imageID).trigger("click");
               return jQuery(widget.options.dialog).find(".nav li").first().trigger("click");
             }
