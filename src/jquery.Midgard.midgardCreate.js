@@ -52,6 +52,12 @@
             // jQuery(this.element).data('midgardNotifications').showTutorial();            
         },
         
+        showNotification: function(options) {
+            if (this.element.midgardNotifications) {
+                jQuery(this.element).data('midgardNotifications').create(options);
+            }
+        },
+        
         _checkSession: function() {
             if (!Modernizr.sessionstorage) {
                 return;
