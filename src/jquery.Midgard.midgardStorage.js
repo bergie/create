@@ -78,6 +78,14 @@
                 models: widget.options.changedModels
             });
             var needed = widget.options.changedModels.length;
+            if (needed > 1) {
+                notification_msg = needed + ' objects saved successfully';
+            } else {
+                subject = widget.options.changedModels[0].getSubject().toString();
+                subject = subject.replace('<', '&lt;').replace('>', '&gt;');
+                notification_msg = 'Object with subject '+subject+' saved successfully';
+            }
+            
             _.forEach(widget.options.changedModels, function(model, index) {
                 model.save(null, {
                     success: function() {
@@ -88,14 +96,20 @@
                         widget._removeLocal(model);
                         widget.options.changedModels.splice(index, 1);
                         needed--;
-                        if (needed <= 0) {
+                        if (needed <= 0) {                            
                             // All models were happily saved
                             widget._trigger('saved', null, {});
                             options.success();
+                            jQuery('body').data('midgardNotifications').create({body: notification_msg});
                         }
                     },
                     error: function() {
                         options.error();
+                        notification_msg = 'Error occurred while saving';
+                        if (options.error()) {
+                            notification_msg = notification_msg + ':<br />' + options.error();
+                        }
+                        jQuery('body').data('midgardNotifications').create({body: notification_msg});
                     }
                 });
             });
