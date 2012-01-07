@@ -29,7 +29,6 @@
                         jQuery('#midgardcreate-save').button({disabled: true});
                     },
                     error: function() {
-                        console.log("Save failed");
                     }
                 });
             });
