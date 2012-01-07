@@ -100,16 +100,17 @@
                             // All models were happily saved
                             widget._trigger('saved', null, {});
                             options.success();
-                            jQuery('body').data('midgardNotifications').create({body: notification_msg});
+                            jQuery('body').data('midgardCreate').showNotification({body: notification_msg});
                         }
                     },
-                    error: function() {
-                        options.error();
+                    error: function(m, err) {                        
                         notification_msg = 'Error occurred while saving';
-                        if (options.error()) {
-                            notification_msg = notification_msg + ':<br />' + options.error();
+                        if (err.responseText) {
+                            notification_msg = notification_msg + ':<br />' + err.responseText;
                         }
-                        jQuery('body').data('midgardNotifications').create({body: notification_msg});
+                        
+                        options.error();
+                        jQuery('body').data('midgardCreate').showNotification({body: notification_msg});
                     }
                 });
             });
