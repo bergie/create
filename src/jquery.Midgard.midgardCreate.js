@@ -16,7 +16,8 @@
             storagePrefix: 'node',            
             workflows: {
                 url: null
-            }
+            },
+            notifications: {}
         },
     
         _create: function() {
@@ -26,9 +27,14 @@
             this._saveButton();
             this._editButton();
             this.element.midgardStorage({vie: this.vie, url: this.options.url});          
+            
             if (this.element.midgardWorkflows) {
                 this.element.midgardWorkflows(this.options.workflows);
-            }            
+            }
+            
+            if (this.element.midgardNotifications) {
+                this.element.midgardNotifications(this.options.notifications);
+            }
         },
         
         _init: function() {
@@ -37,6 +43,8 @@
             } else {
                 this._disableEdit();
             }
+            
+            // jQuery(this.element).data('midgardNotifications').showTutorial();            
         },
         
         _checkSession: function() {
