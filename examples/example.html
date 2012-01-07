@@ -18,7 +18,9 @@
         <script src="../src/jquery.Midgard.midgardNotifications.js"></script>
         <script>
             jQuery(document).ready(function() {
-                jQuery('body').midgardCreate();
+                jQuery('body').midgardCreate({
+                    url: function() { return window.location; }
+                });
             });
         </script>
         <link rel="stylesheet" href="../deps/hallo/vader/jquery-ui-1.8.16.custom.css" />
