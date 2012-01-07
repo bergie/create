@@ -288,18 +288,9 @@
         if (range.isCollapsed) return range.isCollapsed();
         return false;
       },
-      _activated: function(event) {
-        var widget;
-        widget = event.data;
-        if (widget.getContents() === widget.options.placeholder) {
-          widget.setContents('');
-        }
-        if (widget.toolbar.html() !== '') {
-          return widget.toolbar.css("top", widget.element.offset().top - widget.toolbar.height() + 10);
-        }
-      },
       turnOn: function() {
         var el, widthToAdd;
+        if (this.getContents() === this.options.placeholder) this.setContents('');
         jQuery(this.element).addClass('inEditMode');
         if (!this.options.floating) {
           el = jQuery(this.element);
