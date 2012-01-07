@@ -9,6 +9,8 @@
         search: null,
         suggestions: null,
         loaded: null,
+        upload: null,
+        uploadUrl: null,
         dialogOpts: {
           autoOpen: false,
           width: 270,
@@ -29,13 +31,16 @@
         widget = this;
         dialogId = "" + this.options.uuid + "-image-dialog";
         this.options.dialog = jQuery("<div id=\"" + dialogId + "\">                <div class=\"nav\">                    <ul class=\"tabs\">                    </ul>                    <div id=\"" + this.options.uuid + "-tab-activeIndicator\" class=\"tab-activeIndicator\" />                </div>                <div class=\"dialogcontent\">            </div>");
+        if (widget.options.uploadUrl && !widget.options.upload) {
+          widget.options.upload = widget._iframeUpload;
+        }
         if (widget.options.suggestions) {
           this._addGuiTabSuggestions(jQuery(".tabs", this.options.dialog), jQuery(".dialogcontent", this.options.dialog));
         }
         if (widget.options.search) {
           this._addGuiTabSearch(jQuery(".tabs", this.options.dialog), jQuery(".dialogcontent", this.options.dialog));
         }
-        if (true) {
+        if (widget.options.upload) {
           this._addGuiTabUpload(jQuery(".tabs", this.options.dialog), jQuery(".dialogcontent", this.options.dialog));
         }
         buttonset = jQuery("<span class=\"" + widget.widgetName + "\"></span>");
@@ -203,6 +208,24 @@
           return widget.options.search(null, widget.options.limit, 0, showResults);
         });
       },
+      _iframeUpload: function(data) {
+        var iframe, uploadForm, widget;
+        widget = data.widget;
+        iframe = jQuery("<iframe name=\"postframe\" id=\"postframe\" class=\"hidden\" src=\"about:none\" style=\"display:none\" />");
+        jQuery("#" + widget.options.uuid + "-" + widget.widgetName + "-iframe").append(iframe);
+        jQuery("#" + widget.options.uuid + "-" + widget.widgetName + "-tags").val(jQuery(".inEditMode").parent().find(".articleTags input").val());
+        uploadForm = jQuery("#" + widget.options.uuid + "-" + widget.widgetName + "-uploadform");
+        uploadForm.attr("action", widget.options.uploadUrl);
+        uploadForm.attr("method", "post");
+        uploadForm.attr("userfile", data.file);
+        uploadForm.attr("enctype", "multipart/form-data");
+        uploadForm.attr("encoding", "multipart/form-data");
+        uploadForm.attr("target", "postframe");
+        uploadForm.submit();
+        return jQuery("#postframe").load(function() {
+          return data.success(jQuery("#postframe")[0].contentWindow.location.href);
+        });
+      },
       _addGuiTabUpload: function(tabs, element) {
         var iframe, insertImage, widget;
         widget = this;
@@ -210,26 +233,19 @@
         element.append(jQuery("<div id=\"" + this.options.uuid + "-tab-upload-content\" class=\"" + widget.widgetName + "-tab tab-upload\">                <form id=\"" + this.options.uuid + "-" + widget.widgetName + "-uploadform\">                    <input id=\"" + this.options.uuid + "-" + widget.widgetName + "-file\" name=\"" + this.options.uuid + "-" + widget.widgetName + "-file\" type=\"file\" class=\"file\">                    <input id=\"" + this.options.uuid + "-" + widget.widgetName + "-tags\" name=\"tags\" type=\"hidden\" />                    <br />                    <input type=\"submit\" value=\"Upload\" id=\"" + this.options.uuid + "-" + widget.widgetName + "-upload\">                </form>                <div id=\"" + this.options.uuid + "-" + widget.widgetName + "-iframe\"></div>            </div>"));
         iframe = jQuery("<iframe name=\"postframe\" id=\"postframe\" class=\"hidden\" src=\"about:none\" style=\"display:none\" />");
         jQuery("#" + widget.options.uuid + "-" + widget.widgetName + "-upload").live("click", function(e) {
-          var uploadFrom, userFile;
+          var userFile;
           e.preventDefault();
           userFile = jQuery("#" + widget.options.uuid + "-" + widget.widgetName + "-file").val();
-          jQuery("#" + widget.options.uuid + "-" + widget.widgetName + "-iframe").append(iframe);
-          jQuery("#" + widget.options.uuid + "-" + widget.widgetName + "-tags").val(jQuery(".inEditMode").parent().find(".articleTags input").val());
-          uploadFrom = jQuery("#" + widget.options.uuid + "-" + widget.widgetName + "-uploadform");
-          uploadFrom.attr("action", "/app_dev.php/image/upload/");
-          uploadFrom.attr("method", "post");
-          uploadFrom.attr("userfile", userFile);
-          uploadFrom.attr("enctype", "multipart/form-data");
-          uploadFrom.attr("encoding", "multipart/form-data");
-          uploadFrom.attr("target", "postframe");
-          uploadFrom.submit();
-          jQuery("#postframe").load(function() {
-            var imageID, src;
-            src = jQuery("#postframe")[0].contentWindow.location.href;
-            imageID = "si" + Math.floor(Math.random() * (400 - 300 + 1) + 400) + "ab";
-            jQuery(".imageThumbnailContainer ul").append("<li><img src=\"" + src + "\" id=\"" + imageID + "\" class=\"imageThumbnail\"></li>");
-            jQuery("#" + imageID).trigger("click");
-            return jQuery(widget.options.dialog).find(".nav li").first().trigger("click");
+          widget.options.upload({
+            widget: widget,
+            file: userFile,
+            success: function(imageUrl) {
+              var imageID;
+              imageID = "si" + Math.floor(Math.random() * (400 - 300 + 1) + 400) + "ab";
+              jQuery(".imageThumbnailContainer ul").append("<li><img src=\"" + src + "\" id=\"" + imageID + "\" class=\"imageThumbnail\"></li>");
+              jQuery("#" + imageID).trigger("click");
+              return jQuery(widget.options.dialog).find(".nav li").first().trigger("click");
+            }
           });
           return false;
         });
