@@ -115,7 +115,9 @@
 	 	            if (_config.callbacks.onClick) {
     	 	            _config.callbacks.onClick(e, _self);
     	 	        } else {
-    	 	            _self.close();
+    	 	            if (!_story) {
+    	 	                _self.close();
+    	 	            }    	 	            
     	 	        }
 	 	        });	 	        
 	 	        
