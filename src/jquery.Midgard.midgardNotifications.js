@@ -67,7 +67,11 @@
 	 	    getId: function() {
 	 	        return _id;
 	 	    },
+	 	    getElement: function() {
+	 	        return _item;
+	 	    },
 	 	    _generate: function() {
+	 	        var _self = this;
 	 	        var outer, inner, content = null;
 	 	        
                 _item = outer = jQuery('<div class="'+_classes.item.wrapper+'-outer"/>');
@@ -92,8 +96,7 @@
 	 	        
 	 	        if (_config.actions.length) {
                     var actions_holder = jQuery('<div class="'+_classes.item.actions+'"/>');
-                    actions_holder.appendTo(inner);
-                    var _self = this;
+                    actions_holder.appendTo(inner);                    
                     jQuery.each(_config.actions, function(i, opts) {
                         var action = jQuery('<button name="'+opts.name+'" class="button-'+opts.name+'">'+opts.label+'</button>').button();
                         action.bind('click', function(e) {
@@ -107,6 +110,14 @@
                         actions_holder.append(action);
                     });
                 }
+	 	        
+	 	        _item.bind('click', function(e) {
+	 	            if (_config.callbacks.onClick) {
+    	 	            _config.callbacks.onClick(e, _self);
+    	 	        } else {
+    	 	            _self.close();
+    	 	        }
+	 	        });	 	        
 	 	        
 	 	        if (_config.auto_show) {
 	 	            this.show();
@@ -223,14 +234,22 @@
                     _config.position = 'top right';
                 }
 
-                var marginTop = jQuery('.midgard-create', _parent).height();
-
+                var marginTop = jQuery('.midgard-create').height();
+                
                 pos = {
                     position: 'fixed'
                 };
-
+                
+                var activeHeight = function(items) {
+                    var total_height = 0;
+                    jQuery.each(items, function(i, item) {
+                        total_height += item.getElement().height();
+                    });
+                    return total_height;
+                }
+                
                 if (_config.position.match(/top/)) {
-                    pos.top = marginTop + _midgardnotifications_active.length-1 + 20 + 'px';
+                    pos.top = marginTop + activeHeight(_midgardnotifications_active) + 'px';
                 }
                 if (_config.position.match(/bottom/)) {
                     pos.bottom = (_midgardnotifications_active.length-1 * item.height()) + item.height() + 10 + 'px';
