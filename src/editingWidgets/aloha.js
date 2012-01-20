@@ -1,19 +1,18 @@
 (function(jQuery, undefined){
-    jQuery.widget("Create.alohaWidget", jQuery.Create.editWidget,{
-    	enable: function(){
-    		this._initialize();
-    		this.options.disabled=false;
-    	},
-    	disable: function(){
-    		try {
+    jQuery.widget('Create.alohaWidget', jQuery.Create.editWidget,{
+      	enable: function(){
+        		this._initialize();
+        		this.options.disabled=false;
+      	},
+      	disable: function(){
+      		  try {
                 options.editable.destroy();
-            } catch (err) {
-            }
+            } catch (err) {}
             this.options.disabled=true;
-    	},
-    	_initialize: function(){
-    		var options=this.options;
-    		var editable = new Aloha.Editable(Aloha.jQuery(options.element.get(0)));
+      	},
+      	_initialize: function(){
+        		var options=this.options;
+        		var editable = new Aloha.Editable(Aloha.jQuery(options.element.get(0)));
             editable.vieEntity = options.entity;
 
             // Subscribe to activation and deactivation events
@@ -31,6 +30,6 @@
                 options.modified(editable.getContents());
                 editable.setUnmodified();
             });
-    	}
+      	}
     });
 })(jQuery);

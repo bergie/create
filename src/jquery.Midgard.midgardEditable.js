@@ -7,33 +7,36 @@
             // the available widgets by data type
             // TODO: needs a comprehensive list of types and their appropriate widgets
             widgets: {
-            	"Text":"halloWidget",
-            	"default": "editWidget"
+              	'Text': 'halloWidget',
+              	'default': 'halloWidget'
             },
             // returns the name of the widget to use for the given property
             widgetName: function(data) {
-            	// TODO: make sure to type is already loaded into VIE
-            	var propertyType="default";
-            	var type=this.model.get("@type");
-            	if (type){
-            		console.log("found type: "+type.id);
-            		if (type.attributes && type.attributes.get(data.property)){
-            			propertyType=type.attributes.get(data.property).range[0];
-            		}
-            	}
-            	if (this.widgets[propertyType]){
-            		return this.widgets[propertyType];
-            	}
-            	return this.widgets["default"];
+              	// TODO: make sure type is already loaded into VIE
+              	var propertyType = 'default';
+              	var type=this.model.get('@type');
+              	if (type){
+                		if (type.attributes && type.attributes.get(data.property)){
+                			  propertyType=type.attributes.get(data.property).range[0];
+                		}
+              	}
+              	if (this.widgets[propertyType]){
+              		  return this.widgets[propertyType];
+              	}
+              	return this.widgets['default'];
             },
             enableEditor: function(data) {
-            	var widgetName=this.widgetName(data);
-            	jQuery(data.element)[widgetName](data);
-            	return jQuery(data.element);
+              	var widgetName=this.widgetName(data);
+              	jQuery(data.element)[widgetName](data);
+              	jQuery(data.element).data('createWidgetName',widgetName);
+              	return jQuery(data.element);
             },
             disableEditor: function(data) {
-            	var widgetName=jQuery(data.element).data("createWidgetName");
-            	jQuery(data.element)[widgetName]("disable");
+              	var widgetName=jQuery(data.element).data('createWidgetName');
+              	if (widgetName){
+                	    // only if there has been an editing widget registered
+                    	jQuery(data.element)[widgetName]('disable');
+                }
             },
             addButton: null,
             enable: function() {},
@@ -80,11 +83,12 @@
         disable: function() {
             var widget = this;
             jQuery.each(this.options.editables, function(index, editable) {
-              widget.options.disableEditor({
-                widget: widget,
-                editable: editable,
-                entity: widget.options.model
-              });
+                widget.options.disableEditor({
+                    widget: widget,
+                    editable: editable,
+                    entity: widget.options.model,
+                    element: jQuery(this)
+                });
             });
             this.options.editables = [];
             
