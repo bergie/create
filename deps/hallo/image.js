@@ -1,15 +1,20 @@
-(function() {
+
   (function(jQuery) {
     return jQuery.widget("Liip.halloimage", {
       options: {
         editable: null,
         toolbar: null,
         uuid: "",
-        searchUrl: "",
+        limit: 8,
+        search: null,
+        suggestions: null,
+        loaded: null,
+        upload: null,
+        uploadUrl: null,
         dialogOpts: {
           autoOpen: false,
           width: 270,
-          height: 500,
+          height: "auto",
           title: "Insert Images",
           modal: false,
           resizable: false,
@@ -22,71 +27,22 @@
         dialog: null
       },
       _create: function() {
-        var button, buttonset, dialogId, id, insertImage, widget;
+        var button, buttonset, dialogId, id, widget;
         widget = this;
         dialogId = "" + this.options.uuid + "-image-dialog";
-        this.options.dialog = jQuery("<div id=\"" + dialogId + "\">            <div class=\"nav\">                <ul class=\"tabs\">                    <li id=\"" + this.options.uuid + "-tab-suggestions\"><img src=\"/bundles/liipvie/img/tabicon_suggestions.png\" /> Suggestions</li>                    <li id=\"" + this.options.uuid + "-tab-search\"><img src=\"/bundles/liipvie/img/tabicon_search.png\" /> Search</li>                    <li id=\"" + this.options.uuid + "-tab-upload\"><img src=\"/bundles/liipvie/img/tabicon_upload.png\" /> Upload</li>                </ul>                <img src=\"/bundles/liipvie/img/arrow.png\" id=\"" + this.options.uuid + "-tab-activeIndicator\" class=\"tab-activeIndicator\" />            </div>            <div class=\"dialogcontent\">                <div id=\"" + this.options.uuid + "-tab-suggestions-content\" class=\"" + widget.widgetName + "-tab tab-suggestions\">                    <div class=\"imageThumbnailContainer\">                        <img src=\"http://imagesus.homeaway.com/mda01/badf2e69babf2f6a0e4b680fc373c041c705b891\" class=\"imageThumbnail imageThumbnailActive\" />                        <img src=\"http://www.ngkhai.net/cebupics/albums/userpics/10185/thumb_P1010613.JPG\" class=\"imageThumbnail\" />                        <img src=\"http://idiotduck.com/wp-content/uploads/2011/03/amazing-nature-photography-waterfall-hdr-1024-768-14-150x200.jpg\" class=\"imageThumbnail\" />                        <img src=\"http://photos.somd.com/data/14/thumbs/20080604_9-1.JPG\" class=\"imageThumbnail\" />                        <img src=\"http://www.hotfrog.com.au/Uploads/PressReleases2/THAILAND-TRAVEL-PACKAGES-THAILAND-BEACH-TOURS-THAILAND-VACATION-SUNRISE-PHUKET-BEACH-TOUR-200614_image.jpg\" class=\"imageThumbnail\" />                        <img src=\"http://photos.somd.com/data/14/thumbs/SunriseMyrtleBeach2008.jpg\" class=\"imageThumbnail\" />                        <img src=\"http://www.zsqts.com.cn/product-photo/2009-07-17/a411bfd382731251ae26bfb311c30629/Buy-best-buy-fireworks-from-China-Liuyang-SKY-PIONEER-PYROTECHNICS-INC.jpg\" class=\"imageThumbnail\" />                        <img src=\"http://www.costumeattic.com/images_product/preview/Rubies/885106.jpg\" class=\"imageThumbnail\" />                    </div>                    <div class=\"activeImageContainer\">                        <div class=\"rotationWrapper\">                            <div class=\"hintArrow\"></div>                            <img src=\"\" id=\"" + this.options.uuid + "-sugg-activeImage\" class=\"activeImage\" />                        </div>                        <img src=\"\" id=\"" + this.options.uuid + "-sugg-activeImageBg\" class=\"activeImage activeImageBg\" />                    </div>                    <div class=\"metadata\">                        <label for=\"caption-sugg\">Caption</label><input type=\"text\" id=\"caption-sugg\" />                        <!--<button id=\"" + this.options.uuid + "-" + widget.widgetName + "-addimage\">Add Image</button>-->                    </div>                </div>                <div id=\"" + this.options.uuid + "-tab-search-content\" class=\"" + widget.widgetName + "-tab tab-search\">                    <form action=\"" + widget.options.searchUrl + "/?page=1&length=8\" type=\"get\" id=\"" + this.options.uuid + "-" + widget.widgetName + "-searchForm\">                        <input type=\"text\" class=\"searchInput\" /><input type=\"submit\" id=\"" + this.options.uuid + "-" + widget.widgetName + "-searchButton\" class=\"button searchButton\" value=\"OK\"/>                    </form>                    <div class=\"searchResults imageThumbnailContainer\"></div>                    <div id=\"" + this.options.uuid + "-search-activeImageContainer\" class=\"search-activeImageContainer activeImageContainer\">                        <div class=\"rotationWrapper\">                            <div class=\"hintArrow\"></div>                            <img src=\"\" id=\"" + this.options.uuid + "-search-activeImageBg\" class=\"activeImage\" />                        </div>                        <img src=\"\" id=\"" + this.options.uuid + "-search-activeImage\" class=\"activeImage activeImageBg\" />                    </div>                    <div class=\"metadata\" id=\"metadata-search\" style=\"display: none;\">                        <label for=\"caption-search\">Caption</label><input type=\"text\" id=\"caption-search\" />                        <!--<button id=\"" + this.options.uuid + "-" + widget.widgetName + "-addimage\">Add Image</button>-->                    </div>                </div>                <div id=\"" + this.options.uuid + "-tab-upload-content\" class=\"" + widget.widgetName + "-tab tab-upload\">UPLOAD</div>            </div></div>");
-        jQuery(".tab-search form", this.options.dialog).submit(function(event) {
-          var search, showResults, that;
-          event.preventDefault();
-          that = this;
-          showResults = function(response) {
-            var container, firstimage, items;
-            items = [];
-            items.push("<div class=\"pager-prev\" style=\"display:none\"></div>");
-            $.each(response.assets, function(key, val) {
-              return items.push("<img src=\"" + val.url + "\" class=\"imageThumbnail " + widget.widgetName + "-search-imageThumbnail\" /> ");
-            });
-            items.push("<div class=\"pager-next\" style=\"display:none\"></div>");
-            container = jQuery("#" + dialogId + " .tab-search .searchResults");
-            container.html(items.join(''));
-            if (response.page > 1) {
-              jQuery('.pager-prev', container).show();
-            }
-            if (response.page < Math.ceil(response.total / response.length)) {
-              jQuery('.pager-next', container).show();
-            }
-            jQuery('.pager-prev', container).click(function(event) {
-              return search(response.page - 1);
-            });
-            jQuery('.pager-next', container).click(function(event) {
-              return search(response.page + 1);
-            });
-            jQuery("#" + widget.options.uuid + "-search-activeImageContainer").show();
-            firstimage = jQuery("." + widget.widgetName + "-search-imageThumbnail").first().addClass("imageThumbnailActive");
-            jQuery("#" + widget.options.uuid + "-search-activeImage, #" + widget.options.uuid + "-search-activeImageBg").attr("src", firstimage.attr("src"));
-            return jQuery("#metadata-search").show();
-          };
-          search = function(page) {
-            page = page || 1;
-            return jQuery.ajax({
-              type: "GET",
-              url: widget.options.searchUrl,
-              data: "page=" + page + "&length=8",
-              success: showResults
-            });
-          };
-          return search();
-        });
-        insertImage = function() {
-          var img, triggerModified;
-          try {
-            if (!widget.options.editable.getSelection()) {
-              throw new Error("SelectionNotSet");
-            }
-          } catch (error) {
-            widget.options.editable.restoreSelection(widget.lastSelection);
-          }
-          document.execCommand("insertImage", null, $(this).attr('src'));
-          img = document.getSelection().anchorNode.firstChild;
-          jQuery(img).attr("alt", jQuery(".caption").value);
-          triggerModified = function() {
-            return widget.element.trigger("hallomodified");
-          };
-          window.setTimeout(triggerModified, 100);
-          return widget._closeDialog();
-        };
-        this.options.dialog.find(".halloimage-activeImage, #" + widget.options.uuid + "-" + widget.widgetName + "-addimage").click(insertImage);
+        this.options.dialog = jQuery("<div id=\"" + dialogId + "\">                <div class=\"nav\">                    <ul class=\"tabs\">                    </ul>                    <div id=\"" + this.options.uuid + "-tab-activeIndicator\" class=\"tab-activeIndicator\" />                </div>                <div class=\"dialogcontent\">            </div>");
+        if (widget.options.uploadUrl && !widget.options.upload) {
+          widget.options.upload = widget._iframeUpload;
+        }
+        if (widget.options.suggestions) {
+          this._addGuiTabSuggestions(jQuery(".tabs", this.options.dialog), jQuery(".dialogcontent", this.options.dialog));
+        }
+        if (widget.options.search) {
+          this._addGuiTabSearch(jQuery(".tabs", this.options.dialog), jQuery(".dialogcontent", this.options.dialog));
+        }
+        if (widget.options.upload) {
+          this._addGuiTabUpload(jQuery(".tabs", this.options.dialog), jQuery(".dialogcontent", this.options.dialog));
+        }
         buttonset = jQuery("<span class=\"" + widget.widgetName + "\"></span>");
         id = "" + this.options.uuid + "-image";
         buttonset.append(jQuery("<input id=\"" + id + "\" type=\"checkbox\" /><label for=\"" + id + "\" class=\"image_button\" >Image</label>").button());
@@ -127,7 +83,27 @@
       },
       _init: function() {},
       _openDialog: function() {
-        var xposition, yposition;
+        var articleTags, cleanUp, i, repoImagesFound, showResults, tagType, thumbId, tmpArticleTags, vie, widget, xposition, yposition;
+        widget = this;
+        cleanUp = function() {
+          return window.setTimeout((function() {
+            var thumbnails;
+            thumbnails = jQuery(".imageThumbnail");
+            return jQuery(thumbnails).each(function() {
+              var size;
+              size = jQuery("#" + this.id).width();
+              if (size <= 20) return jQuery("#" + this.id).parent("li").remove();
+            });
+          }), 15000);
+        };
+        repoImagesFound = false;
+        showResults = function(response) {
+          jQuery.each(response.assets, function(key, val) {
+            jQuery(".imageThumbnailContainer ul").append("<li><img src=\"" + val.url + "\" class=\"imageThumbnail\"></li>");
+            return repoImagesFound = true;
+          });
+          if (response.assets.length > 0) return jQuery("#activitySpinner").hide();
+        };
         jQuery('.image_button').addClass('ui-state-clicked');
         jQuery("#" + this.options.uuid + "-sugg-activeImage").attr("src", jQuery("#" + this.options.uuid + "-tab-suggestions-content .imageThumbnailActive").first().attr("src"));
         jQuery("#" + this.options.uuid + "-sugg-activeImageBg").attr("src", jQuery("#" + this.options.uuid + "-tab-suggestions-content .imageThumbnailActive").first().attr("src"));
@@ -135,10 +111,173 @@
         xposition = jQuery(this.options.editable.element).offset().left + jQuery(this.options.editable.element).outerWidth() - 3;
         yposition = jQuery(this.options.toolbar).offset().top - jQuery(document).scrollTop() - 29;
         this.options.dialog.dialog("option", "position", [xposition, yposition]);
+        if (widget.options.loaded === null && widget.options.suggestions) {
+          articleTags = [];
+          jQuery("#activitySpinner").show();
+          tmpArticleTags = jQuery(".inEditMode").parent().find(".articleTags input").val();
+          tmpArticleTags = tmpArticleTags.split(",");
+          for (i in tmpArticleTags) {
+            tagType = typeof tmpArticleTags[i];
+            if ("string" === tagType && tmpArticleTags[i].indexOf("http") !== -1) {
+              articleTags.push(tmpArticleTags[i]);
+            }
+          }
+          jQuery(".imageThumbnailContainer ul").empty();
+          widget.options.suggestions(jQuery(".inEditMode").parent().find(".articleTags input").val(), widget.options.limit, 0, showResults);
+          vie = new VIE();
+          vie.use(new vie.DBPediaService({
+            url: "http://dev.iks-project.eu/stanbolfull",
+            proxyDisabled: true
+          }));
+          thumbId = 1;
+          if (articleTags.length === 0) {
+            jQuery("#activitySpinner").html("No images found.");
+          }
+          jQuery(articleTags).each(function() {
+            return vie.load({
+              entity: this + ""
+            }).using("dbpedia").execute().done(function(entity) {
+              jQuery(entity).each(function() {
+                var img, responseType;
+                if (this.attributes["<http://dbpedia.org/ontology/thumbnail>"]) {
+                  responseType = typeof this.attributes["<http://dbpedia.org/ontology/thumbnail>"];
+                  if (responseType === "string") {
+                    img = this.attributes["<http://dbpedia.org/ontology/thumbnail>"];
+                    img = img.substring(1, img.length - 1);
+                  }
+                  if (responseType === "object") {
+                    img = "";
+                    img = this.attributes["<http://dbpedia.org/ontology/thumbnail>"][0].value;
+                  }
+                  jQuery(".imageThumbnailContainer ul").append("<li><img id=\"si-" + thumbId + "\" src=\"" + img + "\" class=\"imageThumbnail\"></li>");
+                  return thumbId++;
+                }
+              });
+              return jQuery("#activitySpinner").hide();
+            });
+          });
+        }
+        cleanUp();
+        widget.options.loaded = 1;
         return this.options.dialog.dialog("open");
       },
       _closeDialog: function() {
         return this.options.dialog.dialog("close");
+      },
+      _addGuiTabSuggestions: function(tabs, element) {
+        var widget;
+        widget = this;
+        tabs.append(jQuery("<li id=\"" + this.options.uuid + "-tab-suggestions\" class=\"" + widget.widgetName + "-tabselector " + widget.widgetName + "-tab-suggestions\"><span>Suggestions</span></li>"));
+        return element.append(jQuery("<div id=\"" + this.options.uuid + "-tab-suggestions-content\" class=\"" + widget.widgetName + "-tab tab-suggestions\">                <div class=\"imageThumbnailContainer fixed\"><div id=\"activitySpinner\">Loading Images...</div><ul><li>                    <img src=\"http://imagesus.homeaway.com/mda01/badf2e69babf2f6a0e4b680fc373c041c705b891\" class=\"imageThumbnail imageThumbnailActive\" />                  </li></ul><br style=\"clear:both\"/>                </div>                <div class=\"activeImageContainer\">                    <div class=\"rotationWrapper\">                        <div class=\"hintArrow\"></div>                        <img src=\"\" id=\"" + this.options.uuid + "-sugg-activeImage\" class=\"activeImage\" />                    </div>                    <img src=\"\" id=\"" + this.options.uuid + "-sugg-activeImageBg\" class=\"activeImage activeImageBg\" />                </div>                <div class=\"metadata\">                    <label for=\"caption-sugg\">Caption</label><input type=\"text\" id=\"caption-sugg\" />                </div>            </div>"));
+      },
+      _addGuiTabSearch: function(tabs, element) {
+        var dialogId, widget;
+        widget = this;
+        dialogId = "" + this.options.uuid + "-image-dialog";
+        tabs.append(jQuery("<li id=\"" + this.options.uuid + "-tab-search\" class=\"" + widget.widgetName + "-tabselector " + widget.widgetName + "-tab-search\"><span>Search</span></li>"));
+        element.append(jQuery("<div id=\"" + this.options.uuid + "-tab-search-content\" class=\"" + widget.widgetName + "-tab tab-search\">                <form type=\"get\" id=\"" + this.options.uuid + "-" + widget.widgetName + "-searchForm\">                    <input type=\"text\" class=\"searchInput\" /><input type=\"submit\" id=\"" + this.options.uuid + "-" + widget.widgetName + "-searchButton\" class=\"button searchButton\" value=\"OK\"/>                </form>                <div class=\"searchResults imageThumbnailContainer\"></div>                <div id=\"" + this.options.uuid + "-search-activeImageContainer\" class=\"search-activeImageContainer activeImageContainer\">                    <div class=\"rotationWrapper\">                        <div class=\"hintArrow\"></div>                        <img src=\"\" id=\"" + this.options.uuid + "-search-activeImageBg\" class=\"activeImage\" />                    </div>                    <img src=\"\" id=\"" + this.options.uuid + "-search-activeImage\" class=\"activeImage activeImageBg\" />                </div>                <div class=\"metadata\" id=\"metadata-search\" style=\"display: none;\">                    <label for=\"caption-search\">Caption</label><input type=\"text\" id=\"caption-search\" />                    <!--<button id=\"" + this.options.uuid + "-" + widget.widgetName + "-addimage\">Add Image</button>-->                </div>            </div>"));
+        return jQuery(".tab-search form", element).submit(function(event) {
+          var showResults, that;
+          event.preventDefault();
+          that = this;
+          showResults = function(response) {
+            var container, firstimage, items;
+            items = [];
+            items.push("<div class=\"pager-prev\" style=\"display:none\"></div>");
+            jQuery.each(response.assets, function(key, val) {
+              return items.push("<img src=\"" + val.url + "\" class=\"imageThumbnail " + widget.widgetName + "-search-imageThumbnail\" /> ");
+            });
+            items.push("<div class=\"pager-next\" style=\"display:none\"></div>");
+            container = jQuery("#" + dialogId + " .tab-search .searchResults");
+            container.html(items.join(""));
+            if (response.offset > 0) jQuery('.pager-prev', container).show();
+            if (response.offset < response.total) {
+              jQuery('.pager-next', container).show();
+            }
+            jQuery('.pager-prev', container).click(function(event) {
+              return widget.options.search(null, widget.options.limit, response.offset - widget.options.limit, showResults);
+            });
+            jQuery('.pager-next', container).click(function(event) {
+              return widget.options.search(null, widget.options.limit, response.offset + widget.options.limit, showResults);
+            });
+            jQuery("#" + widget.options.uuid + "-search-activeImageContainer").show();
+            firstimage = jQuery("." + widget.widgetName + "-search-imageThumbnail").first().addClass("imageThumbnailActive");
+            jQuery("#" + widget.options.uuid + "-search-activeImage, #" + widget.options.uuid + "-search-activeImageBg").attr("src", firstimage.attr("src"));
+            return jQuery("#metadata-search").show();
+          };
+          return widget.options.search(null, widget.options.limit, 0, showResults);
+        });
+      },
+      _prepareIframe: function(widget) {
+        var iframe;
+        widget.options.iframeName = "" + widget.options.uuid + "-" + widget.widgetName + "-postframe";
+        iframe = jQuery("<iframe name=\"" + widget.options.iframeName + "\" id=\"" + widget.options.iframeName + "\" class=\"hidden\" src=\"javascript:false;\" style=\"display:none\" />");
+        jQuery("#" + widget.options.uuid + "-" + widget.widgetName + "-iframe").append(iframe);
+        return iframe.get(0).name = widget.options.iframeName;
+      },
+      _iframeUpload: function(data) {
+        var uploadForm, widget;
+        widget = data.widget;
+        widget._prepareIframe(widget);
+        jQuery("#" + widget.options.uuid + "-" + widget.widgetName + "-tags").val(jQuery(".inEditMode").parent().find(".articleTags input").val());
+        uploadForm = jQuery("#" + widget.options.uuid + "-" + widget.widgetName + "-uploadform");
+        uploadForm.attr("action", widget.options.uploadUrl);
+        uploadForm.attr("method", "post");
+        uploadForm.attr("userfile", data.file);
+        uploadForm.attr("enctype", "multipart/form-data");
+        uploadForm.attr("encoding", "multipart/form-data");
+        uploadForm.attr("target", widget.options.iframeName);
+        uploadForm.submit();
+        return jQuery("#" + widget.options.iframeName).load(function() {
+          return data.success(jQuery("#" + widget.options.iframeName)[0].contentWindow.location.href);
+        });
+      },
+      _addGuiTabUpload: function(tabs, element) {
+        var iframe, insertImage, widget;
+        widget = this;
+        tabs.append(jQuery("<li id=\"" + this.options.uuid + "-tab-upload\" class=\"" + widget.widgetName + "-tabselector " + widget.widgetName + "-tab-upload\"><span>Upload</span></li>"));
+        element.append(jQuery("<div id=\"" + this.options.uuid + "-tab-upload-content\" class=\"" + widget.widgetName + "-tab tab-upload\">                <form id=\"" + this.options.uuid + "-" + widget.widgetName + "-uploadform\">                    <input id=\"" + this.options.uuid + "-" + widget.widgetName + "-file\" name=\"" + this.options.uuid + "-" + widget.widgetName + "-file\" type=\"file\" class=\"file\">                    <input id=\"" + this.options.uuid + "-" + widget.widgetName + "-tags\" name=\"tags\" type=\"hidden\" />                    <br />                    <input type=\"submit\" value=\"Upload\" id=\"" + this.options.uuid + "-" + widget.widgetName + "-upload\">                </form>                <div id=\"" + this.options.uuid + "-" + widget.widgetName + "-iframe\"></div>            </div>"));
+        iframe = jQuery("<iframe name=\"postframe\" id=\"postframe\" class=\"hidden\" src=\"about:none\" style=\"display:none\" />");
+        jQuery("#" + widget.options.uuid + "-" + widget.widgetName + "-upload").live("click", function(e) {
+          var userFile;
+          e.preventDefault();
+          userFile = jQuery("#" + widget.options.uuid + "-" + widget.widgetName + "-file").val();
+          widget.options.upload({
+            widget: widget,
+            file: userFile,
+            success: function(imageUrl) {
+              var imageID, list;
+              imageID = "si" + Math.floor(Math.random() * (400 - 300 + 1) + 400) + "ab";
+              if (jQuery(".imageThumbnailContainer ul", widget.options.dialog).length === 0) {
+                list = jQuery('<ul></ul>');
+                jQuery('.imageThumbnailContainer').append(list);
+              }
+              jQuery(".imageThumbnailContainer ul", widget.options.dialog).append("<li><img src=\"" + imageUrl + "\" id=\"" + imageID + "\" class=\"imageThumbnail\"></li>");
+              jQuery("#" + imageID).trigger("click");
+              return jQuery(widget.options.dialog).find(".nav li").first().trigger("click");
+            }
+          });
+          return false;
+        });
+        insertImage = function() {
+          var img, triggerModified;
+          try {
+            if (!widget.options.editable.getSelection()) {
+              throw new Error("SelectionNotSet");
+            }
+          } catch (error) {
+            widget.options.editable.restoreSelection(widget.lastSelection);
+          }
+          document.execCommand("insertImage", null, jQuery(this).attr('src'));
+          img = document.getSelection().anchorNode.firstChild;
+          jQuery(img).attr("alt", jQuery(".caption").value);
+          triggerModified = function() {
+            return widget.element.trigger("hallomodified");
+          };
+          window.setTimeout(triggerModified, 100);
+          return widget._closeDialog();
+        };
+        return this.options.dialog.find(".halloimage-activeImage, #" + widget.options.uuid + "-" + widget.widgetName + "-addimage").click(insertImage);
       },
       _addDragnDrop: function() {
         var dnd, draggables, editable, helper, offset, overlay, overlayMiddleConfig, third, widgetOptions;
@@ -146,9 +285,7 @@
           delayAction: function(functionToCall, delay) {
             var timer;
             timer = clearTimeout(timer);
-            if (!timer) {
-              return timer = setTimeout(functionToCall, delay);
-            }
+            if (!timer) return timer = setTimeout(functionToCall, delay);
           },
           calcPosition: function(offset, event) {
             var position;
@@ -157,14 +294,14 @@
               return "middle";
             } else if (event.pageX < position) {
               return "left";
-            } else {
-              if (event.pageX > (offset.left + third * 2)) {
-                return "right";
-              }
+            } else if (event.pageX > (offset.left + third * 2)) {
+              return "right";
             }
           },
           createInsertElement: function(image, tmp) {
-            var altText, imageInsert, tmpImg;
+            var altText, height, imageInsert, maxHeight, maxWidth, ratio, tmpImg, width;
+            maxWidth = 250;
+            maxHeight = 250;
             tmpImg = new Image();
             tmpImg.src = image.src;
             if (!tmp) {
@@ -176,20 +313,34 @@
                 altText = jQuery(image).attr("alt");
               }
             }
-            imageInsert = $("<img>").attr({
+            width = tmpImg.width;
+            height = tmpImg.height;
+            if (width > maxWidth || height > maxHeight) {
+              if (width > height) {
+                ratio = (tmpImg.width / maxWidth).toFixed();
+              } else {
+                ratio = (tmpImg.height / maxHeight).toFixed();
+              }
+              width = (tmpImg.width / ratio).toFixed();
+              height = (tmpImg.height / ratio).toFixed();
+            }
+            imageInsert = jQuery("<img>").attr({
               src: tmpImg.src,
-              width: tmpImg.width,
-              height: tmpImg.height,
+              width: width,
+              height: height,
               alt: altText,
               "class": (tmp ? "tmp" : "")
             }).show();
             return imageInsert;
           },
           createLineFeedbackElement: function() {
-            return $("<div/>").addClass("tmpLine");
+            return jQuery("<div/>").addClass("tmpLine");
           },
           removeFeedbackElements: function() {
-            return $('.tmp, .tmpLine', editable).remove();
+            return jQuery('.tmp, .tmpLine', editable).remove();
+          },
+          removeCustomHelper: function() {
+            return jQuery(".customHelper").remove();
           },
           showOverlay: function(position) {
             var eHeight;
@@ -224,7 +375,7 @@
             }
           },
           checkOrigin: function(event) {
-            if ($(event.target).parents("[contenteditable]").length !== 0) {
+            if (jQuery(event.target).parents("[contenteditable]").length !== 0) {
               return true;
             } else {
               return false;
@@ -248,18 +399,18 @@
               var position;
               window.waitWithTrash = clearTimeout(window.waitWithTrash);
               position = helper.calcPosition(offset, event);
-              $('.trashcan', ui.helper).remove();
+              jQuery('.trashcan', ui.helper).remove();
               editable.append(overlay.big);
               editable.append(overlay.left);
               editable.append(overlay.right);
               helper.removeFeedbackElements();
-              $(event.target).prepend(dnd.createTmpFeedback(ui.draggable[0], position));
+              jQuery(event.target).prepend(dnd.createTmpFeedback(ui.draggable[0], position));
               if (position === "middle") {
-                $(event.target).prepend(dnd.createTmpFeedback(ui.draggable[0], 'right'));
-                $('.tmp', $(event.target)).hide();
+                jQuery(event.target).prepend(dnd.createTmpFeedback(ui.draggable[0], 'right'));
+                jQuery('.tmp', jQuery(event.target)).hide();
               } else {
-                $(event.target).prepend(dnd.createTmpFeedback(ui.draggable[0], 'middle'));
-                $('.tmpLine', $(event.target)).hide();
+                jQuery(event.target).prepend(dnd.createTmpFeedback(ui.draggable[0], 'middle'));
+                jQuery('.tmpLine', jQuery(event.target)).hide();
               }
               return helper.showOverlay(position);
             };
@@ -268,12 +419,10 @@
           handleDragEvent: function(event, ui) {
             var position, tmpFeedbackLR, tmpFeedbackMiddle;
             position = helper.calcPosition(offset, event);
-            if (position === dnd.lastPositionDrag) {
-              return;
-            }
+            if (position === dnd.lastPositionDrag) return;
             dnd.lastPositionDrag = position;
-            tmpFeedbackLR = $('.tmp', editable);
-            tmpFeedbackMiddle = $('.tmpLine', editable);
+            tmpFeedbackLR = jQuery('.tmp', editable);
+            tmpFeedbackMiddle = jQuery('.tmpLine', editable);
             if (position === "middle") {
               tmpFeedbackMiddle.show();
               tmpFeedbackLR.hide();
@@ -286,10 +435,10 @@
           handleLeaveEvent: function(event, ui) {
             var func;
             func = function() {
-              if (!$('div.trashcan', ui.helper).length) {
-                $(ui.helper).append($('<div class="trashcan"></div>'));
+              if (!jQuery('div.trashcan', ui.helper).length) {
+                jQuery(ui.helper).append(jQuery('<div class="trashcan"></div>'));
               }
-              return $('.bigOverlay, .smallOverlay').remove();
+              return jQuery('.bigOverlay, .smallOverlay').remove();
             };
             window.waitWithTrash = setTimeout(func, 200);
             return helper.removeFeedbackElements();
@@ -297,9 +446,7 @@
           handleStartEvent: function(event, ui) {
             var internalDrop;
             internalDrop = helper.checkOrigin(event);
-            if (internalDrop) {
-              $(event.target).remove();
-            }
+            if (internalDrop) jQuery(event.target).remove();
             jQuery(document).trigger('startPreventSave');
             return helper.startPlace = jQuery(event.target);
           },
@@ -307,20 +454,21 @@
             var internalDrop;
             internalDrop = helper.checkOrigin(event);
             if (internalDrop) {
-              $(event.target).remove();
+              jQuery(event.target).remove();
             } else {
               editable.trigger('change');
             }
             overlay.big.hide();
             overlay.left.hide();
             overlay.right.hide();
-            return $(document).trigger('stopPreventSave');
+            return jQuery(document).trigger('stopPreventSave');
           },
           handleDropEvent: function(event, ui) {
             var imageInsert, internalDrop, position;
             internalDrop = helper.checkOrigin(event);
             position = helper.calcPosition(offset, event);
             helper.removeFeedbackElements();
+            helper.removeCustomHelper();
             imageInsert = helper.createInsertElement(ui.draggable[0], false);
             if (position === "middle") {
               imageInsert.show();
@@ -328,10 +476,10 @@
                 position: "relative",
                 left: ((editable.width() + parseFloat(editable.css('paddingLeft')) + parseFloat(editable.css('paddingRight'))) - imageInsert.attr('width')) / 2
               });
-              imageInsert.insertBefore($(event.target));
+              imageInsert.insertBefore(jQuery(event.target));
             } else {
               imageInsert.removeClass("inlineImage-middle inlineImage-left inlineImage-right").addClass("inlineImage-" + position).css("display", "block");
-              $(event.target).prepend(imageInsert);
+              jQuery(event.target).prepend(imageInsert);
             }
             overlay.big.hide();
             overlay.left.hide();
@@ -340,8 +488,8 @@
             return dnd.init(editable);
           },
           createHelper: function(event) {
-            return $('<div>').css({
-              backgroundImage: "url(" + $(event.currentTarget).attr('src') + ")"
+            return jQuery('<div>').css({
+              backgroundImage: "url(" + jQuery(event.currentTarget).attr('src') + ")"
             }).addClass('customHelper').appendTo('body');
           },
           init: function() {
@@ -350,7 +498,7 @@
             initDraggable = function(elem) {
               if (!elem.jquery_draggable_initialized) {
                 elem.jquery_draggable_initialized = true;
-                $(elem).draggable({
+                jQuery(elem).draggable({
                   cursor: "move",
                   helper: dnd.createHelper,
                   drag: dnd.handleDragEvent,
@@ -365,21 +513,17 @@
               }
               return draggables.push(elem);
             };
-            $(".rotationWrapper img", widgetOptions.dialog).each(function(index, elem) {
-              if (!elem.jquery_draggable_initialized) {
-                return initDraggable(elem);
-              }
+            jQuery(".rotationWrapper img", widgetOptions.dialog).each(function(index, elem) {
+              if (!elem.jquery_draggable_initialized) return initDraggable(elem);
             });
-            $("img", editable).each(function(index, elem) {
+            jQuery("img", editable).each(function(index, elem) {
               elem.contentEditable = false;
-              if (!elem.jquery_draggable_initialized) {
-                return initDraggable(elem);
-              }
+              if (!elem.jquery_draggable_initialized) return initDraggable(elem);
             });
-            return $("p", editable).each(function(index, elem) {
+            return jQuery("p", editable).each(function(index, elem) {
               if (!elem.jquery_droppable_initialized) {
                 elem.jquery_droppable_initialized = true;
-                return $('p', editable).droppable({
+                return jQuery('p', editable).droppable({
                   tolerance: "pointer",
                   drop: dnd.handleDropEvent,
                   over: dnd.handleOverEvent,
@@ -400,7 +544,7 @@
           }
         };
         draggables = [];
-        editable = $(this.options.editable.element);
+        editable = jQuery(this.options.editable.element);
         widgetOptions = this.options;
         offset = editable.offset();
         third = parseFloat(editable.width() / 3);
@@ -409,12 +553,12 @@
           height: editable.height()
         };
         overlay = {
-          big: $("<div/>").addClass("bigOverlay").css({
+          big: jQuery("<div/>").addClass("bigOverlay").css({
             width: third * 2,
             height: editable.height()
           }),
-          left: $("<div/>").addClass("smallOverlay smallOverlayLeft").css(overlayMiddleConfig),
-          right: $("<div/>").addClass("smallOverlay smallOverlayRight").css(overlayMiddleConfig).css("left", third * 2)
+          left: jQuery("<div/>").addClass("smallOverlay smallOverlayLeft").css(overlayMiddleConfig),
+          right: jQuery("<div/>").addClass("smallOverlay smallOverlayRight").css(overlayMiddleConfig).css("left", third * 2)
         };
         dnd.init();
         editable.bind('halloactivated', dnd.enableDragging);
@@ -422,4 +566,3 @@
       }
     });
   })(jQuery);
-}).call(this);

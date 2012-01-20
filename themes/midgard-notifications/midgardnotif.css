@@ -1,0 +1,144 @@
+.midgardNotifications-container {
+    width: 280px;
+    z-index: 9999;
+    color: white;
+}
+* html .midgardNotifications-container {
+	position: absolute;
+}
+
+.midgardNotifications-item-normal .midgardNotifications-item-inner,
+.midgardNotifications-item-binded .midgardNotifications-item-inner {
+	height: auto;
+	background: #333;
+    opacity: 0.9;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	color: #eee;
+/*  padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 6px;
+    padding-right: 6px;*/
+    padding: 5px;
+	font-family: lucida Grande;
+	font-size: 14px;
+	border: 2px solid #999;
+	display: block;
+	position: relative;
+	margin: 0 0 12px 0;
+	z-index: 999;
+}
+
+.midgardNotifications-item-binded .midgardNotifications-item-inner {
+    left: 0;
+    top: 0;
+}
+.midgardNotifications-item-inner .midgardNotifications-content {
+	padding:10px;
+	font-size:14px;
+	text-shadow:none;
+}
+
+.midgardNotifications-title {
+    text-align: left;    
+}
+
+.midgardNotifications-disregard {
+    width: 22px;
+    height: 22px;
+    position: absolute;
+    top: -7px; right: -7px;
+    cursor: pointer;
+    -moz-border-radius: 22px;
+    background: #000;
+}
+
+.midgardNotifications-arrow {
+	position:absolute;
+	background-color:transparent;
+	background-repeat:no-repeat;
+}
+.midgardNotifications-arrow_T,
+.midgardNotifications-arrow_B,
+.midgardNotifications-arrow_TL,
+.midgardNotifications-arrow_TR,
+.midgardNotifications-arrow_BL,
+.midgardNotifications-arrow_BR{
+	background-image:url(topbottom.png);
+	width:13px;
+	height:7px;
+}
+.midgardNotifications-arrow_L,
+.midgardNotifications-arrow_R,
+.midgardNotifications-arrow_LT,
+.midgardNotifications-arrow_LB,
+.midgardNotifications-arrow_RT,
+.midgardNotifications-arrow_RB{
+	background-image:url(leftright.png);
+	width:7px;
+	height:13px;
+}
+.midgardNotifications-arrow_T{
+	background-position:0px -7px;
+	top:-7px;
+	left:50%;
+	margin-left:-3.5px;
+}
+.midgardNotifications-arrow_TL{
+	background-position:0px -7px;
+	top:-7px;
+	left:5px;
+}
+.midgardNotifications-arrow_TR{
+	background-position:0px -7px;
+	top:-7px;
+	right:5px;
+}
+.midgardNotifications-arrow_B{
+	background-position:0px 0px;
+	bottom:-7px;
+	left:50%;
+	margin-left:-3.5px;
+}
+.midgardNotifications-arrow_BL{
+	background-position:0px 0px;
+	bottom:-7px;
+	left:5px;
+}
+.midgardNotifications-arrow_BR{
+	background-position:0px 0px;
+	bottom:-7px;
+	right:5px;
+}
+.midgardNotifications-arrow_L{
+	background-position:-7px 0px;
+	top:50%;
+	margin-top:-6.5px;
+	left:-7px;
+}
+.midgardNotifications-arrow_LT{
+	background-position:-7px 0px;
+	top:5px;
+	left:-7px;
+}
+.midgardNotifications-arrow_LB{
+	background-position:-7px 0px;
+	bottom:5px;
+	left:-7px;
+}
+.midgardNotifications-arrow_R{
+	background-position:0px 0px;
+	top:50%;
+	margin-top:-6.5px;
+	right:-7px;
+}
+.midgardNotifications-arrow_RT{
+	background-position:0px 0px;
+	top:5px;
+	right:-7px;
+}
+.midgardNotifications-arrow_RB{
+	background-position:0px 0px;
+	bottom:5px;
+	right:-7px;
+}

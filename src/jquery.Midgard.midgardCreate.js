@@ -16,19 +16,30 @@
             storagePrefix: 'node',            
             workflows: {
                 url: null
-            }
+            },
+            notifications: {},
+            vie: null
         },
     
         _create: function() {
-            this.vie = new VIE({classic: true});
+            if (this.options.vie) {
+              this.vie = this.options.vie;
+            } else {
+              this.vie = new VIE({classic: true});
+            }
             this._checkSession();
             this._enableToolbar();
             this._saveButton();
             this._editButton();
             this.element.midgardStorage({vie: this.vie, url: this.options.url});          
+            
             if (this.element.midgardWorkflows) {
                 this.element.midgardWorkflows(this.options.workflows);
-            }            
+            }
+            
+            if (this.element.midgardNotifications) {
+                this.element.midgardNotifications(this.options.notifications);
+            }
         },
         
         _init: function() {
@@ -36,6 +47,14 @@
                 this._enableEdit();
             } else {
                 this._disableEdit();
+            }
+            
+            // jQuery(this.element).data('midgardNotifications').showTutorial();            
+        },
+        
+        showNotification: function(options) {
+            if (this.element.midgardNotifications) {
+                jQuery(this.element).data('midgardNotifications').create(options);
             }
         },
         
