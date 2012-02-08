@@ -1,0 +1,142 @@
+/* Tagging */
+/***************/
+.hiddenfieldsContainer {
+    z-index: 100;
+    padding: 25px 38px 20px 20px;
+    position: absolute;
+    min-height: 30px;
+    right: -25px;
+    margin-top: -35px;
+}
+
+.hiddenfieldsToggle {
+    background-image: url('cornersettings_small.png');
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 106px;
+    height: 92px;
+    cursor: pointer;
+}
+
+.hiddenfieldsToggle:hover {
+    background-image: url('cornersettings_large.png');
+    width: 157px;
+    height: 136px;
+}
+
+.hiddenfields {
+    background-color: black;
+    width: 100%;
+    display: none;
+    border-radius: 3px;
+    padding: 10px 10px 40px 10px;
+}
+
+.hiddenfields h2,
+.hiddenfields h3 {
+    color: #A0A0A0;
+    font-family: Helvetica, Arial;
+    font-weight: bold;
+}
+
+.hiddenfields h2 {
+    background: url('settingsh2icon.png') no-repeat left center;
+    padding-left: 22px;
+    padding-bottom: 0;
+    font-size: 15px;
+}
+
+.hiddenfields h3 {
+    font-size: 13px;
+    margin: 10px 0 4px 0;
+}
+
+.hiddenfieldsCloseCorner {
+    background: url('cornerclose.png') no-repeat left bottom;
+    width: 106px;
+    height: 72px;
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    display: none;
+    cursor: pointer;
+}
+
+.hiddenfieldsCloseButton {
+    background: url('close_button.png');
+    display: none;
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    top: 15px;
+    right: 6px;
+    cursor: pointer;
+}
+
+#articleTagsWrapper {
+    width: 400px;
+    margin-top: 20px;
+}
+
+.tags_clear {
+    clear:both;
+    width:100%;
+    height:0;
+}
+
+div.tagsinput {
+    border: 0;
+    background: none;
+    width:300px;
+    height:auto;
+    overflow-y:auto;
+    padding:3px;
+}
+
+div.tagsinput div {
+    display: block;
+    float: left;
+}
+
+div.tagsinput span.tag {
+    border:1px solid #11a2bf;
+    -moz-border-radius:2px;
+    -webkit-border-radius:2px;
+    display:block;
+    float:left;
+    text-decoration:none;
+    background:#11accc;
+    color:#fff;
+    margin-right:5px;
+    margin-bottom:5px;
+    font-size:12px;
+    padding: 2px 4px;
+    cursor: pointer;
+}
+
+div.tagsinput span.tag a {
+    font-weight: bold;
+    color:#0b788e !important;
+    text-decoration:none;
+    font-size:13px;
+}
+
+div.tagsinput input,
+div.tagsinput input:focus {
+    width:80px;
+    font-size:12px;
+    border: 0 !important;
+    background:transparent !important;
+    color:#fff !important;
+    outline:0;
+    margin:0 5px 5px 0;
+    padding: 5px;
+    -webkit-box-shadow: none !important;
+    -moz-box-shadow: none !important;
+    box-shadow: none !important;
+}
+
+.articleSuggestedTags {
+    margin-bottom: 10px;
+}
