@@ -1,11 +1,15 @@
 (function(jQuery, undefined) {
     jQuery.widget('Midgard.midgardTags', {
         options: {
+            vie: null,
+            entity: null,
+            element: null,
+            entityElement: null
         },
 
         _init: function() {
 
-            this.vie = this.options.widget.vie;
+            this.vie = this.options.vie;
             this.entity = this.options.entity;
             this.element = this.options.element;
 
@@ -105,7 +109,7 @@
             });
 
             // load suggested tags
-            that.vie.analyze({element: this.options.widget.element}).using(['stanbol']).execute().success(function(enhancements) {
+            that.vie.analyze({element: this.options.entityElement}).using(['stanbol']).execute().success(function(enhancements) {
                 return $(enhancements).each(function(i, e) {
 
                     if (typeof e.attributes == 'undefined') {

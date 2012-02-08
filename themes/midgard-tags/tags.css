@@ -10,7 +10,7 @@
 }
 
 .hiddenfieldsToggle {
-    background-image: url('/bundles/liipvie/img/cornersettings_small.png');
+    background-image: url('cornersettings_small.png');
     position: absolute;
     top: 0;
     right: 0;
@@ -20,7 +20,7 @@
 }
 
 .hiddenfieldsToggle:hover {
-    background-image: url('/bundles/liipvie/img/cornersettings_large.png');
+    background-image: url('cornersettings_large.png');
     width: 157px;
     height: 136px;
 }
@@ -41,7 +41,7 @@
 }
 
 .hiddenfields h2 {
-    background: url('/bundles/liipvie/img/settingsh2icon.png') no-repeat left center;
+    background: url('settingsh2icon.png') no-repeat left center;
     padding-left: 22px;
     padding-bottom: 0;
     font-size: 15px;
@@ -53,7 +53,7 @@
 }
 
 .hiddenfieldsCloseCorner {
-    background: url('/bundles/liipvie/img/cornerclose.png') no-repeat left bottom;
+    background: url('cornerclose.png') no-repeat left bottom;
     width: 106px;
     height: 72px;
     position: absolute;
@@ -64,7 +64,7 @@
 }
 
 .hiddenfieldsCloseButton {
-    background: url('/bundles/liipvie/img/close_button.png');
+    background: url('close_button.png');
     display: none;
     width: 25px;
     height: 25px;
