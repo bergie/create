@@ -3,22 +3,40 @@
         options: {
             editables: [],
             model: null,
-            editor: 'hallo',
-            editorOptions: {},
-            // Override this if you want to use custom widgets for editing
-            enableEditor: function(data) {
-              if (data.widget.options.editor === 'aloha') {
-                return data.widget._enableAloha(data);
-              }
-              return data.widget._enableHallo(data);
+            editorOptions:{},
+            // the available widgets by data type
+            // TODO: needs a comprehensive list of types and their appropriate widgets
+            widgets: {
+              	'Text': 'halloWidget',
+              	'default': 'halloWidget'
             },
-            // Override this if you want to use custom widgets for editing
+            // returns the name of the widget to use for the given property
+            widgetName: function(data) {
+              	// TODO: make sure type is already loaded into VIE
+              	var propertyType = 'default';
+              	var type=this.model.get('@type');
+              	if (type){
+                		if (type.attributes && type.attributes.get(data.property)){
+                			  propertyType=type.attributes.get(data.property).range[0];
+                		}
+              	}
+              	if (this.widgets[propertyType]){
+              		  return this.widgets[propertyType];
+              	}
+              	return this.widgets['default'];
+            },
+            enableEditor: function(data) {
+              	var widgetName=this.widgetName(data);
+              	jQuery(data.element)[widgetName](data);
+              	jQuery(data.element).data('createWidgetName',widgetName);
+              	return jQuery(data.element);
+            },
             disableEditor: function(data) {
-              if (data.widget.options.editor === 'aloha') {
-                data.widget._disableAloha(data);
-                return;
-              }
-              data.widget._disableHallo(data);
+              	var widgetName=jQuery(data.element).data('createWidgetName');
+              	if (widgetName){
+                	    // only if there has been an editing widget registered
+                    	jQuery(data.element)[widgetName]('disable');
+                }
             },
             addButton: null,
             enable: function() {},
@@ -65,11 +83,12 @@
         disable: function() {
             var widget = this;
             jQuery.each(this.options.editables, function(index, editable) {
-              widget.options.disableEditor({
-                widget: widget,
-                editable: editable,
-                entity: widget.options.model
-              });
+                widget.options.disableEditor({
+                    widget: widget,
+                    editable: editable,
+                    entity: widget.options.model,
+                    element: jQuery(this)
+                });
             });
             this.options.editables = [];
             
@@ -94,6 +113,8 @@
                 // For now we don't deal with multivalued properties in the editable
                 return true;
             }
+            
+            
 
             var editable = this.options.enableEditor({
                 widget: this,
@@ -141,73 +162,6 @@
             this.options.editables.push(editable);
         },
 
-        _enableHallo: function(options) {
-            var defaultOptions = {
-                plugins: {
-                    halloformat: {}
-                },
-                editable: true,
-                placeholder: '[' + options.property + ']'
-            };
-            var editorOptions = {};
-            if (options.editorOptions[options.property]) {
-                editorOptions = options.editorOptions[options.property];
-            } else if (options.editorOptions['default']) {
-                editorOptions = options.editorOptions['default'];
-            }
-            jQuery.extend(defaultOptions, editorOptions);
-            jQuery(options.element).hallo(defaultOptions);
-
-            var widget = this;
-            jQuery(options.element).bind('halloactivated', function(event, data) {
-                options.activated();
-            });
-            jQuery(options.element).bind('hallodeactivated', function(event, data) {
-                options.deactivated();
-            });
-            jQuery(options.element).bind('hallomodified', function(event, data) {
-                options.modified(data.content);
-                data.editable.setUnmodified();
-            });
-
-            return options.element;
-        },
-
-        _disableHallo: function(options) {
-            jQuery(options.editable).hallo({editable: false}); 
-        },
-
-        _enableAloha: function(options) {
-            var editable = new Aloha.Editable(Aloha.jQuery(options.element.get(0)));
-            editable.vieEntity = options.entity;
-
-            // Subscribe to activation and deactivation events
-            var widget = this;
-            Aloha.bind('aloha-editable-activated', function() {
-                options.activated();
-            });
-            Aloha.bind('aloha-editable-deactivated', function() {
-                options.deactivated();
-            });
-
-            Aloha.bind('aloha-smart-content-changed', function() {
-                if (!editable.isModified()) {
-                    return true;
-                }
-                options.modified(editable.getContents());
-                editable.setUnmodified();
-            });
-
-            return editable;
-        },
-
-        _disableAloha: function(options) {
-            try {
-                options.editable.destroy();
-            } catch (err) {
-            }
-        },
-        
         _enableCollection: function(collectionView) {
             var widget = this;
 
