@@ -26,16 +26,19 @@
               	return this.widgets['default'];
             },
             enableEditor: function(data) {
-              	var widgetName=this.widgetName(data);
+              	var widgetName = this.widgetName(data);
+                data.disabled = false;
               	jQuery(data.element)[widgetName](data);
-              	jQuery(data.element).data('createWidgetName',widgetName);
+              	jQuery(data.element).data('createWidgetName', widgetName);
               	return jQuery(data.element);
             },
             disableEditor: function(data) {
-              	var widgetName=jQuery(data.element).data('createWidgetName');
-              	if (widgetName){
+              	var widgetName = jQuery(data.element).data('createWidgetName');
+                data.disabled = true;
+              	if (widgetName) {
                 	    // only if there has been an editing widget registered
-                    	jQuery(data.element)[widgetName]('disable');
+                    	jQuery(data.element)[widgetName](data);
+                      jQuery(data.element).removeClass('ui-state-disabled');
                 }
             },
             addButton: null,
