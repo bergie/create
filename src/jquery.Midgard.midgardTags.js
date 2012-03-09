@@ -85,6 +85,9 @@
             });
 
             this.loadTags();
+            this.options.entityElement.bind('midgardeditabledeactivated', function () {
+                that.loadTags();
+            });
         },
 
         closeTags: function () {
