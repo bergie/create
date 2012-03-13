@@ -1,3 +1,4 @@
+(function() {
 
   (function(jQuery) {
     return jQuery.widget("IKS.halloheadings", {
@@ -8,8 +9,8 @@
         headers: [1, 2, 3]
       },
       _create: function() {
-        var button, buttonize, buttonset, header, id, label, widget, _i, _len, _ref;
-        var _this = this;
+        var button, buttonize, buttonset, header, id, label, widget, _i, _len, _ref,
+          _this = this;
         widget = this;
         buttonset = jQuery("<span class=\"" + widget.widgetName + "\"></span>");
         id = "" + this.options.uuid + "-paragraph";
@@ -68,3 +69,5 @@
       _init: function() {}
     });
   })(jQuery);
+
+}).call(this);

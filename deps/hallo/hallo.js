@@ -1,3 +1,4 @@
+(function() {
 
   (function(jQuery) {
     return jQuery.widget("IKS.hallo", {
@@ -63,7 +64,7 @@
         if (!this.element.html()) this.element.html(this.options.placeholder);
         if (!this.bound) {
           this.element.bind("focus", this, this._activated);
-          if (!this.options.showAlways) {
+          if (this.options.showAlways) {
             this.element.bind("blur", this, this._deactivated);
           }
           this.element.bind("keyup paste change", this, this._checkModified);
@@ -309,7 +310,6 @@
       turnOff: function() {
         this.toolbar.hide();
         jQuery(this.element).removeClass('inEditMode');
-        if (this.options.showAlways) this.element.blur();
         this._trigger("deactivated", this);
         if (!this.getContents()) return this.setContents(this.options.placeholder);
       },
@@ -321,3 +321,5 @@
       }
     });
   })(jQuery);
+
+}).call(this);

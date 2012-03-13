@@ -1,3 +1,4 @@
+(function() {
 
   (function(jQuery) {
     return jQuery.widget("IKS.halloformat", {
@@ -13,8 +14,8 @@
         }
       },
       _create: function() {
-        var buttonize, buttonset, enabled, format, widget, _ref;
-        var _this = this;
+        var buttonize, buttonset, enabled, format, widget, _ref,
+          _this = this;
         widget = this;
         buttonset = jQuery("<span class=\"" + widget.widgetName + "\"></span>");
         buttonize = function(format) {
@@ -59,3 +60,5 @@
       _init: function() {}
     });
   })(jQuery);
+
+}).call(this);

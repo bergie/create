@@ -1,3 +1,4 @@
+(function() {
 
   (function(jQuery) {
     return jQuery.widget("Liip.hallooverlay", {
@@ -84,3 +85,5 @@
       }
     });
   })(jQuery);
+
+}).call(this);

@@ -1,3 +1,4 @@
+(function() {
 
   (function(jQuery) {
     return jQuery.widget("IKS.hallolink", {
@@ -20,8 +21,8 @@
         }
       },
       _create: function() {
-        var buttonize, buttonset, dialog, dialogId, dialogSubmitCb, urlInput, widget;
-        var _this = this;
+        var buttonize, buttonset, dialog, dialogId, dialogSubmitCb, urlInput, widget,
+          _this = this;
         widget = this;
         dialogId = "" + this.options.uuid + "-dialog";
         dialog = jQuery("<div id=\"" + dialogId + "\"><form action=\"#\" method=\"post\" class=\"linkForm\"><input class=\"url\" type=\"text\" name=\"url\" value=\"" + this.options.defaultUrl + "\" /><input type=\"submit\" id=\"addlinkButton\" value=\"Insert\" /></form></div>");
@@ -94,3 +95,5 @@
       _init: function() {}
     });
   })(jQuery);
+
+}).call(this);

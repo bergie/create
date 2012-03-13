@@ -1,3 +1,4 @@
+(function() {
 
   (function(jQuery) {
     return jQuery.widget("Liip.hallotoolbarlinebreak", {
@@ -35,3 +36,5 @@
       _init: function() {}
     });
   })(jQuery);
+
+}).call(this);

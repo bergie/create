@@ -1,3 +1,4 @@
+(function() {
 
   (function(jQuery) {
     return jQuery.widget("IKS.hallojustify", {
@@ -7,8 +8,8 @@
         uuid: ""
       },
       _create: function() {
-        var buttonize, buttonset, widget;
-        var _this = this;
+        var buttonize, buttonset, widget,
+          _this = this;
         widget = this;
         buttonset = jQuery("<span class=\"" + widget.widgetName + "\"></span>");
         buttonize = function(alignment) {
@@ -50,3 +51,5 @@
       _init: function() {}
     });
   })(jQuery);
+
+}).call(this);
