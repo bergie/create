@@ -245,6 +245,9 @@
                 var activeHeight = function(items) {
                     var total_height = 0;
                     jQuery.each(items, function(i, item) {
+                        if (!item) {
+                            return;
+                        }
                         total_height += item.getElement().height();
                     });
                     return total_height;
