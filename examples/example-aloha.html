@@ -33,7 +33,7 @@
         }
         </script>
         <!-- Include Aloha Editor and load desired plugins -->
-        <script src="../deps/aloha/lib/aloha.js" 
+        <script src="http://aloha-editor.org/aloha-0.20/lib/aloha.js" 
             data-aloha-plugins="common/format,
                                 common/table,
                                 common/list,
@@ -47,10 +47,7 @@
                                 extra/browser,
                                 extra/linkbrowser"></script>
 
-        <script src="../src/jquery.Midgard.midgardCreate.js"></script>
-        <script src="../src/jquery.Midgard.midgardToolbar.js"></script>
-        <script src="../src/jquery.Midgard.midgardStorage.js"></script>
-        <script src="../src/jquery.Midgard.midgardEditable.js"></script>
+        <script src="./create.js"></script>
         <script>
             jQuery(document).ready(function() {
                 jQuery('body').midgardCreate({
@@ -58,7 +55,7 @@
                 });
             });
         </script>
-        <link rel="stylesheet" href="../deps/aloha/css/aloha.css" />
+        <link rel="stylesheet" href="http://aloha-editor.org/aloha-0.20/css/aloha.css" />
         <link rel="stylesheet" href="../themes/midgard-theme/jquery.ui.all.css" />
         <link rel="stylesheet" href="../themes/midgard-toolbar/midgardbar.css" />
         <link rel="stylesheet" href="demo.css" />
@@ -69,9 +66,6 @@
 
                 <h1 property="dcterms:title">News item title</h1>
                 <div property="sioc:content">
-                    <p>
-                        <b>Note: To use this example you need to download the latest version of <a href="http://aloha-editor.org/builds/development/latest.zip">Aloha Editor</a>. Extract the archive file and move the "aloha" directory into the "Create/deps/" folder. Check to have it like this: "Create/deps/aloha/lib/aloha.js"</b>
-                    </p>
                     <p>
                         Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.
                     </p>
