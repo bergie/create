@@ -8,7 +8,10 @@
             state: 'browse',
             highlight: true,
             highlightColor: '#67cc08',
-            editor: 'hallo',
+            editorWidgets: {
+                'Text': 'halloWidget',
+                'default': 'halloWidget'
+            },
             editorOptions: {},
             enableEditor: null,
             disableEditor: null,
@@ -125,7 +128,7 @@
             var editableOptions = {
                 disabled: false,
                 vie: widget.vie,
-                editor: widget.options.editor,
+                widgets: widget.options.editorWidgets,
                 editorOptions: widget.options.editorOptions,
             };
             if (widget.options.enableEditor) {
