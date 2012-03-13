@@ -36,7 +36,8 @@ Create, from the [Midgard Project](http://www.midgard-project.org/), is a compre
 In nutshell, you have to do the following:
 
 * Annotate your content with RDFa
-* Include the Create JavaScript file(s)
+* Include the Create dependencies (jQuery, jQuery UI, Underscore, Backbone, VIE, the editor of your choice)
+* Include the Create JavaScript file (see `examples/create.js` and `examples/create-min.js`)
 * Implement [Backbone.sync](http://documentcloud.github.com/backbone/#Sync) for your back-end
 
 [Blogsiple](https://github.com/bergie/blogsiple) is a [Node.js](http://nodejs.org/) based CMS integration testbed for Create. It may provide useful examples on how the connection between Create and a REST-capable web tool works.
@@ -137,6 +138,16 @@ Create is an event-based user interface. Normally integrators shouldn't need to 
 * `midgardstoragesaved`: when save has completed succesfully
 
 You can use normal [jQuery event methods](http://api.jquery.com/category/events/) to deal with these events.
+
+## Building Create
+
+Use the supplied `Cakefile` to generate the merged JavaScript file for Create:
+
+    $ cake build
+
+You can also generate a minified version (requires uglifyjs):
+
+    $ cake min
 
 ## Read more
 
