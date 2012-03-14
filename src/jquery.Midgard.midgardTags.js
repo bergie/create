@@ -96,6 +96,9 @@
             $('.hiddenfieldsToggle', context).show();
             $('.hiddenfieldsCloseCorner', context).hide();
             $('.hiddenfieldsCloseButton', context).hide();
+
+            // save on close
+            this.options.deactivated();
         },
 
         loadTags: function () {
