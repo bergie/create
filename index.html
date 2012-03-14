@@ -2,38 +2,37 @@
 <html>
     <head>
         <title>Create &mdash; A new kind of web editing interface</title>
-        <script src="deps/jquery-1.6.4.min.js"></script>
-        <script src="deps/jquery-ui-1.8.16.custom.min.js"></script>
-        <script src="deps/modernizr.custom.80485.js"></script>
-        <script src="deps/underscore-min.js"></script>
-        <script src="deps/backbone-min.js"></script>
-        <script src="deps/vie-min.js"></script>
-        <script src="deps/hallo.js"></script>
-        <script src="deps/hallo/format.js"></script>
-        <script src="create/jquery.Midgard.midgardCreate.js"></script>
-        <script src="create/jquery.Midgard.midgardToolbar.js"></script>
-        <script src="create/jquery.Midgard.midgardStorage.js"></script>
-        <script src="create/jquery.Midgard.midgardEditable.js"></script>        <script>
-            jQuery(document).ready(function() {
-                jQuery('#tryit').button({disabled: false}).click(function() {
-                    jQuery('body').midgardCreate({state: 'edit'});
-                    jQuery('#tryit').button({disabled: true});
-                });
+        <script src="js/deps/jquery-1.6.4.min.js"></script>
+        <script src="js/deps/jquery-ui-1.8.16.custom.min.js"></script>
+        <script src="js/deps/modernizr.custom.80485.js"></script>
+        <script src="js/deps/underscore-min.js"></script>
+        <script src="js/deps/backbone-min.js"></script>
+        <script src="js/deps/vie-min.js"></script>
+        <script src="js/deps/hallo.js"></script>
+        <script src="js/create.js"></script>
+        <script>
+          jQuery(document).ready(function() {
+            jQuery('#tryit').button({disabled: false}).click(function() {
+              // Instantiate Create
+              jQuery('body').midgardCreate({
+                url: function() { return 'javascript:false;'; }
+              });
+              jQuery('#tryit').button({disabled: true});
             });
-            Backbone.sync = function(method, model, success, error) {
-                var message = "Backbone.sync triggered for model " + model.id;
-                if (console) {
-                    console.log("Model contents", model.toJSONLD());
-                    message += '. See JavaScript Console for details';
-                }
-                alert(message);
-
-            };
+          });
+          // Fake Backbone.sync since there is no server to communicate with
+          Backbone.sync = function(method, model, options) {
+            if (console && console.log) {
+              console.log("Model contents", model.toJSONLD());
+            }
+            options.success(model);
+          };
         </script>
-        <link rel="stylesheet" href="deps/hallo/vader/jquery-ui-1.8.16.custom.css" />
-        <link rel="stylesheet" href="themes/midgard-theme/jquery.ui.all.css" />
-        <link rel="stylesheet" href="themes/midgard-toolbar/midgardbar.css" />
-        <link rel="stylesheet" href="create.css" />
+        <link rel="stylesheet" href="css/themes/vader/jquery-ui-1.8.16.custom.css" />
+        <link rel="stylesheet" href="css/themes/midgard-theme/jquery.ui.all.css" />
+        <link rel="stylesheet" href="css/themes/midgard-toolbar/midgardbar.css" />
+        <link rel="stylesheet" href="css/themes/midgard-notifications/midgardnotif.css" />
+        <link rel="stylesheet" href="css/create.css" />
         <link rel="shortcut icon" href="favicon.png" type="image/png"/>
 
         <script type="text/javascript">
@@ -47,9 +46,10 @@
           })();
         </script>
     </head>
-    <body xmlns:doap="http://usefulinc.com/ns/doap#" xmlns:foaf="http://xmlns.com/foaf/0.1/" about="http://createjs.org/#create" typeof="doap:Project">
+    <body xmlns:doap="http://usefulinc.com/ns/doap#" xmlns:foaf="http://xmlns.com/foaf/0.1/">
+      <div class="container" about="http://createjs.org/#create" typeof="doap:Project">
         <header>
-            <a href="https://github.com/bergie/create" rel="doap:homepage"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://d3nwyuy0nl342s.cloudfront.net/img/71eeaab9d563c2b3c590319b398dd35683265e85/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub"></a>
+            <a href="https://github.com/bergie/create"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://d3nwyuy0nl342s.cloudfront.net/img/71eeaab9d563c2b3c590319b398dd35683265e85/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub"></a>
         </header>
         <aside class="tryit">
             <button id="tryit" type="button">Try it now</button>
@@ -85,5 +85,6 @@
         <footer>
             <p>Create is <a href="http://www.opensource.org/licenses/mit-license.php" rel="doap:license">free software</a> developed by <span property="doap:maintainer"><a rel="foaf:homepage" typeof="foaf:Person" href="http://bergie.iki.fi/" property="foaf:name">Henri Bergius</a></span> and the <a href="http://www.midgard-project.org/">Midgard Project</a> in collaboration with <a href="http://iks-project.eu/">IKS</a> and co-funded by the European Union</p>
         </footer>
+      </div>
     </body>
 </html> 
