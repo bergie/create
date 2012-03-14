@@ -51,7 +51,7 @@
 
                     // convert to reference url
                     if (!entity.isReference(tag)) {
-                        tag = 'urn:tag:' + tag;
+                        tag = '<urn:tag:' + tag + '>';
                     }
 
                     // add tag to entity
