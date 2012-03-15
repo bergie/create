@@ -87,6 +87,7 @@
             this.loadTags();
             this.options.entityElement.bind('midgardeditabledeactivated', function () {
                 that.articleTags.importTags('');
+                that.suggestedTags.importTags('');
                 that.loadTags();
             });
         },
