@@ -398,7 +398,7 @@
           disabled: widget.options.disabled,
           model: itemView.model,
           vie: widget.vie,
-          editor: widget.options.editor
+          widgets: widget.options.widgets
         });
       });
 
