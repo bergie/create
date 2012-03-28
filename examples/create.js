@@ -829,8 +829,7 @@
             _config.position = 'top right';
           }
 
-          var marginTop = jQuery('.midgard-create').height();
-
+          var marginTop = jQuery('.create-ui-toolbar-wrapper').outerHeight(true) + 6;
           pos = {
             position: 'fixed'
           };
