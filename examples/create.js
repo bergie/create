@@ -107,9 +107,11 @@
       editButton.bind('click', function () {
         if (widget.options.state === 'edit') {
           widget._disableEdit();
+          editButton.html('<a class="create-ui-btn">Edit <i class="icon-edit"></i></a>');
           return;
         }
         widget._enableEdit();
+        editButton.html('<a class="create-ui-btn">Cancel <i class="icon-remove"></i></a>');
       });
     },
 
