@@ -214,6 +214,9 @@
     },
 
     _fetchModelWorkflows: function (model) {
+      if (model.isNew()) {
+        return;
+      }
       var widget = this;
 
       widget.workflows[model.cid] = new(this._generateCollectionFor(model))([], {});
