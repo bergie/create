@@ -2,8 +2,8 @@
 <html>
     <head>
         <title>Midgard Create example with Aloha Editor</title>
-        <script src="../deps/jquery-1.6.4.min.js"></script>
-        <script src="../deps/jquery-ui-1.8.16.custom.min.js"></script>
+        <script src="../deps/jquery-1.7.1.min.js"></script>
+        <script src="../deps/jquery-ui-1.8.18.custom.min.js"></script>
         <script src="../deps/modernizr.custom.80485.js"></script>
         <script src="../deps/underscore-min.js"></script>
         <script src="../deps/backbone-min.js"></script>
@@ -52,14 +52,16 @@
             jQuery(document).ready(function() {
                 jQuery('body').midgardCreate({
                     editorWidgets: {
-                      'default': 'alohaWidget'
+                      'default': 'alohaWidget',
+                      'Text': 'alohaWidget'
                     }
                 });
             });
         </script>
         <link rel="stylesheet" href="http://aloha-editor.org/aloha-0.20/css/aloha.css" />
-        <link rel="stylesheet" href="../themes/midgard-theme/jquery.ui.all.css" />
-        <link rel="stylesheet" href="../themes/midgard-toolbar/midgardbar.css" />
+        <link rel="stylesheet" href="./font-awesome/css/font-awesome.css"
+    />
+        <link rel="stylesheet" href="../themes/create-ui/css/create-ui.css" />
         <link rel="stylesheet" href="demo.css" />
     </head>
     <body>
