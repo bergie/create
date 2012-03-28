@@ -134,6 +134,7 @@
       this._setOption('state', 'edit');
       var widget = this;
       var editableOptions = {
+        toolbarState: widget.options.display,
         disabled: false,
         vie: widget.vie,
         widgets: widget.options.editorWidgets,

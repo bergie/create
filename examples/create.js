@@ -134,6 +134,7 @@
       this._setOption('state', 'edit');
       var widget = this;
       var editableOptions = {
+        toolbarState: widget.options.display,
         disabled: false,
         vie: widget.vie,
         widgets: widget.options.editorWidgets,
@@ -210,6 +211,7 @@
         'Text': 'halloWidget',
         'default': 'halloWidget'
       },
+      toolbarState: 'full',
       // returns the name of the widget to use for the given property
       widgetName: function (data) {
         // TODO: make sure type is already loaded into VIE
@@ -328,6 +330,7 @@
         entity: this.options.model,
         property: propertyName,
         editorOptions: this.options.editorOptions,
+        toolbarState: this.options.toolbarState,
         modified: function (content) {
           var changedProperties = {};
           changedProperties[propertyName] = content;
@@ -507,6 +510,10 @@
 })(jQuery);
 (function (jQuery, undefined) {
   jQuery.widget('Create.halloWidget', jQuery.Create.editWidget, {
+    options: {
+      disabled: true,
+      toolbarState: 'full'
+    },
     enable: function () {
       jQuery(this.element).hallo({
         editable: true
@@ -520,27 +527,7 @@
       this.options.disabled = true;
     },
     _initialize: function () {
-      var defaultOptions = {
-        plugins: {
-          halloformat: {},
-          halloblock: {},
-          hallolists: {}
-        },
-        editable: true,
-        placeholder: '[' + this.options.property + ']',
-        parentElement: jQuery('.create-ui-toolbar-dynamictoolarea .create-ui-tool-freearea'),
-        showAlways: true,
-        fixed: true,
-        buttonCssClass: 'create-ui-btn-small'
-      };
-      var editorOptions = {};
-      if (this.options.editorOptions[this.options.property]) {
-        editorOptions = this.options.editorOptions[this.options.property];
-      } else if (this.options.editorOptions['default']) {
-        editorOptions = this.options.editorOptions['default'];
-      }
-      jQuery.extend(defaultOptions, editorOptions);
-      jQuery(this.element).hallo(defaultOptions);
+      jQuery(this.element).hallo(this.getHalloOptions());
       var self = this;
       jQuery(this.element).bind('halloactivated', function (event, data) {
         self.options.activated();
@@ -552,6 +539,46 @@
         self.options.modified(data.content);
         data.editable.setUnmodified();
       });
+
+      jQuery(document).bind('midgardtoolbarstatechange', function(event, data) {
+        // Switch between Hallo configurations when toolbar state changes
+        if (data.display === self.options.toolbarState) {
+          return;
+        }
+        self.options.toolbarState = data.display;
+        jQuery(self.element).hallo(self.getHalloOptions());
+      });
+    },
+
+    getHalloOptions: function() {
+      var defaults = {
+        plugins: {
+          halloformat: {},
+          halloblock: {},
+          hallolists: {}
+        },
+        buttonCssClass: 'create-ui-btn-small',
+        placeholder: '[' + this.options.property + ']'
+      };
+
+      if (this.options.toolbarState === 'full') {
+        // Use fixed toolbar in the Create tools area
+        defaults.parentElement = jQuery('.create-ui-toolbar-dynamictoolarea .create-ui-tool-freearea');
+        defaults.showAlways = true;
+        defaults.fixed = true;
+      } else {
+        // Tools area minimized, use floating toolbar
+        defaults.showAlways = false;
+        defaults.fixed = false;
+      }
+
+      var editorOptions = {};
+      if (this.options.editorOptions[this.options.property]) {
+        editorOptions = this.options.editorOptions[this.options.property];
+      } else if (this.options.editorOptions['default']) {
+        editorOptions = this.options.editorOptions['default'];
+      }
+      return _.extend(defaults, editorOptions);
     }
   });
 })(jQuery);

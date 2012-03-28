@@ -10,6 +10,7 @@
         'Text': 'halloWidget',
         'default': 'halloWidget'
       },
+      toolbarState: 'full',
       // returns the name of the widget to use for the given property
       widgetName: function (data) {
         // TODO: make sure type is already loaded into VIE
@@ -128,6 +129,7 @@
         entity: this.options.model,
         property: propertyName,
         editorOptions: this.options.editorOptions,
+        toolbarState: this.options.toolbarState,
         modified: function (content) {
           var changedProperties = {};
           changedProperties[propertyName] = content;

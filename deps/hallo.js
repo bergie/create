@@ -8,6 +8,7 @@
   (function(jQuery) {
     return jQuery.widget("IKS.hallo", {
       toolbar: null,
+      toolbarMoved: false,
       bound: false,
       originalContent: "",
       uuid: "",
@@ -52,6 +53,7 @@
         return _results;
       },
       _init: function() {
+        this._setToolbarPosition();
         if (this.options.editable) {
           return this.enable();
         } else {
@@ -225,14 +227,27 @@
           return _this.toolbar.hide();
         });
       },
+      _setToolbarPosition: function() {
+        if (this.options.fixed) {
+          this.toolbar.css('position', 'static');
+          if (this.toolbarMoved) {
+            jQuery(this.options.parentElement).append(this.toolbar);
+          }
+          this.toolbarMoved = false;
+          return;
+        }
+        if (this.options.parentElement !== 'body') {
+          jQuery('body').append(this.toolbar);
+          this.toolbarMoved = true;
+        }
+        this.toolbar.css('position', 'absolute');
+        this.toolbar.css('top', this.element.offset().top - 20);
+        return this.toolbar.css('left', this.element.offset().left);
+      },
       _prepareToolbar: function() {
         var _this = this;
         this.toolbar = jQuery('<div class="hallotoolbar"></div>').hide();
-        if (!this.options.fixed) {
-          this.toolbar.css("position", "absolute");
-          this.toolbar.css("top", this.element.offset().top - 20);
-          this.toolbar.css("left", this.element.offset().left);
-        }
+        this._setToolbarPosition();
         jQuery(this.options.parentElement).append(this.toolbar);
         this.toolbar.bind("mousedown", function(event) {
           return event.preventDefault();
