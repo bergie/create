@@ -99,7 +99,12 @@
 
     _editButton: function () {
       var widget = this;
-      jQuery('.create-ui-toolbar-statustoolarea .create-ui-statustools', this.element).append(jQuery('<li id="midgardcreate-edit"><a class="create-ui-btn">Edit <i class="icon-edit"></i></a></li>'));
+      var buttonContents = {
+        edit: '<a class="create-ui-btn">Cancel <i class="icon-remove"></i></a>',
+        browse: '<a class="create-ui-btn">Edit <i class="icon-edit"></i></a>'
+      };
+
+      jQuery('.create-ui-toolbar-statustoolarea .create-ui-statustools', this.element).append(jQuery('<li id="midgardcreate-edit">' + buttonContents[widget.options.state] + '</li>'));
       var editButton = jQuery('#midgardcreate-edit', this.element);
       if (this.options.state === 'edit') {
         editButton.addClass('selected');
@@ -107,11 +112,11 @@
       editButton.bind('click', function () {
         if (widget.options.state === 'edit') {
           widget._disableEdit();
-          editButton.html('<a class="create-ui-btn">Edit <i class="icon-edit"></i></a>');
+          editButton.html(buttonContents[widget.options.state]);
           return;
         }
         widget._enableEdit();
-        editButton.html('<a class="create-ui-btn">Cancel <i class="icon-remove"></i></a>');
+        editButton.html(buttonContents[widget.options.state]);
       });
     },
 
