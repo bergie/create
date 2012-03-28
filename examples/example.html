@@ -9,6 +9,12 @@
     <script src="../deps/underscore-min.js"></script>
     <script src="../deps/backbone-min.js"></script>
     <script src="../deps/vie-min.js"></script>
+
+    <!-- rdfQuery and annotate are only needed for the Hallo
+    annotations plugin -->
+    <script src="../deps/jquery.rdfquery.min.js"></script>
+    <script src="../deps/annotate-min.js"></script>
+
     <script src="../deps/hallo.js"></script>
     <script src="./create.js"></script>
     <script>
@@ -16,7 +22,8 @@
         jQuery('body').midgardCreate({
           url: function () {
             return 'javascript:false;';
-          }
+          },
+          stanbolUrl: 'http://dev.iks-project.eu:8081' 
         });
       });
     </script>

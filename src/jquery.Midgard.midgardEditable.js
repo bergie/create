@@ -121,8 +121,6 @@
         return true;
       }
 
-
-
       var editable = this.options.enableEditor({
         widget: this,
         element: element,
@@ -130,6 +128,7 @@
         property: propertyName,
         editorOptions: this.options.editorOptions,
         toolbarState: this.options.toolbarState,
+        vie: this.vie,
         modified: function (content) {
           var changedProperties = {};
           changedProperties[propertyName] = content;

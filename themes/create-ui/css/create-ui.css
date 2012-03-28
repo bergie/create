@@ -216,8 +216,16 @@ button.create-ui-btn-small {
     height: 21px;
 }
 
-.create-ui-toolbar-wrapper .ui-buttonset input[type="checkbox"].create-ui-btn-small {
+.create-ui-toolbar-wrapper .ui-buttonset input[type="checkbox"].create-ui-btn-small, body > .hallotoolbar .ui-buttonset input[type="checkbox"].create-ui-btn-small {
     display: none !important;
+}
+
+body > .hallotoolbar {
+   background-color: #111111; 
+   color: #ffffff;
+   background: url("../img/create-ui-bg.png") repeat scroll 0 0 transparent;
+   font-family: "Futura","Helvetica",Arial;
+   text-decoration: none;
 }
 
 .create-ui-toolbar-wrapper .ui-buttonset {
@@ -226,10 +234,10 @@ button.create-ui-btn-small {
 }
 
 .create-ui-btn-small:hover, .create-ui-toolbar-wrapper .ui-state-clicked {
-    background-color: #393939;
+    background-color: #ffffff;
     border-radius: 6px;
     background-position: 0 -30px;
-    color: #ffffff;
+    color: #393939;
     text-decoration: none;
     border-color: #ffffff #ffffff #ffffff;
 }
@@ -468,3 +476,44 @@ button.create-ui-btn-small {
     top: auto;
 }
 /* DROPDOWN END */
+
+/* ANNOTATIONS */
+.inEditMode .entity, .inEditMode a[typeof][about] {
+	z-index: -1;
+	padding: 0 3px;
+	background-color: #E0E0E0;
+	border-radius: 7px;
+	border: outset rgba(0, 0, 0, 0.2);
+	white-space: nowrap;
+	border-width:1px;
+}
+.inEditMode a[typeof][about] {
+    border-width: 1px 0;
+    border-color: rgba(0, 0, 0, 0.8);
+    border-style: solid;
+    border-radius: 0;
+}
+.inEditMode .entity.withSuggestions {
+    border-color: rgba(0, 0, 0, 0.8);
+}
+
+.inEditMode .entity.person, .inEditMode a[typeof][about].person {
+    background-color: #ffe;
+}
+
+.inEditMode .entity.place, .inEditMode a[typeof][about].place {
+    background-color: #fef;
+}
+
+.inEditMode .entity.organisation, .inEditMode a[typeof][about].organisation {
+    background-color: #eff;
+}
+
+.annotateselector-dialog {
+   background-color: #111111; 
+   color: #ffffff;
+   background: url("../img/create-ui-bg.png") repeat scroll 0 0 transparent;
+   font-family: "Futura","Helvetica",Arial;
+   text-decoration: none;
+}
+/* ANNOTATIONS END */

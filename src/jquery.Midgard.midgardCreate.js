@@ -21,7 +21,8 @@
         url: null
       },
       notifications: {},
-      vie: null
+      vie: null,
+      stanbolUrl: null
     },
 
     _create: function () {
@@ -31,6 +32,12 @@
         this.vie = new VIE({
           classic: true
         });
+        if (this.options.stanbolUrl) {
+          this.vie.use(new this.vie.StanbolService({
+            proxyDisabled: true,
+            url: this.options.stanbolUrl
+          }));
+        }
       }
       this._checkSession();
       this._enableToolbar();

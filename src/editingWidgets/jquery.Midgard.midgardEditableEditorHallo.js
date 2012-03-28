@@ -2,7 +2,8 @@
   jQuery.widget('Create.halloWidget', jQuery.Create.editWidget, {
     options: {
       disabled: true,
-      toolbarState: 'full'
+      toolbarState: 'full',
+      vie: null
     },
     enable: function () {
       jQuery(this.element).hallo({
@@ -45,11 +46,18 @@
         plugins: {
           halloformat: {},
           halloblock: {},
-          hallolists: {}
+          hallolists: {},
         },
         buttonCssClass: 'create-ui-btn-small',
         placeholder: '[' + this.options.property + ']'
       };
+      if (typeof this.element.annotate === 'function' && this.options.vie.services.stanbol) {
+        // Enable Hallo Annotate plugin by default if user has annotate.js
+        // loaded and VIE has Stanbol enabled
+        defaults.plugins['halloannotate'] = {
+            vie: this.options.vie
+        };
+      }
 
       if (this.options.toolbarState === 'full') {
         // Use fixed toolbar in the Create tools area

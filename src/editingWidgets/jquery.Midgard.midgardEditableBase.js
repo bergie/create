@@ -4,7 +4,8 @@
 (function (jQuery, undefined) {
   jQuery.widget('Create.editWidget', {
     options: {
-      disabled: false
+      disabled: false,
+      vie: null
     },
     // override to enable the widget
     enable: function () {

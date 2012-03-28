@@ -160,6 +160,17 @@
           return this.element.trigger("change");
         }
       },
+      protectFocusFrom: function(el) {
+        var widget;
+        widget = this;
+        return el.bind("mousedown", function(event) {
+          event.preventDefault();
+          widget._protectToolbarFocus = true;
+          return setTimeout(function() {
+            return widget._protectToolbarFocus = false;
+          }, 300);
+        });
+      },
       _generateUUID: function() {
         var S4;
         S4 = function() {
@@ -245,18 +256,18 @@
         return this.toolbar.css('left', this.element.offset().left);
       },
       _prepareToolbar: function() {
+        var widget;
         var _this = this;
         this.toolbar = jQuery('<div class="hallotoolbar"></div>').hide();
         this._setToolbarPosition();
         jQuery(this.options.parentElement).append(this.toolbar);
-        this.toolbar.bind("mousedown", function(event) {
-          return event.preventDefault();
-        });
+        widget = this;
         if (this.options.showAlways) this._bindToolbarEventsFixed();
         if (!this.options.showAlways) this._bindToolbarEventsRegular();
-        return jQuery(window).resize(function(event) {
+        jQuery(window).resize(function(event) {
           return _this._updateToolbarPosition(_this._getToolbarPosition(event));
         });
+        return this.protectFocusFrom(this.toolbar);
       },
       _updateToolbarPosition: function(position) {
         if (this.options.fixed) return;
@@ -326,7 +337,10 @@
       },
       _isEmptyRange: function(range) {
         if (range.collapsed) return true;
-        if (range.isCollapsed) return range.isCollapsed();
+        if (range.isCollapsed) {
+          if (typeof range.isCollapsed === 'function') return range.isCollapsed();
+          return range.isCollapsed;
+        }
         return false;
       },
       turnOn: function() {
@@ -356,7 +370,13 @@
         return event.data.turnOn();
       },
       _deactivated: function(event) {
-        return event.data.turnOff();
+        if (event.data._protectToolbarFocus !== true) {
+          return event.data.turnOff();
+        } else {
+          return setTimeout(function() {
+            return jQuery(event.data.element).focus();
+          }, 300);
+        }
       },
       _forceStructured: function(event) {
         try {
@@ -604,6 +624,116 @@
         }
       },
       _init: function() {}
+    });
+  })(jQuery);
+
+  (function(jQuery) {
+    var z;
+    z = null;
+    if (this.VIE !== void 0) {
+      z = new VIE;
+      z.use(new z.StanbolService({
+        proxyDisabled: true,
+        url: 'http://dev.iks-project.eu:8081'
+      }));
+    }
+    return jQuery.widget('IKS.halloannotate', {
+      options: {
+        vie: z,
+        editable: null,
+        toolbar: null,
+        uuid: '',
+        select: function() {},
+        decline: function() {},
+        remove: function() {},
+        buttonCssClass: ''
+      },
+      _create: function() {
+        var buttonHolder, editableElement, queryState, widget;
+        var _this = this;
+        widget = this;
+        if (this.options.vie === void 0) {
+          throw 'The halloannotate plugin requires VIE to be loaded';
+          return;
+        }
+        if (typeof this.element.annotate !== 'function') {
+          throw 'The halloannotate plugin requires annotate.js to be loaded';
+          return;
+        }
+        this.state = 'off';
+        buttonHolder = jQuery("<span class=\"" + widget.widgetName + "\"></span>");
+        this.button = buttonHolder.hallobutton({
+          label: '',
+          icon: 'icon-tags',
+          editable: this.options.editable,
+          command: null,
+          uuid: this.options.uuid,
+          cssClass: this.options.buttonCssClass,
+          queryState: false
+        });
+        buttonHolder.bind('change', function(event) {
+          switch (_this.state) {
+            case 'off':
+              return _this.enhance();
+            case 'on':
+              return _this.done();
+          }
+        });
+        buttonHolder.buttonset();
+        this.options.toolbar.append(this.button);
+        this.instantiate();
+        editableElement = this.options.editable.element;
+        queryState = function(event) {
+          if (document.queryCommandState(_this.options.command)) {
+            _this.button.attr('checked', true);
+            _this.button.next('label').addClass('ui-state-clicked');
+            _this.button.button('refresh');
+            return;
+          }
+          _this.button.attr('checked', false);
+          _this.button.next('label').removeClass('ui-state-clicked');
+          return _this.button.button('refresh');
+        };
+        editableElement.bind('halloenabled', function() {
+          return editableElement.bind('keyup paste change mouseup hallomodified', queryState);
+        });
+        return editableElement.bind('hallodisabled', function() {
+          return editableElement.unbind('keyup paste change mouseup hallomodified', queryState);
+        });
+      },
+      instantiate: function() {
+        return this.options.editable.element.annotate({
+          vie: this.options.vie,
+          debug: false,
+          showTooltip: true,
+          select: this.options.select,
+          remove: this.options.remove,
+          success: this.options.success,
+          error: this.options.error
+        });
+      },
+      enhance: function() {
+        var widget;
+        var _this = this;
+        widget = this;
+        this.button.hallobutton("disable");
+        try {
+          return this.options.editable.element.annotate('enable', function(success) {
+            if (success) {
+              _this.state = "on";
+              return _this.button.hallobutton("enable");
+            } else {
+              return _this.buttons.enhance.show().button('enable').button('option', 'label', 'error, see the log.. Try to enhance again!');
+            }
+          });
+        } catch (e) {
+          return alert(e);
+        }
+      },
+      done: function() {
+        this.options.editable.element.annotate('disable');
+        return this.state = 'off';
+      }
     });
   })(jQuery);
 
@@ -1488,13 +1618,22 @@
         var _this = this;
         if (!this.button) this.button = this._prepareButton();
         this.element.append(this.button);
-        this.button.bind('change', function(event) {
-          return _this.options.editable.execute(_this.options.command);
-        });
+        if (this.options.command) {
+          this.button.bind('change', function(event) {
+            return _this.options.editable.execute(_this.options.command);
+          });
+        }
         if (!this.options.queryState) return;
         editableElement = this.options.editable.element;
         queryState = function(event) {
-          if (document.queryCommandState(_this.options.command)) {
+          var state;
+          if (!_this.options.command) return;
+          try {
+            state = document.queryCommandState(_this.options.command);
+          } catch (e) {
+            return;
+          }
+          if (state) {
             _this.button.attr('checked', true);
             _this.button.next('label').addClass('ui-state-clicked');
             _this.button.button('refresh');
@@ -1505,11 +1644,17 @@
           return _this.button.button('refresh');
         };
         editableElement.bind('halloenabled', function() {
-          return editableElement.bind('keyup paste change mouseup', queryState);
+          return editableElement.bind('keyup paste change mouseup hallomodified', queryState);
         });
         return editableElement.bind('hallodisabled', function() {
-          return editableElement.unbind('keyup paste change mouseup', queryState);
+          return editableElement.unbind('keyup paste change mouseup hallomodified', queryState);
         });
+      },
+      enable: function() {
+        return this.button.button('enable');
+      },
+      disable: function() {
+        return this.button.button('disable');
       },
       _prepareButton: function() {
         var button, buttonEl, id;

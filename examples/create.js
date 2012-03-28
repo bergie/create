@@ -21,7 +21,8 @@
         url: null
       },
       notifications: {},
-      vie: null
+      vie: null,
+      stanbolUrl: null
     },
 
     _create: function () {
@@ -31,6 +32,12 @@
         this.vie = new VIE({
           classic: true
         });
+        if (this.options.stanbolUrl) {
+          this.vie.use(new this.vie.StanbolService({
+            proxyDisabled: true,
+            url: this.options.stanbolUrl
+          }));
+        }
       }
       this._checkSession();
       this._enableToolbar();
@@ -327,8 +334,6 @@
         return true;
       }
 
-
-
       var editable = this.options.enableEditor({
         widget: this,
         element: element,
@@ -336,6 +341,7 @@
         property: propertyName,
         editorOptions: this.options.editorOptions,
         toolbarState: this.options.toolbarState,
+        vie: this.vie,
         modified: function (content) {
           var changedProperties = {};
           changedProperties[propertyName] = content;
@@ -432,7 +438,8 @@
 (function (jQuery, undefined) {
   jQuery.widget('Create.editWidget', {
     options: {
-      disabled: false
+      disabled: false,
+      vie: null
     },
     // override to enable the widget
     enable: function () {
@@ -517,7 +524,8 @@
   jQuery.widget('Create.halloWidget', jQuery.Create.editWidget, {
     options: {
       disabled: true,
-      toolbarState: 'full'
+      toolbarState: 'full',
+      vie: null
     },
     enable: function () {
       jQuery(this.element).hallo({
@@ -560,11 +568,18 @@
         plugins: {
           halloformat: {},
           halloblock: {},
-          hallolists: {}
+          hallolists: {},
         },
         buttonCssClass: 'create-ui-btn-small',
         placeholder: '[' + this.options.property + ']'
       };
+      if (typeof this.element.annotate === 'function' && this.options.vie.services.stanbol) {
+        // Enable Hallo Annotate plugin by default if user has annotate.js
+        // loaded and VIE has Stanbol enabled
+        defaults.plugins['halloannotate'] = {
+            vie: this.options.vie
+        };
+      }
 
       if (this.options.toolbarState === 'full') {
         // Use fixed toolbar in the Create tools area
@@ -1913,6 +1928,9 @@
     },
 
     _fetchModelWorkflows: function (model) {
+      if (model.isNew()) {
+        return;
+      }
       var widget = this;
 
       widget.workflows[model.cid] = new(this._generateCollectionFor(model))([], {});
