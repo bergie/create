@@ -91,7 +91,7 @@
         return this.options.saveButton;
       }
 
-      jQuery('.create-ui-toolbar-statustoolarea .create-ui-statustools', this.element).append(jQuery('<li id="midgardcreate-save"><a class="create-ui-btn">Save</a></li>'));
+      jQuery('.create-ui-toolbar-statustoolarea .create-ui-statustools', this.element).append(jQuery('<li id="midgardcreate-save"><a class="create-ui-btn">Save <i class="icon-ok"></i></a></li>'));
       this.options.saveButton = jQuery('#midgardcreate-save', this.element);
       this.options.saveButton.hide();
       return this.options.saveButton;
@@ -99,7 +99,7 @@
 
     _editButton: function () {
       var widget = this;
-      jQuery('.create-ui-toolbar-statustoolarea .create-ui-statustools', this.element).append(jQuery('<li id="midgardcreate-edit"><a class="create-ui-btn">Edit</a></li>'));
+      jQuery('.create-ui-toolbar-statustoolarea .create-ui-statustools', this.element).append(jQuery('<li id="midgardcreate-edit"><a class="create-ui-btn">Edit <i class="icon-edit"></i></a></li>'));
       var editButton = jQuery('#midgardcreate-edit', this.element);
       if (this.options.state === 'edit') {
         editButton.addClass('selected');
@@ -520,10 +520,15 @@
     _initialize: function () {
       var defaultOptions = {
         plugins: {
-          halloformat: {}
+          halloformat: {},
+          halloblock: {},
+          hallolists: {}
         },
         editable: true,
-        placeholder: '[' + this.options.property + ']'
+        placeholder: '[' + this.options.property + ']',
+        parentElement: jQuery('.create-ui-toolbar-dynamictoolarea .create-ui-tool-freearea'),
+        showAlways: true,
+        fixed: true
       };
       var editorOptions = {};
       if (this.options.editorOptions[this.options.property]) {
@@ -1587,17 +1592,15 @@
       this.element.append(this._getFull());
 
       var widget = this;
-      jQuery('#midgard-bar-minimized').click(function () {
-        widget.show();
-        widget._trigger('statechange', null, {
-          display: 'full'
-        });
-      });
-      jQuery('#midgard-bar-hidebutton').click(function () {
-        widget.hide();
-        widget._trigger('statechange', null, {
-          display: 'minimized'
-        });
+      jQuery('.create-ui-toggle').click(function () {
+        if (widget.options.display === 'full') {
+          widget.hide();
+          widget.options.display = 'minimized';
+        } else {
+          widget.show();
+          widget.options.display = 'full';
+        }
+        widget._trigger('statechange', null, widget.options);
       });
 
       this._setDisplay(this.options.display);
@@ -1651,11 +1654,11 @@
     },
 
     _getMinimized: function () {
-      return jQuery('<div class="create-ui-logo"><a class="create-ui-toggle" id="create-ui-toggle-toolbar" href="#"><img style="border: 0 none;" src="../themes/create-ui/img/create-ui-logo.png" alt="here" height="41" width="38" /></a></div>');
+      return jQuery('<div class="create-ui-logo"><a class="create-ui-toggle" id="create-ui-toggle-toolbar"></a></div>');
     },
 
     _getFull: function () {
-      return jQuery('<div class="create-ui-toolbar-wrapper"><div class="create-ui-toolbar-toolarea"><div class="create-ui-toolbar-dynamictoolarea"><ul class="create-ui-dynamictools create-ui-toolset-1"></ul></div><div class="create-ui-toolbar-statustoolarea"><ul class="create-ui-statustools"></ul></div></div></div>');
+      return jQuery('<div class="create-ui-toolbar-wrapper"><div class="create-ui-toolbar-toolarea"><div class="create-ui-toolbar-dynamictoolarea"><ul class="create-ui-dynamictools create-ui-toolset-1"><li class="create-ui-tool-freearea"></li></ul></div><div class="create-ui-toolbar-statustoolarea"><ul class="create-ui-statustools"></ul></div></div></div>');
     },
 
     _createWorkflowsHolder: function () {

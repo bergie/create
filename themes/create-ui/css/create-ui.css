@@ -42,7 +42,7 @@
 }
 
 
-.create-ui-logo{
+.create-ui-logo {
     left: 0;
     margin: 0;
     padding: 0;
@@ -57,9 +57,14 @@
     padding: 10px 10px 5px 5px;
 }
 
-.create-ui-toggle a {
+a.create-ui-toggle {
+    display: block;
     color: #0088CC;
     text-decoration: none;
+    width: 38px;
+    height: 41px;
+    background-image: url("../img/create-ui-logo.png");
+    background-repeat: no-repeat;
 }
 
 .create-ui-toolbar-toolarea {

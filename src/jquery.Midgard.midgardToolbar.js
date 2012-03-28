@@ -10,17 +10,15 @@
       this.element.append(this._getFull());
 
       var widget = this;
-      jQuery('#midgard-bar-minimized').click(function () {
-        widget.show();
-        widget._trigger('statechange', null, {
-          display: 'full'
-        });
-      });
-      jQuery('#midgard-bar-hidebutton').click(function () {
-        widget.hide();
-        widget._trigger('statechange', null, {
-          display: 'minimized'
-        });
+      jQuery('.create-ui-toggle').click(function () {
+        if (widget.options.display === 'full') {
+          widget.hide();
+          widget.options.display = 'minimized';
+        } else {
+          widget.show();
+          widget.options.display = 'full';
+        }
+        widget._trigger('statechange', null, widget.options);
       });
 
       this._setDisplay(this.options.display);
@@ -74,11 +72,11 @@
     },
 
     _getMinimized: function () {
-      return jQuery('<div class="create-ui-logo"><a class="create-ui-toggle" id="create-ui-toggle-toolbar" href="#"><img style="border: 0 none;" src="../themes/create-ui/img/create-ui-logo.png" alt="here" height="41" width="38" /></a></div>');
+      return jQuery('<div class="create-ui-logo"><a class="create-ui-toggle" id="create-ui-toggle-toolbar"></a></div>');
     },
 
     _getFull: function () {
-      return jQuery('<div class="create-ui-toolbar-wrapper"><div class="create-ui-toolbar-toolarea"><div class="create-ui-toolbar-dynamictoolarea"><ul class="create-ui-dynamictools create-ui-toolset-1"></ul></div><div class="create-ui-toolbar-statustoolarea"><ul class="create-ui-statustools"></ul></div></div></div>');
+      return jQuery('<div class="create-ui-toolbar-wrapper"><div class="create-ui-toolbar-toolarea"><div class="create-ui-toolbar-dynamictoolarea"><ul class="create-ui-dynamictools create-ui-toolset-1"><li class="create-ui-tool-freearea"></li></ul></div><div class="create-ui-toolbar-statustoolarea"><ul class="create-ui-statustools"></ul></div></div></div>');
     },
 
     _createWorkflowsHolder: function () {

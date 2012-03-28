@@ -91,7 +91,7 @@
         return this.options.saveButton;
       }
 
-      jQuery('.create-ui-toolbar-statustoolarea .create-ui-statustools', this.element).append(jQuery('<li id="midgardcreate-save"><a class="create-ui-btn">Save</a></li>'));
+      jQuery('.create-ui-toolbar-statustoolarea .create-ui-statustools', this.element).append(jQuery('<li id="midgardcreate-save"><a class="create-ui-btn">Save <i class="icon-ok"></i></a></li>'));
       this.options.saveButton = jQuery('#midgardcreate-save', this.element);
       this.options.saveButton.hide();
       return this.options.saveButton;
@@ -99,7 +99,7 @@
 
     _editButton: function () {
       var widget = this;
-      jQuery('.create-ui-toolbar-statustoolarea .create-ui-statustools', this.element).append(jQuery('<li id="midgardcreate-edit"><a class="create-ui-btn">Edit</a></li>'));
+      jQuery('.create-ui-toolbar-statustoolarea .create-ui-statustools', this.element).append(jQuery('<li id="midgardcreate-edit"><a class="create-ui-btn">Edit <i class="icon-edit"></i></a></li>'));
       var editButton = jQuery('#midgardcreate-edit', this.element);
       if (this.options.state === 'edit') {
         editButton.addClass('selected');
