@@ -58,6 +58,7 @@
 }
 
 a.create-ui-toggle {
+    margin: 10px 10px 5px 5px;
     display: block;
     color: #0088CC;
     text-decoration: none;
@@ -75,6 +76,7 @@ a.create-ui-toggle {
 }
 
 .create-ui-toolbar-dynamictoolarea {
+    margin-left: 60px;
     float: left;
 }
 
@@ -187,6 +189,49 @@ a.create-ui-toggle {
 .create-ui-tool-freearea {
     margin-top: 15px;
     margin-left: 15px;
+}
+
+.create-ui-btn-small {
+    border: none;
+    background-color: transparent;
+    color: #ffffff;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 14px;
+    line-height: 20px;
+    margin-bottom: 0;
+    padding: 4px 4px;
+    text-align: center;
+    /*text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);*/
+    vertical-align: middle;
+    margin-left: 2px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    opacity: 0.9;
+    filter: alpha(opacity=90); 
+}
+
+button.create-ui-btn-small {
+    width: 18px;
+    height: 21px;
+}
+
+.create-ui-toolbar-wrapper .ui-buttonset input[type="checkbox"].create-ui-btn-small {
+    display: none !important;
+}
+
+.create-ui-toolbar-wrapper .ui-buttonset {
+    margin: 0;
+    padding: 0;
+}
+
+.create-ui-btn-small:hover, .create-ui-toolbar-wrapper .ui-state-clicked {
+    background-color: #393939;
+    border-radius: 6px;
+    background-position: 0 -30px;
+    color: #ffffff;
+    text-decoration: none;
+    border-color: #ffffff #ffffff #ffffff;
 }
 /* CREATE UI BUTTONS STYLES END */
 
@@ -325,6 +370,26 @@ a.create-ui-toggle {
     position: absolute;
     top: 100%;
     z-index: 1000;
+}
+
+.dropdown-menu .menu-item {
+    margin: 0px;
+    padding: 6px;
+    border-radius: 6px;
+}
+
+.dropdown-menu .disabled {
+    color: #393939;
+}
+
+.dropdown-menu .menu-item:hover, .dropdown-menu .selected {
+    background-color: #393939;
+    color: #ffffff;
+}
+
+.dropdown-menu .disabled:hover {
+    color: #393939;
+    background-color: transparent;
 }
 
 .create-ui-dynamictools .dropdown-menu:before {

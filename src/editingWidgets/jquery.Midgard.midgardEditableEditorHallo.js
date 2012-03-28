@@ -23,7 +23,8 @@
         placeholder: '[' + this.options.property + ']',
         parentElement: jQuery('.create-ui-toolbar-dynamictoolarea .create-ui-tool-freearea'),
         showAlways: true,
-        fixed: true
+        fixed: true,
+        buttonCssClass: 'create-ui-btn-small'
       };
       var editorOptions = {};
       if (this.options.editorOptions[this.options.property]) {

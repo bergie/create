@@ -406,7 +406,7 @@
         //itemView.el.hide('drop');
       });
 
-      widget.options.addButton = jQuery('<button>Add</button>').button();
+      widget.options.addButton = jQuery('<button class="btn"><i class="icon-plus"></i> Add</button>').button();
       widget.options.addButton.addClass('midgard-create-add');
       widget.options.addButton.click(function () {
         collectionView.collection.add({});
@@ -528,7 +528,8 @@
         placeholder: '[' + this.options.property + ']',
         parentElement: jQuery('.create-ui-toolbar-dynamictoolarea .create-ui-tool-freearea'),
         showAlways: true,
-        fixed: true
+        fixed: true,
+        buttonCssClass: 'create-ui-btn-small'
       };
       var editorOptions = {};
       if (this.options.editorOptions[this.options.property]) {
@@ -1605,7 +1606,6 @@
 
       this._setDisplay(this.options.display);
 
-      this._createWorkflowsHolder();
       widget = this;
 
       jQuery(this.element).bind('midgardcreatestatechange', function (event, options) {
@@ -1618,15 +1618,13 @@
         widget._clearWorkflows();
         if (options.workflows.length) {
           options.workflows.each(function (workflow) {
-            html = jQuery('body').data().midgardWorkflows.prepareItem(model, workflow, function (err, model) {
+            html = jQuery('body').data().midgardWorkflows.prepareItem(options.instance, workflow, function (err, model) {
               widget._clearWorkflows();
               if (err) {
-                //console.log('WORKFLOW ACTION FAILED',err);
                 return;
               }
-              //console.log('WORKFLOW ACTION FINISHED');
             });
-            jQuery('.workflows-holder', this.element).append(html);
+            jQuery('.create-ui-tool-workflowarea', this.element).append(html);
           });
         }
       });
@@ -1658,18 +1656,11 @@
     },
 
     _getFull: function () {
-      return jQuery('<div class="create-ui-toolbar-wrapper"><div class="create-ui-toolbar-toolarea"><div class="create-ui-toolbar-dynamictoolarea"><ul class="create-ui-dynamictools create-ui-toolset-1"><li class="create-ui-tool-freearea"></li></ul></div><div class="create-ui-toolbar-statustoolarea"><ul class="create-ui-statustools"></ul></div></div></div>');
-    },
-
-    _createWorkflowsHolder: function () {
-      if (jQuery('.workflows-holder', this.element).length) {
-        return;
-      }
-      jQuery('.toolbarcontent-center', this.element).append('<div class="workflows-holder" />');
+      return jQuery('<div class="create-ui-toolbar-wrapper"><div class="create-ui-toolbar-toolarea"><div class="create-ui-toolbar-dynamictoolarea"><ul class="create-ui-dynamictools create-ui-toolset-1"><li class="create-ui-tool-workflowarea"></li><li class="create-ui-tool-freearea"></li></ul></div><div class="create-ui-toolbar-statustoolarea"><ul class="create-ui-statustools"></ul></div></div></div>');
     },
 
     _clearWorkflows: function () {
-      jQuery('.workflows-holder', this.element).empty();
+      jQuery('.create-ui-tool-workflowarea', this.element).empty();
     }
   });
 })(jQuery);
@@ -1681,7 +1672,7 @@
       renderers: {
         button: function (model, workflow, action_cb, final_cb) {
           button_id = 'midgardcreate-workflow_' + workflow.get('name');
-          html = jQuery('<button id="' + button_id + '">' + workflow.get('label') + '</button>').button();
+          html = jQuery('<button class="create-ui-btn" id="' + button_id + '">' + workflow.get('label') + '</button>').button();
 
           html.bind('click', function (evt) {
             action_cb(model, workflow, final_cb);
@@ -1790,44 +1781,48 @@
 
       var widget = this;
       jQuery(this.element).bind('midgardeditableactivated', function (event, options) {
-        model = options.instance;
-        if (model.isNew()) {
-          widget._trigger('changed', null, {
-            instance: model,
-            workflows: []
-          });
-          return;
-        }
+        widget._fetchWorkflows(options.instance);
+      });
+    },
 
-        if (widget._last_instance == model) {
-          if (widget.workflows[model.cid]) {
-            widget._trigger('changed', null, {
-              instance: model,
-              workflows: widget.workflows[model.cid]
-            });
-          }
-          return;
-        }
-        widget._last_instance = model;
+    _fetchWorkflows: function (model) {
+      var widget = this;
+      if (model.isNew()) {
+        widget._trigger('changed', null, {
+          instance: model,
+          workflows: []
+        });
+        return;
+      }
 
+      if (widget._last_instance == model) {
         if (widget.workflows[model.cid]) {
           widget._trigger('changed', null, {
             instance: model,
             workflows: widget.workflows[model.cid]
           });
-          return;
         }
+        return;
+      }
+      widget._last_instance = model;
 
-        if (widget.options.url) {
-          widget._fetchModelWorkflows(model);
-        } else {
-          flows = new(widget._generateCollectionFor(model))([], {});
-          widget._trigger('changed', null, {
-            instance: model,
-            workflows: flows
-          });
-        }
-      });
+      if (widget.workflows[model.cid]) {
+        widget._trigger('changed', null, {
+          instance: model,
+          workflows: widget.workflows[model.cid]
+        });
+        return;
+      }
+
+      if (widget.options.url) {
+        widget._fetchModelWorkflows(model);
+      } else {
+        flows = new(widget._generateCollectionFor(model))([], {});
+        widget._trigger('changed', null, {
+          instance: model,
+          workflows: flows
+        });
+      }
     },
 
     _parseRenderersAndTypes: function () {
@@ -1866,7 +1861,10 @@
       return renderer(model, workflow, action_type_cb, function (err, m) {
         delete widget.workflows[model.cid];
         widget._last_instance = null;
-
+        if (workflow.get('action').type !== 'backbone_destroy') {
+          // Get an updated list of workflows
+          widget._fetchModelWorkflows(model);
+        }
         final_cb(err, m);
       });
     },
