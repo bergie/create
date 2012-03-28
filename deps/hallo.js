@@ -1560,12 +1560,11 @@
         return target.hide();
       },
       _updateTargetPosition: function() {
-        var left, target, toolbarLeft, toolbarTop, top, _ref, _ref2;
+        var bottom, left, target, _ref;
         target = jQuery(this.options.target);
-        _ref = this.element.offset(), top = _ref.top, left = _ref.left;
-        _ref2 = this.options.editable.toolbar.offset(), toolbarTop = _ref2.toolbarTop, toolbarLeft = _ref2.toolbarLeft;
-        target.css('top', left - toolbarLeft);
-        return target.css('left', top - toolbarTop);
+        _ref = this.element.position(), bottom = _ref.bottom, left = _ref.left;
+        target.css('top', bottom);
+        return target.css('left', left - 20);
       },
       _prepareButton: function() {
         var button, buttonEl, id;
