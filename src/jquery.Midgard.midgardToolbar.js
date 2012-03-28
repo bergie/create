@@ -23,7 +23,6 @@
 
       this._setDisplay(this.options.display);
 
-      this._createWorkflowsHolder();
       widget = this;
 
       jQuery(this.element).bind('midgardcreatestatechange', function (event, options) {
@@ -36,15 +35,13 @@
         widget._clearWorkflows();
         if (options.workflows.length) {
           options.workflows.each(function (workflow) {
-            html = jQuery('body').data().midgardWorkflows.prepareItem(model, workflow, function (err, model) {
+            html = jQuery('body').data().midgardWorkflows.prepareItem(options.instance, workflow, function (err, model) {
               widget._clearWorkflows();
               if (err) {
-                //console.log('WORKFLOW ACTION FAILED',err);
                 return;
               }
-              //console.log('WORKFLOW ACTION FINISHED');
             });
-            jQuery('.workflows-holder', this.element).append(html);
+            jQuery('.create-ui-tool-workflowarea', this.element).append(html);
           });
         }
       });
@@ -76,18 +73,11 @@
     },
 
     _getFull: function () {
-      return jQuery('<div class="create-ui-toolbar-wrapper"><div class="create-ui-toolbar-toolarea"><div class="create-ui-toolbar-dynamictoolarea"><ul class="create-ui-dynamictools create-ui-toolset-1"><li class="create-ui-tool-freearea"></li></ul></div><div class="create-ui-toolbar-statustoolarea"><ul class="create-ui-statustools"></ul></div></div></div>');
-    },
-
-    _createWorkflowsHolder: function () {
-      if (jQuery('.workflows-holder', this.element).length) {
-        return;
-      }
-      jQuery('.toolbarcontent-center', this.element).append('<div class="workflows-holder" />');
+      return jQuery('<div class="create-ui-toolbar-wrapper"><div class="create-ui-toolbar-toolarea"><div class="create-ui-toolbar-dynamictoolarea"><ul class="create-ui-dynamictools create-ui-toolset-1"><li class="create-ui-tool-workflowarea"></li><li class="create-ui-tool-freearea"></li></ul></div><div class="create-ui-toolbar-statustoolarea"><ul class="create-ui-statustools"></ul></div></div></div>');
     },
 
     _clearWorkflows: function () {
-      jQuery('.workflows-holder', this.element).empty();
+      jQuery('.create-ui-tool-workflowarea', this.element).empty();
     }
   });
 })(jQuery);
