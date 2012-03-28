@@ -20,9 +20,9 @@
           original_model = model.clone();
           original_model.url = copy_of_url;
 
-          action = workflow.get("action")
+          action = workflow.get('action');
           if (action.url) {
-            model.url = action.url
+            model.url = action.url;
           }
           original_model.save(null, {
             success: function (m) {
@@ -42,9 +42,9 @@
           original_model = model.clone();
           original_model.url = copy_of_url;
 
-          action = workflow.get("action")
+          action = workflow.get('action');
           if (action.url) {
-            model.url = action.url
+            model.url = action.url;
           }
 
           model.destroy({
@@ -61,7 +61,7 @@
           });
         },
         http: function (model, workflow, callback) {
-          action = workflow.get("action")
+          action = workflow.get('action');
           if (!action.url) {
             return callback('No action url defined!');
           }
@@ -201,7 +201,7 @@
         model: this.ModelWorkflowModel
       };
       if (this.options.url) {
-        collectionSettings['url'] = this.options.url(model);
+        collectionSettings.url = this.options.url(model);
       }
       return Backbone.Collection.extend(collectionSettings);
     },

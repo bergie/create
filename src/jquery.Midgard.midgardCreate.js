@@ -139,7 +139,7 @@
         disabled: false,
         vie: widget.vie,
         widgets: widget.options.editorWidgets,
-        editorOptions: widget.options.editorOptions,
+        editorOptions: widget.options.editorOptions
       };
       if (widget.options.enableEditor) {
         editableOptions[enableEditor] = widget.options.enableEditor;
@@ -182,7 +182,7 @@
         disabled: true,
         vie: widget.vie,
         editor: widget.options.editor,
-        editorOptions: widget.options.editorOptions,
+        editorOptions: widget.options.editorOptions
       };
       if (widget.options.enableEditor) {
         editableOptions[enableEditor] = widget.options.enableEditor;

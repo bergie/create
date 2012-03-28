@@ -34,12 +34,12 @@
           onShow: function (item, cb) {
             item.animate({
               opacity: 'show'
-            }, 600, cb)
+            }, 600, cb);
           },
           onHide: function (item, cb) {
             item.animate({
               opacity: 'hide'
-            }, 600, cb)
+            }, 600, cb);
           }
         },
         actions: [],
@@ -99,7 +99,7 @@
             outer.addClass(_classes.item.wrapper + '-normal');
           }
 
-          var content = jQuery('<div class="' + _classes.item.content + '"/>');
+          content = jQuery('<div class="' + _classes.item.content + '"/>');
           content.html(_config.body);
           content.appendTo(inner);
 
@@ -252,15 +252,15 @@
           };
 
           var activeHeight = function (items) {
-              var total_height = 0;
-              jQuery.each(items, function (i, item) {
-                if (!item) {
-                  return;
-                }
-                total_height += item.getElement().height();
-              });
-              return total_height;
-            }
+            var total_height = 0;
+            jQuery.each(items, function (i, item) {
+              if (!item) {
+                return;
+              }
+              total_height += item.getElement().height();
+            });
+            return total_height;
+          };
 
           if (_config.position.match(/top/)) {
             pos.top = marginTop + activeHeight(_midgardnotifications_active) + 'px';
@@ -279,23 +279,24 @@
         },
         show: function () {
           var self = this;
+          var w_t, w_b, b_b, b_t, e_t, e_h;
 
           if (_config.callbacks.beforeShow) {
             _config.callbacks.beforeShow(self);
           }
 
           if (_config.bindTo) {
-            var w_t = jQuery(window).scrollTop();
-            var w_b = jQuery(window).scrollTop() + jQuery(window).height();
-            var b_t = parseFloat(_item.offset().top, 10);
-            var e_t = _bind_target.offset().top;
-            var e_h = _bind_target.outerHeight();
+            w_t = jQuery(window).scrollTop();
+            w_b = jQuery(window).scrollTop() + jQuery(window).height();
+            b_t = parseFloat(_item.offset().top, 10);
+            e_t = _bind_target.offset().top;
+            e_h = _bind_target.outerHeight();
 
             if (e_t < b_t) {
               b_t = e_t;
             }
 
-            var b_b = parseFloat(_item.offset().top, 10) + _item.height();
+            b_b = parseFloat(_item.offset().top, 10) + _item.height();
             if ((e_t + e_h) > b_b) {
               b_b = e_t + e_h;
             }

@@ -17,18 +17,18 @@
 
       // insert settings pane
       var id = subject.replace(/[^A-Za-z]/g, '-');
-      this.pane = $('<div class="hiddenfieldsContainer"><div class="hiddenfieldsToggle"></div><div class="hiddenfields"><div class="hiddenfieldsCloseButton"></div><h2>Article settings</h2><div id="articleTagsWrapper"><form><div class="articleTags"><h3>Article tags</h3><input type="text" id="' + id + '-articleTags" class="tags" value="" /></div><div class="articleSuggestedTags"><h3>Suggested tags</h3><input type="text" id="' + id + '-suggestedTags" class="tags" value="" /></div></form></div></div><div class="hiddenfieldsCloseCorner"></div></div>')
+      this.pane = jQuery('<div class="hiddenfieldsContainer"><div class="hiddenfieldsToggle"></div><div class="hiddenfields"><div class="hiddenfieldsCloseButton"></div><h2>Article settings</h2><div id="articleTagsWrapper"><form><div class="articleTags"><h3>Article tags</h3><input type="text" id="' + id + '-articleTags" class="tags" value="" /></div><div class="articleSuggestedTags"><h3>Suggested tags</h3><input type="text" id="' + id + '-suggestedTags" class="tags" value="" /></div></form></div></div><div class="hiddenfieldsCloseCorner"></div></div>');
       this.pane = this.pane.insertBefore(this.element);
       this.articleTags = this.pane.find('.articleTags input');
       this.suggestedTags = this.pane.find('.articleSuggestedTags input');
 
       // bind toggle events for settings pane
       this.pane.find('.hiddenfieldsToggle').click(function (event) {
-        var context = $(this).closest('.hiddenfieldsContainer');
-        $('.hiddenfields', context).show();
-        $('.hiddenfieldsToggle', context).hide();
-        $('.hiddenfieldsCloseCorner', context).show();
-        $('.hiddenfieldsCloseButton', context).show();
+        var context = jQuery(this).closest('.hiddenfieldsContainer');
+        jQuery('.hiddenfields', context).show();
+        jQuery('.hiddenfieldsToggle', context).hide();
+        jQuery('.hiddenfieldsCloseCorner', context).show();
+        jQuery('.hiddenfieldsCloseButton', context).show();
       });
 
       var that = this;
@@ -36,8 +36,8 @@
         that.closeTags();
       });
 
-      $(document).click(function (e) {
-        if ($(e.target).closest('.hiddenfieldsContainer').size() == 0 && $('.hiddenfieldsCloseCorner:visible').length > 0) {
+      jQuery(document).click(function (e) {
+        if (jQuery(e.target).closest('.hiddenfieldsContainer').size() === 0 && jQuery('.hiddenfieldsCloseCorner:visible').length > 0) {
           that.closeTags();
         }
       });
@@ -77,10 +77,10 @@
       });
 
       // add suggested tag on click to tags
-      $('#' + id + '-suggestedTags_tagsinput .tag span').live('click', function () {
+      jQuery('#' + id + '-suggestedTags_tagsinput .tag span').live('click', function () {
 
-        var tag = $(this).text();
-        that.articleTags.addTag($(this).data('value'));
+        var tag = jQuery(this).text();
+        that.articleTags.addTag(jQuery(this).data('value'));
         that.suggestedTags.removeTag($.trim(tag));
 
         return false;
@@ -90,11 +90,11 @@
     },
 
     closeTags: function () {
-      var context = $('.hiddenfieldsContainer');
-      $('.hiddenfields', context).hide();
-      $('.hiddenfieldsToggle', context).show();
-      $('.hiddenfieldsCloseCorner', context).hide();
-      $('.hiddenfieldsCloseButton', context).hide();
+      var context = jQuery('.hiddenfieldsContainer');
+      jQuery('.hiddenfields', context).hide();
+      jQuery('.hiddenfieldsToggle', context).show();
+      jQuery('.hiddenfieldsCloseCorner', context).hide();
+      jQuery('.hiddenfieldsCloseButton', context).hide();
 
       // save on close
       this.options.deactivated();
@@ -114,7 +114,7 @@
       that.vie.analyze({
         element: this.options.entityElement
       }).using(['stanbol']).execute().success(function (enhancements) {
-        return $(enhancements).each(function (i, e) {
+        return jQuery(enhancements).each(function (i, e) {
 
           if (typeof e.attributes == 'undefined') {
 
