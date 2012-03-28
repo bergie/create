@@ -45,16 +45,12 @@
           widget.options.changedModels.push(options.instance);
         }
         widget._saveLocal(options.instance);
-        jQuery('#midgardcreate-save').button({
-          disabled: false
-        });
+        jQuery('#midgardcreate-save').show();
       });
 
       widget.element.bind('midgardeditabledisable', function (event, options) {
         widget._restoreLocal(options.instance);
-        jQuery('#midgardcreate-save').button({
-          disabled: true
-        });
+        jQuery('#midgardcreate-save').hide();
       });
 
       widget.element.bind('midgardeditableenable', function (event, options) {

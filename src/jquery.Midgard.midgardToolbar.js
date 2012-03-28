@@ -6,7 +6,7 @@
     },
 
     _create: function () {
-      this.element.append(this._getMinimized().hide());
+      this.element.append(this._getMinimized());
       this.element.append(this._getFull());
 
       var widget = this;
@@ -62,27 +62,23 @@
     _setDisplay: function (value) {
       if (value === 'minimized') {
         this.hide();
-      } else {
-        this.show();
-      }
+      } 
     },
 
     hide: function () {
-      jQuery('#midgard-bar:visible', this.element).slideToggle();
-      jQuery('#midgard-bar-minimized:hidden', this.element).slideToggle();
+      jQuery('div.create-ui-toolbar-wrapper').fadeToggle('fast', 'linear');
     },
 
     show: function () {
-      jQuery('#midgard-bar-minimized:visible', this.element).slideToggle();
-      jQuery('#midgard-bar:hidden', this.element).slideToggle();
+      jQuery('div.create-ui-toolbar-wrapper').fadeToggle('fast', 'linear');
     },
 
     _getMinimized: function () {
-      return jQuery('<a id="midgard-bar-minimized" class="midgard-create ui-widget-showbut"></a>');
+      return jQuery('<div class="create-ui-logo"><a class="create-ui-toggle" id="create-ui-toggle-toolbar" href="#"><img style="border: 0 none;" src="../themes/create-ui/img/create-ui-logo.png" alt="here" height="41" width="38" /></a></div>');
     },
 
     _getFull: function () {
-      return jQuery('<div class="midgard-create" id="midgard-bar"><div class="ui-widget-content"><div class="toolbarcontent"><div class="midgard-logo-button"><a id="midgard-bar-hidebutton" class="ui-widget-hidebut"></a></div><div class="toolbarcontent-left"></div><div class="toolbarcontent-center"></div><div class="toolbarcontent-right"></div></div></div>');
+      return jQuery('<div class="create-ui-toolbar-wrapper"><div class="create-ui-toolbar-toolarea"><div class="create-ui-toolbar-dynamictoolarea"><ul class="create-ui-dynamictools create-ui-toolset-1"></ul></div><div class="create-ui-toolbar-statustoolarea"><ul class="create-ui-statustools"></ul></div></div></div>');
     },
 
     _createWorkflowsHolder: function () {

@@ -91,25 +91,21 @@
         return this.options.saveButton;
       }
 
-      jQuery('#midgard-bar .toolbarcontent-right', this.element).append(jQuery('<button id="midgardcreate-save">Save</button>'));
+      jQuery('.create-ui-toolbar-statustoolarea .create-ui-statustools', this.element).append(jQuery('<li id="midgardcreate-save"><a class="create-ui-btn">Save</a></li>'));
       this.options.saveButton = jQuery('#midgardcreate-save', this.element);
-      this.options.saveButton.button({
-        disabled: true
-      });
+      this.options.saveButton.hide();
       return this.options.saveButton;
     },
 
     _editButton: function () {
       var widget = this;
-      jQuery('#midgard-bar .toolbarcontent-right', this.element).append(jQuery('<input type="checkbox" id="midgardcreate-edit" /><label for="midgardcreate-edit">Edit</label>'));
-      var editButton = jQuery('#midgardcreate-edit', this.element).button();
+      jQuery('.create-ui-toolbar-statustoolarea .create-ui-statustools', this.element).append(jQuery('<li id="midgardcreate-edit"><a class="create-ui-btn">Edit</a></li>'));
+      var editButton = jQuery('#midgardcreate-edit', this.element);
       if (this.options.state === 'edit') {
-        editButton.attr('checked', true);
-        editButton.button('refresh');
+        editButton.addClass('selected');
       }
-      editButton.bind('change', function () {
+      editButton.bind('click', function () {
         if (widget.options.state === 'edit') {
-          //editButton.attr('checked', false);
           widget._disableEdit();
           return;
         }

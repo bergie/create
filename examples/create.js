@@ -91,25 +91,21 @@
         return this.options.saveButton;
       }
 
-      jQuery('#midgard-bar .toolbarcontent-right', this.element).append(jQuery('<button id="midgardcreate-save">Save</button>'));
+      jQuery('.create-ui-toolbar-statustoolarea .create-ui-statustools', this.element).append(jQuery('<li id="midgardcreate-save"><a class="create-ui-btn">Save</a></li>'));
       this.options.saveButton = jQuery('#midgardcreate-save', this.element);
-      this.options.saveButton.button({
-        disabled: true
-      });
+      this.options.saveButton.hide();
       return this.options.saveButton;
     },
 
     _editButton: function () {
       var widget = this;
-      jQuery('#midgard-bar .toolbarcontent-right', this.element).append(jQuery('<input type="checkbox" id="midgardcreate-edit" /><label for="midgardcreate-edit">Edit</label>'));
-      var editButton = jQuery('#midgardcreate-edit', this.element).button();
+      jQuery('.create-ui-toolbar-statustoolarea .create-ui-statustools', this.element).append(jQuery('<li id="midgardcreate-edit"><a class="create-ui-btn">Edit</a></li>'));
+      var editButton = jQuery('#midgardcreate-edit', this.element);
       if (this.options.state === 'edit') {
-        editButton.attr('checked', true);
-        editButton.button('refresh');
+        editButton.addClass('selected');
       }
-      editButton.bind('change', function () {
+      editButton.bind('click', function () {
         if (widget.options.state === 'edit') {
-          //editButton.attr('checked', false);
           widget._disableEdit();
           return;
         }
@@ -139,7 +135,7 @@
         disabled: false,
         vie: widget.vie,
         widgets: widget.options.editorWidgets,
-        editorOptions: widget.options.editorOptions,
+        editorOptions: widget.options.editorOptions
       };
       if (widget.options.enableEditor) {
         editableOptions[enableEditor] = widget.options.enableEditor;
@@ -182,7 +178,7 @@
         disabled: true,
         vie: widget.vie,
         editor: widget.options.editor,
-        editorOptions: widget.options.editorOptions,
+        editorOptions: widget.options.editorOptions
       };
       if (widget.options.enableEditor) {
         editableOptions[enableEditor] = widget.options.enableEditor;
@@ -587,12 +583,12 @@
           onShow: function (item, cb) {
             item.animate({
               opacity: 'show'
-            }, 600, cb)
+            }, 600, cb);
           },
           onHide: function (item, cb) {
             item.animate({
               opacity: 'hide'
-            }, 600, cb)
+            }, 600, cb);
           }
         },
         actions: [],
@@ -652,7 +648,7 @@
             outer.addClass(_classes.item.wrapper + '-normal');
           }
 
-          var content = jQuery('<div class="' + _classes.item.content + '"/>');
+          content = jQuery('<div class="' + _classes.item.content + '"/>');
           content.html(_config.body);
           content.appendTo(inner);
 
@@ -805,15 +801,15 @@
           };
 
           var activeHeight = function (items) {
-              var total_height = 0;
-              jQuery.each(items, function (i, item) {
-                if (!item) {
-                  return;
-                }
-                total_height += item.getElement().height();
-              });
-              return total_height;
-            }
+            var total_height = 0;
+            jQuery.each(items, function (i, item) {
+              if (!item) {
+                return;
+              }
+              total_height += item.getElement().height();
+            });
+            return total_height;
+          };
 
           if (_config.position.match(/top/)) {
             pos.top = marginTop + activeHeight(_midgardnotifications_active) + 'px';
@@ -832,23 +828,24 @@
         },
         show: function () {
           var self = this;
+          var w_t, w_b, b_b, b_t, e_t, e_h;
 
           if (_config.callbacks.beforeShow) {
             _config.callbacks.beforeShow(self);
           }
 
           if (_config.bindTo) {
-            var w_t = jQuery(window).scrollTop();
-            var w_b = jQuery(window).scrollTop() + jQuery(window).height();
-            var b_t = parseFloat(_item.offset().top, 10);
-            var e_t = _bind_target.offset().top;
-            var e_h = _bind_target.outerHeight();
+            w_t = jQuery(window).scrollTop();
+            w_b = jQuery(window).scrollTop() + jQuery(window).height();
+            b_t = parseFloat(_item.offset().top, 10);
+            e_t = _bind_target.offset().top;
+            e_h = _bind_target.outerHeight();
 
             if (e_t < b_t) {
               b_t = e_t;
             }
 
-            var b_b = parseFloat(_item.offset().top, 10) + _item.height();
+            b_b = parseFloat(_item.offset().top, 10) + _item.height();
             if ((e_t + e_h) > b_b) {
               b_b = e_t + e_h;
             }
@@ -1239,16 +1236,12 @@
           widget.options.changedModels.push(options.instance);
         }
         widget._saveLocal(options.instance);
-        jQuery('#midgardcreate-save').button({
-          disabled: false
-        });
+        jQuery('#midgardcreate-save').show();
       });
 
       widget.element.bind('midgardeditabledisable', function (event, options) {
         widget._restoreLocal(options.instance);
-        jQuery('#midgardcreate-save').button({
-          disabled: true
-        });
+        jQuery('#midgardcreate-save').hide();
       });
 
       widget.element.bind('midgardeditableenable', function (event, options) {
@@ -1449,18 +1442,18 @@
 
       // insert settings pane
       var id = subject.replace(/[^A-Za-z]/g, '-');
-      this.pane = $('<div class="hiddenfieldsContainer"><div class="hiddenfieldsToggle"></div><div class="hiddenfields"><div class="hiddenfieldsCloseButton"></div><h2>Article settings</h2><div id="articleTagsWrapper"><form><div class="articleTags"><h3>Article tags</h3><input type="text" id="' + id + '-articleTags" class="tags" value="" /></div><div class="articleSuggestedTags"><h3>Suggested tags</h3><input type="text" id="' + id + '-suggestedTags" class="tags" value="" /></div></form></div></div><div class="hiddenfieldsCloseCorner"></div></div>')
+      this.pane = jQuery('<div class="hiddenfieldsContainer"><div class="hiddenfieldsToggle"></div><div class="hiddenfields"><div class="hiddenfieldsCloseButton"></div><h2>Article settings</h2><div id="articleTagsWrapper"><form><div class="articleTags"><h3>Article tags</h3><input type="text" id="' + id + '-articleTags" class="tags" value="" /></div><div class="articleSuggestedTags"><h3>Suggested tags</h3><input type="text" id="' + id + '-suggestedTags" class="tags" value="" /></div></form></div></div><div class="hiddenfieldsCloseCorner"></div></div>');
       this.pane = this.pane.insertBefore(this.element);
       this.articleTags = this.pane.find('.articleTags input');
       this.suggestedTags = this.pane.find('.articleSuggestedTags input');
 
       // bind toggle events for settings pane
       this.pane.find('.hiddenfieldsToggle').click(function (event) {
-        var context = $(this).closest('.hiddenfieldsContainer');
-        $('.hiddenfields', context).show();
-        $('.hiddenfieldsToggle', context).hide();
-        $('.hiddenfieldsCloseCorner', context).show();
-        $('.hiddenfieldsCloseButton', context).show();
+        var context = jQuery(this).closest('.hiddenfieldsContainer');
+        jQuery('.hiddenfields', context).show();
+        jQuery('.hiddenfieldsToggle', context).hide();
+        jQuery('.hiddenfieldsCloseCorner', context).show();
+        jQuery('.hiddenfieldsCloseButton', context).show();
       });
 
       var that = this;
@@ -1468,8 +1461,8 @@
         that.closeTags();
       });
 
-      $(document).click(function (e) {
-        if ($(e.target).closest('.hiddenfieldsContainer').size() == 0 && $('.hiddenfieldsCloseCorner:visible').length > 0) {
+      jQuery(document).click(function (e) {
+        if (jQuery(e.target).closest('.hiddenfieldsContainer').size() === 0 && jQuery('.hiddenfieldsCloseCorner:visible').length > 0) {
           that.closeTags();
         }
       });
@@ -1509,10 +1502,10 @@
       });
 
       // add suggested tag on click to tags
-      $('#' + id + '-suggestedTags_tagsinput .tag span').live('click', function () {
+      jQuery('#' + id + '-suggestedTags_tagsinput .tag span').live('click', function () {
 
-        var tag = $(this).text();
-        that.articleTags.addTag($(this).data('value'));
+        var tag = jQuery(this).text();
+        that.articleTags.addTag(jQuery(this).data('value'));
         that.suggestedTags.removeTag($.trim(tag));
 
         return false;
@@ -1522,11 +1515,11 @@
     },
 
     closeTags: function () {
-      var context = $('.hiddenfieldsContainer');
-      $('.hiddenfields', context).hide();
-      $('.hiddenfieldsToggle', context).show();
-      $('.hiddenfieldsCloseCorner', context).hide();
-      $('.hiddenfieldsCloseButton', context).hide();
+      var context = jQuery('.hiddenfieldsContainer');
+      jQuery('.hiddenfields', context).hide();
+      jQuery('.hiddenfieldsToggle', context).show();
+      jQuery('.hiddenfieldsCloseCorner', context).hide();
+      jQuery('.hiddenfieldsCloseButton', context).hide();
 
       // save on close
       this.options.deactivated();
@@ -1546,7 +1539,7 @@
       that.vie.analyze({
         element: this.options.entityElement
       }).using(['stanbol']).execute().success(function (enhancements) {
-        return $(enhancements).each(function (i, e) {
+        return jQuery(enhancements).each(function (i, e) {
 
           if (typeof e.attributes == 'undefined') {
 
@@ -1590,7 +1583,7 @@
     },
 
     _create: function () {
-      this.element.append(this._getMinimized().hide());
+      this.element.append(this._getMinimized());
       this.element.append(this._getFull());
 
       var widget = this;
@@ -1646,27 +1639,23 @@
     _setDisplay: function (value) {
       if (value === 'minimized') {
         this.hide();
-      } else {
-        this.show();
-      }
+      } 
     },
 
     hide: function () {
-      jQuery('#midgard-bar:visible', this.element).slideToggle();
-      jQuery('#midgard-bar-minimized:hidden', this.element).slideToggle();
+      jQuery('div.create-ui-toolbar-wrapper').fadeToggle('fast', 'linear');
     },
 
     show: function () {
-      jQuery('#midgard-bar-minimized:visible', this.element).slideToggle();
-      jQuery('#midgard-bar:hidden', this.element).slideToggle();
+      jQuery('div.create-ui-toolbar-wrapper').fadeToggle('fast', 'linear');
     },
 
     _getMinimized: function () {
-      return jQuery('<a id="midgard-bar-minimized" class="midgard-create ui-widget-showbut"></a>');
+      return jQuery('<div class="create-ui-logo"><a class="create-ui-toggle" id="create-ui-toggle-toolbar" href="#"><img style="border: 0 none;" src="../themes/create-ui/img/create-ui-logo.png" alt="here" height="41" width="38" /></a></div>');
     },
 
     _getFull: function () {
-      return jQuery('<div class="midgard-create" id="midgard-bar"><div class="ui-widget-content"><div class="toolbarcontent"><div class="midgard-logo-button"><a id="midgard-bar-hidebutton" class="ui-widget-hidebut"></a></div><div class="toolbarcontent-left"></div><div class="toolbarcontent-center"></div><div class="toolbarcontent-right"></div></div></div>');
+      return jQuery('<div class="create-ui-toolbar-wrapper"><div class="create-ui-toolbar-toolarea"><div class="create-ui-toolbar-dynamictoolarea"><ul class="create-ui-dynamictools create-ui-toolset-1"></ul></div><div class="create-ui-toolbar-statustoolarea"><ul class="create-ui-statustools"></ul></div></div></div>');
     },
 
     _createWorkflowsHolder: function () {
@@ -1703,9 +1692,9 @@
           original_model = model.clone();
           original_model.url = copy_of_url;
 
-          action = workflow.get("action")
+          action = workflow.get('action');
           if (action.url) {
-            model.url = action.url
+            model.url = action.url;
           }
           original_model.save(null, {
             success: function (m) {
@@ -1725,9 +1714,9 @@
           original_model = model.clone();
           original_model.url = copy_of_url;
 
-          action = workflow.get("action")
+          action = workflow.get('action');
           if (action.url) {
-            model.url = action.url
+            model.url = action.url;
           }
 
           model.destroy({
@@ -1744,7 +1733,7 @@
           });
         },
         http: function (model, workflow, callback) {
-          action = workflow.get("action")
+          action = workflow.get('action');
           if (!action.url) {
             return callback('No action url defined!');
           }
@@ -1884,7 +1873,7 @@
         model: this.ModelWorkflowModel
       };
       if (this.options.url) {
-        collectionSettings['url'] = this.options.url(model);
+        collectionSettings.url = this.options.url(model);
       }
       return Backbone.Collection.extend(collectionSettings);
     },
