@@ -1266,7 +1266,7 @@
             return _this.options.editable.element.bind('keyup paste change mouseup', queryState);
           });
           _this.options.editable.element.bind('hallodisabled', function() {
-            return _this.options.editable.element.bind('keyup paste change mouseup', queryState);
+            return _this.options.editable.element.unbind('keyup paste change mouseup', queryState);
           });
           return el;
         };
@@ -1461,7 +1461,7 @@
           return editableElement.bind('keyup paste change mouseup', queryState);
         });
         return editableElement.bind('hallodisabled', function() {
-          return editableElement.bind('keyup paste change mouseup', queryState);
+          return editableElement.unbind('keyup paste change mouseup', queryState);
         });
       },
       _prepareButton: function() {
