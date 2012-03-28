@@ -20,6 +20,7 @@
           x: 0,
           y: 0
         },
+        fixed: false,
         showAlways: false,
         activated: function() {},
         deactivated: function() {},
@@ -225,9 +226,11 @@
       _prepareToolbar: function() {
         var _this = this;
         this.toolbar = jQuery('<div class="hallotoolbar"></div>').hide();
-        this.toolbar.css("position", "absolute");
-        this.toolbar.css("top", this.element.offset().top - 20);
-        this.toolbar.css("left", this.element.offset().left);
+        if (!this.options.fixed) {
+          this.toolbar.css("position", "absolute");
+          this.toolbar.css("top", this.element.offset().top - 20);
+          this.toolbar.css("left", this.element.offset().left);
+        }
         jQuery(this.options.parentElement).append(this.toolbar);
         this.toolbar.bind("mousedown", function(event) {
           return event.preventDefault();
@@ -239,6 +242,7 @@
         });
       },
       _updateToolbarPosition: function(position) {
+        if (this.options.fixed) return;
         if (!position) return;
         if (!(position.top && position.left)) return;
         this.toolbar.css("top", position.top);

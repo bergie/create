@@ -15,10 +15,15 @@
     _initialize: function () {
       var defaultOptions = {
         plugins: {
-          halloformat: {}
+          halloformat: {},
+          halloblock: {},
+          hallolists: {}
         },
         editable: true,
-        placeholder: '[' + this.options.property + ']'
+        placeholder: '[' + this.options.property + ']',
+        parentElement: jQuery('.create-ui-toolbar-dynamictoolarea .create-ui-tool-freearea'),
+        showAlways: true,
+        fixed: true
       };
       var editorOptions = {};
       if (this.options.editorOptions[this.options.property]) {
