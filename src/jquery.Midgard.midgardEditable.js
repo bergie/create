@@ -208,7 +208,7 @@
         //itemView.el.hide('drop');
       });
 
-      widget.options.addButton = jQuery('<button>Add</button>').button();
+      widget.options.addButton = jQuery('<button class="btn"><i class="icon-plus"></i> Add</button>').button();
       widget.options.addButton.addClass('midgard-create-add');
       widget.options.addButton.click(function () {
         collectionView.collection.add({});
