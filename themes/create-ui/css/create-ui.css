@@ -482,6 +482,14 @@ body > .hallotoolbar {
 }
 /* DROPDOWN END */
 
+/* EDITOR */
+[contenteditable="true"]:focus {
+  outline-style: auto;
+  outline-width: 3px;
+  outline-color: #eeeeec;
+}
+/* EDITOR END */
+
 /* ANNOTATIONS */
 .inEditMode .entity, .inEditMode a[typeof][about] {
 	z-index: -1;
