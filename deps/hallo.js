@@ -1747,7 +1747,7 @@
       _prepareButton: function() {
         var button, buttonEl, id;
         id = "" + this.options.uuid + "-" + this.options.label;
-        buttonEl = jQuery("<button id=\"" + id + "\" data-toggle=\"dropdown\" data-target=\"#" + (this.options.target.attr('id')) + "\" title=\"" + this.options.label + "\">\n  <span class=\"ui-button-text\"><i class=\"" + this.options.icon + "\"></i></span>\n</button>");
+        buttonEl = jQuery("<button id=\"" + id + "\" data-toggle=\"dropdown\" data-target=\"#" + (this.options.target.attr('id')) + "\" title=\"" + this.options.label + "\">\n  <i class=\"" + this.options.icon + "\"></span>\n</button>");
         if (this.options.cssClass) buttonEl.addClass(this.options.cssClass);
         button = buttonEl.button();
         return button;

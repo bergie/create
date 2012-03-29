@@ -45,7 +45,7 @@
           widget.options.changedModels.push(options.instance);
         }
         widget._saveLocal(options.instance);
-        jQuery('#midgardcreate-save').show();
+        jQuery('#midgardcreate-save').button({disabled: false});
       });
 
       widget.element.bind('midgardeditabledisable', function (event, options) {
@@ -54,6 +54,8 @@
       });
 
       widget.element.bind('midgardeditableenable', function (event, options) {
+        jQuery('#midgardcreate-save').button({disabled: true});
+        jQuery('#midgardcreate-save').show();
         if (options.instance.id) {
           widget._readLocal(options.instance);
         }
