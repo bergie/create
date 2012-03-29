@@ -56,7 +56,7 @@
 
     _setDisplay: function (value) {
       if (value === 'minimized') {
-        this.hide();
+        jQuery('div.create-ui-toolbar-wrapper').hide();
       } 
     },
 

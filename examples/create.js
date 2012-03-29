@@ -286,6 +286,9 @@
 
     enable: function () {
       var widget = this;
+      if (!this.options.model) {
+        return;
+      }
       this.vie.RDFa.findPredicateElements(this.options.model.id, jQuery('[property]', this.element), false).each(function () {
         return widget._enableProperty(jQuery(this));
       });
@@ -1449,6 +1452,7 @@
     _restoreLocal: function (model) {
       var widget = this;
       // Remove unsaved collection members
+      if (!model) { return; }
       _.each(model.attributes, function (attributeValue, property) {
         if (attributeValue instanceof widget.vie.Collection) {
           attributeValue.forEach(function (model) {
@@ -1689,7 +1693,7 @@
 
     _setDisplay: function (value) {
       if (value === 'minimized') {
-        this.hide();
+        jQuery('div.create-ui-toolbar-wrapper').hide();
       } 
     },
 

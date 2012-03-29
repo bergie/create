@@ -500,34 +500,23 @@ body > .hallotoolbar {
 
 /* ANNOTATIONS */
 .inEditMode .entity, .inEditMode a[typeof][about] {
-	z-index: -1;
-	padding: 0 3px;
-	background-color: #E0E0E0;
-	border-radius: 7px;
-	border: outset rgba(0, 0, 0, 0.2);
-	white-space: nowrap;
-	border-width:1px;
-}
-.inEditMode a[typeof][about] {
-    border-width: 1px 0;
-    border-color: rgba(0, 0, 0, 0.8);
-    border-style: solid;
-    border-radius: 0;
+	  border-bottom: 1px #729fcf dotted;
 }
 .inEditMode .entity.withSuggestions {
-    border-color: rgba(0, 0, 0, 0.8);
+    border-color: #73d216;
+    border-bottom-style: double;
 }
 
 .inEditMode .entity.person, .inEditMode a[typeof][about].person {
-    background-color: #ffe;
+    border-color: #e9b96e;
 }
 
 .inEditMode .entity.place, .inEditMode a[typeof][about].place {
-    background-color: #fef;
+    border-color: #c17d11;
 }
 
 .inEditMode .entity.organisation, .inEditMode a[typeof][about].organisation {
-    background-color: #eff;
+    border-color: #8f5902;
 }
 
 .annotation-selector-dialog {
@@ -541,5 +530,60 @@ body > .hallotoolbar {
 }
 .annotation-selector-dialog a, .annotation-selector-dialog .ui-dialog-titlebar {
    color: #ffffff;
+}
+
+.annotation-selector-dialog .suggestion-menu {
+   list-style: none;
+   margin: 0px;
+   padding: 0px;
+}
+
+.annotation-selector-dialog .suggestion-menu li {
+   margin: 0px;
+   padding: 0px;
+}
+
+.annotation-selector-dialog .suggestion-menu li a:hover {
+  display: block;
+  width: 100%;
+  padding: 3px;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.vie-autocomplete .ui-autocomplete {
+   background-color: #111111; 
+   color: #ffffff;
+   background: url("../img/create-ui-bg.png") repeat scroll 0 0 transparent;
+   font-family: "Futura","Helvetica",Arial;
+   text-decoration: none;
+   padding: 4px;
+   border-radius: 6px;
+}
+
+.vie-autocomplete .ui-menu {
+  list-style: none;
+  padding: 0px;
+  margin: 0px;
+  width: 200px;
+}
+
+.vie-autocomplete .ui-menu .ui-menu-item {
+  text-decoration: none;
+  margin: 0px;
+  padding: 0px;
+}
+
+.vie-autocomplete .ui-menu .ui-menu-item a, .vie-autocomplete .ui-menu .ui-menu-item a:hover {
+  display: block;
+  width: 100%;
+  padding: 3px;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.vie-autocomplete .ui-menu .ui-menu-item a.ui-state-hover, .vie-autocomplete .ui-menu .ui-menu-item a.ui-state-active  {
+  background-color: #393939;
+  color: #ffffff;
 }
 /* ANNOTATIONS END */

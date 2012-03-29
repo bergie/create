@@ -728,7 +728,7 @@
         this.turnPending();
         widget = this;
         try {
-          return this.options.editable.element.annotate('enable', function(success) {
+          this.options.editable.element.annotate('enable', function(success) {
             if (success) {
               _this.state = 'on';
               _this.button.hallobutton('checked', true);
@@ -736,8 +736,11 @@
             }
           });
         } catch (e) {
-          return alert(e);
+          alert(e);
         }
+        return this.options.editable.element.bind('hallodisabled', function() {
+          return _this.turnOff();
+        });
       },
       turnOff: function() {
         this.options.editable.element.annotate('disable');

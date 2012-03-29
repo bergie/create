@@ -204,6 +204,7 @@
     _restoreLocal: function (model) {
       var widget = this;
       // Remove unsaved collection members
+      if (!model) { return; }
       _.each(model.attributes, function (attributeValue, property) {
         if (attributeValue instanceof widget.vie.Collection) {
           attributeValue.forEach(function (model) {

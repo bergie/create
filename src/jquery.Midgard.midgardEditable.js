@@ -73,6 +73,9 @@
 
     enable: function () {
       var widget = this;
+      if (!this.options.model) {
+        return;
+      }
       this.vie.RDFa.findPredicateElements(this.options.model.id, jQuery('[property]', this.element), false).each(function () {
         return widget._enableProperty(jQuery(this));
       });
