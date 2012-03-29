@@ -157,6 +157,12 @@
       setUnmodified: function() {
         return this.originalContent = this.getContents();
       },
+      setModified: function() {
+        return this._trigger('modified', null, {
+          editable: this,
+          content: this.getContents()
+        });
+      },
       restoreOriginalContent: function() {
         return this.element.html(this.originalContent);
       },
@@ -284,12 +290,7 @@
       _checkModified: function(event) {
         var widget;
         widget = event.data;
-        if (widget.isModified()) {
-          return widget._trigger("modified", null, {
-            editable: widget,
-            content: widget.getContents()
-          });
-        }
+        if (widget.isModified()) return widget.setModified();
       },
       _keys: function(event) {
         var old, widget;
@@ -700,6 +701,8 @@
         }
       },
       instantiate: function() {
+        var widget;
+        widget = this;
         return this.options.editable.element.annotate({
           vie: this.options.vie,
           debug: false,
@@ -709,7 +712,7 @@
           success: this.options.success,
           error: this.options.error
         }).bind('annotateselect', function() {
-          return jQuery.noop();
+          return widget.options.editable.setModified();
         }).bind('annotateremove', function() {
           return jQuery.noop();
         });
