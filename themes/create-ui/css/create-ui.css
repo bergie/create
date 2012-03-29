@@ -216,7 +216,7 @@ button.create-ui-btn-small {
     height: 21px;
 }
 
-.create-ui-toolbar-wrapper .ui-buttonset input[type="checkbox"].create-ui-btn-small, body > .hallotoolbar .ui-buttonset input[type="checkbox"].create-ui-btn-small {
+input[type="checkbox"].create-ui-btn-small {
     display: none !important;
 }
 
@@ -233,7 +233,7 @@ body > .hallotoolbar {
     padding: 0;
 }
 
-.create-ui-btn-small:hover, .create-ui-toolbar-wrapper .ui-state-clicked {
+.create-ui-btn-small:hover, .create-ui-toolbar-wrapper .ui-state-active {
     background-color: #ffffff;
     border-radius: 6px;
     background-position: 0 -30px;

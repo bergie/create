@@ -1592,8 +1592,20 @@
         cssClass: null
       },
       _create: function() {
-        var _base, _ref;
-        return (_ref = (_base = this.options).icon) != null ? _ref : _base.icon = "icon-" + (this.options.label.toLowerCase());
+        var id, _base, _ref;
+        if ((_ref = (_base = this.options).icon) == null) {
+          _base.icon = "icon-" + (this.options.label.toLowerCase());
+        }
+        id = "" + this.options.uuid + "-" + this.options.label;
+        this.element.append(this._createButton(id, this.options.command));
+        this.element.append(this._createLabel(id, this.options.command, this.options.label, this.options.icon));
+        if (this.options.cssClass) {
+          this.element.find('label').addClass(this.options.cssClass);
+        }
+        this.button = this.element.find('input');
+        this.button.button();
+        if (this.options.cssClass) this.button.addClass(this.options.cssClass);
+        return this.button.data('hallo-command', this.options.command);
       },
       _init: function() {
         var editableElement, queryState;
@@ -1608,22 +1620,12 @@
         if (!this.options.queryState) return;
         editableElement = this.options.editable.element;
         queryState = function(event) {
-          var state;
           if (!_this.options.command) return;
           try {
-            state = document.queryCommandState(_this.options.command);
+            return _this.checked(document.queryCommandState(_this.options.command));
           } catch (e) {
-            return;
+
           }
-          if (state) {
-            _this.button.attr('checked', true);
-            _this.button.next('label').addClass('ui-state-clicked');
-            _this.button.button('refresh');
-            return;
-          }
-          _this.button.attr('checked', false);
-          _this.button.next('label').removeClass('ui-state-clicked');
-          return _this.button.button('refresh');
         };
         editableElement.bind('halloenabled', function() {
           return editableElement.bind('keyup paste change mouseup hallomodified', queryState);
@@ -1638,14 +1640,18 @@
       disable: function() {
         return this.button.button('disable');
       },
-      _prepareButton: function() {
-        var button, buttonEl, id;
-        id = "" + this.options.uuid + "-" + this.options.label;
-        buttonEl = jQuery("<input id=\"" + id + "\" type=\"checkbox\" />\n<label for=\"" + id + "\" class=\"" + this.options.command + "_button\" title=\"" + this.options.label + "\">\n  <i class=\"" + this.options.icon + "\"></i>\n</label>");
-        if (this.options.cssClass) buttonEl.addClass(this.options.cssClass);
-        button = buttonEl.button();
-        button.data('hallo-command', this.options.command);
-        return button;
+      refresh: function() {
+        return this.button.button('refresh');
+      },
+      checked: function(checked) {
+        this.button.attr('checked', checked);
+        return this.refresh();
+      },
+      _createButton: function(id) {
+        return jQuery("<input id=\"" + id + "\" type=\"checkbox\" />");
+      },
+      _createLabel: function(id, command, label, icon) {
+        return jQuery("<label for=\"" + id + "\" class=\"" + command + "_button\" title=\"" + label + "\"><i class=\"" + icon + "\"></i></label>");
       }
     });
   })(jQuery);
