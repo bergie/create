@@ -509,11 +509,16 @@ body > .hallotoolbar {
     background-color: #eff;
 }
 
-.annotateselector-dialog {
+.annotation-selector-dialog {
    background-color: #111111; 
    color: #ffffff;
    background: url("../img/create-ui-bg.png") repeat scroll 0 0 transparent;
    font-family: "Futura","Helvetica",Arial;
    text-decoration: none;
+   padding: 4px;
+   border-radius: 6px;
+}
+.annotation-selector-dialog a, .annotation-selector-dialog .ui-dialog-titlebar {
+   color: #ffffff;
 }
 /* ANNOTATIONS END */

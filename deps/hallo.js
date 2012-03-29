@@ -646,10 +646,10 @@
         select: function() {},
         decline: function() {},
         remove: function() {},
-        buttonCssClass: ''
+        buttonCssClass: null
       },
       _create: function() {
-        var buttonHolder, editableElement, queryState, widget;
+        var buttonHolder, widget;
         var _this = this;
         widget = this;
         if (this.options.vie === void 0) {
@@ -663,7 +663,7 @@
         this.state = 'off';
         buttonHolder = jQuery("<span class=\"" + widget.widgetName + "\"></span>");
         this.button = buttonHolder.hallobutton({
-          label: '',
+          label: 'Annotate',
           icon: 'icon-tags',
           editable: this.options.editable,
           command: null,
@@ -681,25 +681,7 @@
         });
         buttonHolder.buttonset();
         this.options.toolbar.append(this.button);
-        this.instantiate();
-        editableElement = this.options.editable.element;
-        queryState = function(event) {
-          if (document.queryCommandState(_this.options.command)) {
-            _this.button.attr('checked', true);
-            _this.button.next('label').addClass('ui-state-clicked');
-            _this.button.button('refresh');
-            return;
-          }
-          _this.button.attr('checked', false);
-          _this.button.next('label').removeClass('ui-state-clicked');
-          return _this.button.button('refresh');
-        };
-        editableElement.bind('halloenabled', function() {
-          return editableElement.bind('keyup paste change mouseup hallomodified', queryState);
-        });
-        return editableElement.bind('hallodisabled', function() {
-          return editableElement.unbind('keyup paste change mouseup hallomodified', queryState);
-        });
+        return this.instantiate();
       },
       instantiate: function() {
         return this.options.editable.element.annotate({
