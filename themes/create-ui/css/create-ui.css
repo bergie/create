@@ -213,7 +213,7 @@ a.create-ui-toggle {
 
 button.create-ui-btn-small {
     width: 18px;
-    height: 21px;
+    height: 20px;
 }
 
 input[type="checkbox"].create-ui-btn-small {
@@ -240,6 +240,11 @@ body > .hallotoolbar {
     color: #393939;
     text-decoration: none;
     border-color: #ffffff #ffffff #ffffff;
+}
+.create-ui-toolbar-wrapper .ui-state-disabled, .create-ui-toolbar-wrapper .ui-state-disabled:hover {
+    color: #393939; 
+    background-color: transparent;
+    border: none;
 }
 /* CREATE UI BUTTONS STYLES END */
 

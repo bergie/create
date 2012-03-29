@@ -141,7 +141,12 @@
         }
       },
       getContents: function() {
-        return this.element.html();
+        var contentClone, plugin;
+        contentClone = this.element.clone();
+        for (plugin in this.options.plugins) {
+          jQuery(this.element)[plugin]('cleanupContentClone', contentClone);
+        }
+        return contentClone.html();
       },
       setContents: function(contents) {
         return this.element.html(contents);
@@ -649,7 +654,7 @@
         buttonCssClass: null
       },
       _create: function() {
-        var buttonHolder, widget;
+        var buttonHolder, editableElement, turnOffAnnotate, widget;
         var _this = this;
         widget = this;
         if (this.options.vie === void 0) {
@@ -672,16 +677,27 @@
           queryState: false
         });
         buttonHolder.bind('change', function(event) {
-          switch (_this.state) {
-            case 'off':
-              return _this.enhance();
-            case 'on':
-              return _this.done();
-          }
+          if (_this.state === "pending") return;
+          if (_this.state === "off") return _this.turnOn();
+          return _this.turnOff();
         });
         buttonHolder.buttonset();
         this.options.toolbar.append(this.button);
-        return this.instantiate();
+        this.instantiate();
+        turnOffAnnotate = function() {
+          var editable;
+          editable = this;
+          return jQuery(editable).halloannotate('turnOff');
+        };
+        editableElement = this.options.editable.element;
+        return editableElement.bind('hallodisabled', turnOffAnnotate);
+      },
+      cleanupContentClone: function(el) {
+        if (this.state === 'on') {
+          return el.find(".entity:not([about])").each(function() {
+            return jQuery(this).replaceWith(jQuery(this).html());
+          });
+        }
       },
       instantiate: function() {
         return this.options.editable.element.annotate({
@@ -692,28 +708,39 @@
           remove: this.options.remove,
           success: this.options.success,
           error: this.options.error
+        }).bind('annotateselect', function() {
+          return jQuery.noop();
+        }).bind('annotateremove', function() {
+          return jQuery.noop();
         });
       },
-      enhance: function() {
+      turnPending: function() {
+        this.state = 'pending';
+        this.button.hallobutton('checked', false);
+        return this.button.hallobutton('disable');
+      },
+      turnOn: function() {
         var widget;
         var _this = this;
+        this.turnPending();
         widget = this;
-        this.button.hallobutton("disable");
         try {
           return this.options.editable.element.annotate('enable', function(success) {
             if (success) {
-              _this.state = "on";
-              return _this.button.hallobutton("enable");
-            } else {
-              return _this.buttons.enhance.show().button('enable').button('option', 'label', 'error, see the log.. Try to enhance again!');
+              _this.state = 'on';
+              _this.button.hallobutton('checked', true);
+              return _this.button.hallobutton('enable');
             }
           });
         } catch (e) {
           return alert(e);
         }
       },
-      done: function() {
+      turnOff: function() {
         this.options.editable.element.annotate('disable');
+        this.button.attr('checked', false);
+        this.button.find("label").removeClass("ui-state-clicked");
+        this.button.button('refresh');
         return this.state = 'off';
       }
     });
