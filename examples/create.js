@@ -407,7 +407,6 @@
 
       collectionView.bind('add', function (itemView) {
         //itemView.el.effect('slide');
-        itemView.model.primaryCollection = collectionView.collection;
         itemView.el.midgardEditable({
           disabled: widget.options.disabled,
           model: itemView.model,
@@ -417,6 +416,7 @@
       });
 
       collectionView.collection.bind('add', function (model) {
+        model.primaryCollection = collectionView.collection;
         widget.vie.entities.add(model);
         model.collection = collectionView.collection;
       });
@@ -1304,7 +1304,7 @@
       widget.element.bind('midgardeditableenable', function (event, options) {
         jQuery('#midgardcreate-save').button({disabled: true});
         jQuery('#midgardcreate-save').show();
-        if (options.instance.id) {
+        if (!options.instance.isNew()) {
           widget._readLocal(options.instance);
         }
         _.each(options.instance.attributes, function (attributeValue, property) {

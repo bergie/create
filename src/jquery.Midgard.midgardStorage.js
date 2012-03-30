@@ -56,7 +56,7 @@
       widget.element.bind('midgardeditableenable', function (event, options) {
         jQuery('#midgardcreate-save').button({disabled: true});
         jQuery('#midgardcreate-save').show();
-        if (options.instance.id) {
+        if (!options.instance.isNew()) {
           widget._readLocal(options.instance);
         }
         _.each(options.instance.attributes, function (attributeValue, property) {

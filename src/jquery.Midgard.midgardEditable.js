@@ -194,7 +194,6 @@
 
       collectionView.bind('add', function (itemView) {
         //itemView.el.effect('slide');
-        itemView.model.primaryCollection = collectionView.collection;
         itemView.el.midgardEditable({
           disabled: widget.options.disabled,
           model: itemView.model,
@@ -204,6 +203,7 @@
       });
 
       collectionView.collection.bind('add', function (model) {
+        model.primaryCollection = collectionView.collection;
         widget.vie.entities.add(model);
         model.collection = collectionView.collection;
       });
