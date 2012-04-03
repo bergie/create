@@ -37,3 +37,17 @@ task 'min', 'minify the generated JavaScript file', ->
 
 task 'bam', 'build and minify Create', ->
   invoke 'min'
+
+task 'doc', 'generate documentation for *.coffee files', ->
+  sh("docco-husky src") ->
+
+task 'docpub', 'publish API documentation', ->
+  series [
+    (sh "docco-husky src")
+    (sh "mv api api_tmp")
+    (sh "git checkout gh-pages")
+    (sh "cp -R api_tmp/* api/")
+    (sh "git add api/*")
+    (sh "git commit -m 'API docs update'")
+    (sh "git checkout master")
+  ]
