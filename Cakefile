@@ -44,10 +44,10 @@ task 'doc', 'generate documentation for *.coffee files', ->
 task 'docpub', 'publish API documentation', ->
   series [
     (sh "docco-husky src")
-    (sh "mv api api_tmp")
+    (sh "mv docs docs_tmp")
     (sh "git checkout gh-pages")
-    (sh "cp -R api_tmp/* api/")
-    (sh "git add api/*")
-    (sh "git commit -m 'API docs update'")
+    (sh "cp -R docs_tmp/* docs/")
+    (sh "git add docs/*")
+    (sh "git commit -m 'Documentation update'")
     (sh "git checkout master")
   ]

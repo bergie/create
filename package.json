@@ -2,7 +2,7 @@
   "name": "create",
   "version": "0.0.1",
   "url": "http://createjs.org/",
-  "author": "Henri Bergius",
+  "author": "Henri Bergius <henri.bergius@iki.fi>",
   "dependencies": {},
   "devDependencies": {
     "underscore": ">=1.2.0",
