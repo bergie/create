@@ -265,7 +265,8 @@
       activated: function () {},
       deactivated: function () {},
       changed: function () {},
-      vie: null
+      vie: null,
+      enableCollectionAdd: true
     },
 
     _create: function () {
@@ -296,6 +297,9 @@
         instance: this.options.model,
         entityElement: this.element
       });
+      if (!this.options.enableCollectionAdd) {
+        return;
+      }
       _.forEach(this.vie.services.rdfa.views, function (view) {
         if (view instanceof widget.vie.view.Collection) {
           widget._enableCollection(view);
