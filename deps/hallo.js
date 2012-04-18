@@ -728,7 +728,7 @@
         this.turnPending();
         widget = this;
         try {
-          this.options.editable.element.annotate('enable', function(success) {
+          return this.options.editable.element.annotate('enable', function(success) {
             if (success) {
               _this.state = 'on';
               _this.button.hallobutton('checked', true);
@@ -736,11 +736,8 @@
             }
           });
         } catch (e) {
-          alert(e);
+          return alert(e);
         }
-        return this.options.editable.element.bind('hallodisabled', function() {
-          return _this.turnOff();
-        });
       },
       turnOff: function() {
         this.options.editable.element.annotate('disable');
@@ -810,7 +807,7 @@
           cssClass: this.options.buttonCssClass
         });
         buttonset.append(buttonHolder);
-        button = buttonHolder.button();
+        button = buttonHolder;
         button.bind("change", function(event) {
           if (widget.options.dialog.dialog("isOpen")) {
             return widget._closeDialog();
@@ -923,7 +920,8 @@
         }
         cleanUp();
         widget.options.loaded = 1;
-        return this.options.dialog.dialog("open");
+        this.options.dialog.dialog("open");
+        return this.options.editable.protectFocusFrom(this.options.dialog);
       },
       _closeDialog: function() {
         return this.options.dialog.dialog("close");
@@ -1000,7 +998,7 @@
         var iframe, insertImage, widget;
         widget = this;
         tabs.append(jQuery("<li id=\"" + this.options.uuid + "-tab-upload\" class=\"" + widget.widgetName + "-tabselector " + widget.widgetName + "-tab-upload\"><span>Upload</span></li>"));
-        element.append(jQuery("<div id=\"" + this.options.uuid + "-tab-upload-content\" class=\"" + widget.widgetName + "-tab tab-upload\">                <form id=\"" + this.options.uuid + "-" + widget.widgetName + "-uploadform\">                    <input id=\"" + this.options.uuid + "-" + widget.widgetName + "-file\" name=\"" + this.options.uuid + "-" + widget.widgetName + "-file\" type=\"file\" class=\"file\">                    <input id=\"" + this.options.uuid + "-" + widget.widgetName + "-tags\" name=\"tags\" type=\"hidden\" />                    <br />                    <input type=\"submit\" value=\"Upload\" id=\"" + this.options.uuid + "-" + widget.widgetName + "-upload\">                </form>                <div id=\"" + this.options.uuid + "-" + widget.widgetName + "-iframe\"></div>            </div>"));
+        element.append(jQuery("<div id=\"" + this.options.uuid + "-tab-upload-content\" class=\"" + widget.widgetName + "-tab tab-upload\">                <form id=\"" + this.options.uuid + "-" + widget.widgetName + "-uploadform\">                    <input id=\"" + this.options.uuid + "-" + widget.widgetName + "-file\" name=\"" + this.options.uuid + "-" + widget.widgetName + "-file\" type=\"file\" class=\"file\" accept=\"image/*\">                    <input id=\"" + this.options.uuid + "-" + widget.widgetName + "-tags\" name=\"tags\" type=\"hidden\" />                    <br />                    <input type=\"submit\" value=\"Upload\" id=\"" + this.options.uuid + "-" + widget.widgetName + "-upload\">                </form>                <div id=\"" + this.options.uuid + "-" + widget.widgetName + "-iframe\"></div>            </div>"));
         iframe = jQuery("<iframe name=\"postframe\" id=\"postframe\" class=\"hidden\" src=\"about:none\" style=\"display:none\" />");
         jQuery("#" + widget.options.uuid + "-" + widget.widgetName + "-upload").live("click", function(e) {
           var userFile;
@@ -1280,20 +1278,19 @@
             jQuery(".rotationWrapper img", widgetOptions.dialog).each(function(index, elem) {
               if (!elem.jquery_draggable_initialized) return initDraggable(elem);
             });
-            jQuery("img", editable).each(function(index, elem) {
+            jQuery('img', editable).each(function(index, elem) {
               elem.contentEditable = false;
               if (!elem.jquery_draggable_initialized) return initDraggable(elem);
             });
-            return jQuery("p", editable).each(function(index, elem) {
-              if (!elem.jquery_droppable_initialized) {
-                elem.jquery_droppable_initialized = true;
-                return jQuery('p', editable).droppable({
-                  tolerance: "pointer",
-                  drop: dnd.handleDropEvent,
-                  over: dnd.handleOverEvent,
-                  out: dnd.handleLeaveEvent
-                });
-              }
+            return jQuery('p', editable).each(function(index, elem) {
+              if (jQuery(elem).data('jquery_droppable_initialized')) return;
+              jQuery(elem).droppable({
+                tolerance: "pointer",
+                drop: dnd.handleDropEvent,
+                over: dnd.handleOverEvent,
+                out: dnd.handleLeaveEvent
+              });
+              return jQuery(elem).data('jquery_droppable_initialized', true);
             });
           },
           enableDragging: function() {
@@ -1549,7 +1546,8 @@
               urlInput.val(jQuery(widget.lastSelection.startContainer.parentNode).attr('href'));
               jQuery(urlInput[0].form).find('input[type=submit]').val('update');
             }
-            return dialog.dialog('open');
+            dialog.dialog('open');
+            return widget.options.editable.protectFocusFrom(dialog);
           });
           return _this.element.bind("keyup paste change mouseup", function(event) {
             var nodeName, start;
@@ -1750,7 +1748,7 @@
       _prepareButton: function() {
         var button, buttonEl, id;
         id = "" + this.options.uuid + "-" + this.options.label;
-        buttonEl = jQuery("<button id=\"" + id + "\" data-toggle=\"dropdown\" data-target=\"#" + (this.options.target.attr('id')) + "\" title=\"" + this.options.label + "\">\n  <i class=\"" + this.options.icon + "\"></span>\n</button>");
+        buttonEl = jQuery("<button id=\"" + id + "\" data-toggle=\"dropdown\" data-target=\"#" + (this.options.target.attr('id')) + "\" title=\"" + this.options.label + "\">\n  <span class=\"ui-button-text\"><i class=\"" + this.options.icon + "\"></i></span>\n</button>");
         if (this.options.cssClass) buttonEl.addClass(this.options.cssClass);
         button = buttonEl.button();
         return button;
