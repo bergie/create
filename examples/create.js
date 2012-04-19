@@ -1337,8 +1337,7 @@
       if (needed > 1) {
         notification_msg = needed + ' objects saved successfully';
       } else {
-        subject = widget.options.changedModels[0].getSubject().toString();
-        subject = subject.replace('<', '&lt;').replace('>', '&gt;');
+        subject = widget.options.changedModels[0].getSubjectUri();
         notification_msg = 'Object with subject ' + subject + ' saved successfully';
       }
 
@@ -1381,14 +1380,14 @@
         return;
       }
 
-      if (typeof model.id === 'object') {
+      if (model.isNew()) {
         // Anonymous object, save as refs instead
         if (!model.primaryCollection) {
           return;
         }
         return this._saveLocalReferences(model.primaryCollection.subject, model.primaryCollection.predicate, model);
       }
-      localStorage.setItem(model.getSubject(), JSON.stringify(model.toJSONLD()));
+      localStorage.setItem(model.getSubjectUri(), JSON.stringify(model.toJSONLD()));
     },
 
     _getReferenceId: function (model, property) {
@@ -1426,14 +1425,17 @@
         return;
       }
 
-      var local = localStorage.getItem(model.getSubject());
+      var local = localStorage.getItem(model.getSubjectUri());
       if (!local) {
         return;
       }
       if (!model.originalAttributes) {
         model.originalAttributes = _.clone(model.attributes);
       }
-      var entity = this.vie.EntityManager.getByJSONLD(JSON.parse(local));
+      var parsed = JSON.parse(local);
+      var entity = this.vie.entities.addOrUpdate(parsed, {
+        overrideAttributes: true
+      });
 
       this._trigger('loaded', null, {
         instance: entity
@@ -1483,7 +1485,7 @@
         return;
       }
 
-      localStorage.removeItem(model.getSubject());
+      localStorage.removeItem(model.getSubjectUri());
     }
   });
 })(jQuery);
