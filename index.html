@@ -8,6 +8,12 @@
         <script src="js/deps/underscore-min.js"></script>
         <script src="js/deps/backbone-min.js"></script>
         <script src="js/deps/vie-min.js"></script>
+
+        <!-- rdfQuery and annotate are only needed for the Hallo
+        annotations plugin -->
+        <script src="js/deps/jquery.rdfquery.min.js"></script>
+        <script src="js/deps/annotate-min.js"></script>
+
         <script src="js/deps/hallo.js"></script>
         <script src="js/create.js"></script>
         <script>
@@ -15,9 +21,12 @@
             jQuery('#tryit').button({disabled: false}).click(function() {
               // Instantiate Create
               jQuery('body').midgardCreate({
-                url: function() { return 'javascript:false;'; }
+                url: function() {
+                  return 'javascript:false;';
+                },
+                stanbolUrl: 'http://dev.iks-project.eu:8081' 
               });
-              jQuery('#tryit').button({disabled: true});
+              jQuery('#tryit').hide();
             });
           });
           // Fake Backbone.sync since there is no server to communicate with
@@ -28,10 +37,10 @@
             options.success(model);
           };
         </script>
-        <link rel="stylesheet" href="css/themes/vader/jquery-ui-1.8.16.custom.css" />
-        <link rel="stylesheet" href="css/themes/midgard-theme/jquery.ui.all.css" />
-        <link rel="stylesheet" href="css/themes/midgard-toolbar/midgardbar.css" />
-        <link rel="stylesheet" href="css/themes/midgard-notifications/midgardnotif.css" />
+        <link rel="stylesheet" href="js/deps/font-awesome/css/font-awesome.css" />
+        <link rel="stylesheet" href="css/themes/create-ui/css/create-ui.css" />
+        <link rel="stylesheet" href="css/themes/midgard-notifications/midgardnotif.css"
+    />
         <link rel="stylesheet" href="css/create.css" />
         <link rel="shortcut icon" href="favicon.png" type="image/png"/>
 
