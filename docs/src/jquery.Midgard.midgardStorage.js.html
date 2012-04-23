@@ -1,0 +1,239 @@
+<!DOCTYPE html><html><head><title>jquery.Midgard.midgardStorage.js</title><meta http-equiv="Content-Type" content="text/html" charset="UTF-8"><link rel="stylesheet" media="all" href="../docco.css"></head><body><div id="container"><div id="background"></div><div id="jump_to">Jump To &hellip;<div id="jump_wrapper"><div id="jump_page"><a href="../index.html" class="source"><span class="file_name">README</span></a><a href="../src/editingWidgets/jquery.Midgard.midgardEditableEditorAloha.js.html" class="source "><span class="base_path">src / editingWidgets / </span><span class="file_name">jquery.Midgard.midgardEditableEditorAloha.js</span></a><a href="../src/editingWidgets/jquery.Midgard.midgardEditableBase.js.html" class="source "><span class="base_path">src / editingWidgets / </span><span class="file_name">jquery.Midgard.midgardEditableBase.js</span></a><a href="../src/editingWidgets/jquery.Midgard.midgardEditableEditorHallo.js.html" class="source "><span class="base_path">src / editingWidgets / </span><span class="file_name">jquery.Midgard.midgardEditableEditorHallo.js</span></a><a href="../src/jquery.Midgard.midgardToolbar.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardToolbar.js</span></a><a href="../src/jquery.Midgard.midgardNotifications.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardNotifications.js</span></a><a href="../src/jquery.Midgard.midgardEditable.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardEditable.js</span></a><a href="../src/jquery.Midgard.midgardStorage.js.html" class="source selected"><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardStorage.js</span></a><a href="../src/jquery.Midgard.midgardTags.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardTags.js</span></a><a href="../src/jquery.Midgard.midgardCreate.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardCreate.js</span></a><a href="../src/jquery.Midgard.midgardWorkflows.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardWorkflows.js</span></a></div></div></div><table cellpadding="0" cellspacing="0"><thead><tr><th class="docs"><h1>jquery.Midgard.midgardStorage.js</h1><div class="filepath">src/</div></th><th class="code"></th></tr></thead><tbody><tr id="section-1"><td class="docs"><div class="pilwrap"><a href="#section-1" class="pilcrow">&#182;</a></div><pre><code>Create - On-site web editing interface
+(c) 2011-2012 Henri Bergius, IKS Consortium
+Create may be freely distributed under the MIT license.
+For all details and documentation:
+http://createjs.org/
+</code></pre>
+</td><td class="code"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">jQuery</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">jQuery</span><span class="p">.</span><span class="nx">widget</span><span class="p">(</span><span class="s1">&#39;Midgard.midgardStorage&#39;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">options</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">localStorage</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+      <span class="nx">vie</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+      <span class="nx">changedModels</span><span class="o">:</span> <span class="p">[],</span>
+      <span class="nx">loaded</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{},</span>
+      <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;&#39;</span>
+    <span class="p">},</span>
+
+    <span class="nx">_create</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">widget</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="nx">Modernizr</span><span class="p">.</span><span class="nx">localstorage</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">localStorage</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+      <span class="p">}</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">vie</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">vie</span><span class="p">;</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">vie</span><span class="p">.</span><span class="nx">entities</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span></pre></div></td></tr><tr id="section-2"><td class="docs"><div class="pilwrap"><a href="#section-2" class="pilcrow">&#182;</a></div><p>Add the back-end URL used by Backbone.sync</p>
+</td><td class="code"><div class="highlight"><pre>        <span class="nx">model</span><span class="p">.</span><span class="nx">url</span> <span class="o">=</span> <span class="nx">widget</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">url</span><span class="p">;</span>
+        <span class="nx">model</span><span class="p">.</span><span class="nx">toJSON</span> <span class="o">=</span> <span class="nx">model</span><span class="p">.</span><span class="nx">toJSONLD</span><span class="p">;</span>
+      <span class="p">});</span>
+
+      <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;#midgardcreate-save&#39;</span><span class="p">).</span><span class="nx">click</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="nx">widget</span><span class="p">.</span><span class="nx">_saveRemote</span><span class="p">({</span>
+          <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;#midgardcreate-save&#39;</span><span class="p">).</span><span class="nx">button</span><span class="p">({</span>
+              <span class="nx">disabled</span><span class="o">:</span> <span class="kc">true</span>
+            <span class="p">});</span>
+          <span class="p">},</span>
+          <span class="nx">error</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{}</span>
+        <span class="p">});</span>
+      <span class="p">});</span>
+
+      <span class="nx">widget</span><span class="p">.</span><span class="nx">_bindEditables</span><span class="p">();</span>
+    <span class="p">},</span>
+
+    <span class="nx">_bindEditables</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">widget</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+      <span class="nx">widget</span><span class="p">.</span><span class="nx">element</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;midgardeditablechanged&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">widget</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">changedModels</span><span class="p">,</span> <span class="nx">options</span><span class="p">.</span><span class="nx">instance</span><span class="p">)</span> <span class="o">===</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">widget</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">changedModels</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">instance</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">widget</span><span class="p">.</span><span class="nx">_saveLocal</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">instance</span><span class="p">);</span>
+        <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;#midgardcreate-save&#39;</span><span class="p">).</span><span class="nx">button</span><span class="p">({</span><span class="nx">disabled</span><span class="o">:</span> <span class="kc">false</span><span class="p">});</span>
+      <span class="p">});</span>
+
+      <span class="nx">widget</span><span class="p">.</span><span class="nx">element</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;midgardeditabledisable&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">widget</span><span class="p">.</span><span class="nx">_restoreLocal</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">instance</span><span class="p">);</span>
+        <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;#midgardcreate-save&#39;</span><span class="p">).</span><span class="nx">hide</span><span class="p">();</span>
+      <span class="p">});</span>
+
+      <span class="nx">widget</span><span class="p">.</span><span class="nx">element</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;midgardeditableenable&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;#midgardcreate-save&#39;</span><span class="p">).</span><span class="nx">button</span><span class="p">({</span><span class="nx">disabled</span><span class="o">:</span> <span class="kc">true</span><span class="p">});</span>
+        <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;#midgardcreate-save&#39;</span><span class="p">).</span><span class="nx">show</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">isNew</span><span class="p">())</span> <span class="p">{</span>
+          <span class="nx">widget</span><span class="p">.</span><span class="nx">_readLocal</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">instance</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">_</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">attributes</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">attributeValue</span><span class="p">,</span> <span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">attributeValue</span> <span class="k">instanceof</span> <span class="nx">widget</span><span class="p">.</span><span class="nx">vie</span><span class="p">.</span><span class="nx">Collection</span><span class="p">)</span> <span class="p">{</span></pre></div></td></tr><tr id="section-3"><td class="docs"><div class="pilwrap"><a href="#section-3" class="pilcrow">&#182;</a></div><p>widget._readLocalReferences(options.instance, property, attributeValue);</p>
+</td><td class="code"><div class="highlight"><pre>          <span class="p">}</span>
+        <span class="p">});</span>
+      <span class="p">});</span>
+
+      <span class="nx">widget</span><span class="p">.</span><span class="nx">element</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;midgardstorageloaded&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">widget</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">changedModels</span><span class="p">,</span> <span class="nx">options</span><span class="p">.</span><span class="nx">instance</span><span class="p">)</span> <span class="o">===</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">widget</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">changedModels</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">instance</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;#midgardcreate-save&#39;</span><span class="p">).</span><span class="nx">button</span><span class="p">({</span>
+          <span class="nx">disabled</span><span class="o">:</span> <span class="kc">false</span>
+        <span class="p">});</span>
+      <span class="p">});</span>
+    <span class="p">},</span>
+
+    <span class="nx">_saveRemote</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">widget</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+      <span class="nx">widget</span><span class="p">.</span><span class="nx">_trigger</span><span class="p">(</span><span class="s1">&#39;save&#39;</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">models</span><span class="o">:</span> <span class="nx">widget</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">changedModels</span>
+      <span class="p">});</span>
+      <span class="kd">var</span> <span class="nx">needed</span> <span class="o">=</span> <span class="nx">widget</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">changedModels</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">needed</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">notification_msg</span> <span class="o">=</span> <span class="nx">needed</span> <span class="o">+</span> <span class="s1">&#39; objects saved successfully&#39;</span><span class="p">;</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">subject</span> <span class="o">=</span> <span class="nx">widget</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">changedModels</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">getSubjectUri</span><span class="p">();</span>
+        <span class="nx">notification_msg</span> <span class="o">=</span> <span class="s1">&#39;Object with subject &#39;</span> <span class="o">+</span> <span class="nx">subject</span> <span class="o">+</span> <span class="s1">&#39; saved successfully&#39;</span><span class="p">;</span>
+      <span class="p">}</span>
+
+      <span class="nx">_</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">widget</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">changedModels</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">model</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="p">{</span>
+          <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">originalAttributes</span><span class="p">)</span> <span class="p">{</span></pre></div></td></tr><tr id="section-4"><td class="docs"><div class="pilwrap"><a href="#section-4" class="pilcrow">&#182;</a></div><p>From now on we're going with the values we have on server</p>
+</td><td class="code"><div class="highlight"><pre>              <span class="k">delete</span> <span class="nx">model</span><span class="p">.</span><span class="nx">originalAttributes</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="nx">widget</span><span class="p">.</span><span class="nx">_removeLocal</span><span class="p">(</span><span class="nx">model</span><span class="p">);</span>
+            <span class="nx">widget</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">changedModels</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+            <span class="nx">needed</span><span class="o">--</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">needed</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span></pre></div></td></tr><tr id="section-5"><td class="docs"><div class="pilwrap"><a href="#section-5" class="pilcrow">&#182;</a></div><p>All models were happily saved</p>
+</td><td class="code"><div class="highlight"><pre>              <span class="nx">widget</span><span class="p">.</span><span class="nx">_trigger</span><span class="p">(</span><span class="s1">&#39;saved&#39;</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="p">{});</span>
+              <span class="nx">options</span><span class="p">.</span><span class="nx">success</span><span class="p">();</span>
+              <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">).</span><span class="nx">data</span><span class="p">(</span><span class="s1">&#39;midgardCreate&#39;</span><span class="p">).</span><span class="nx">showNotification</span><span class="p">({</span>
+                <span class="nx">body</span><span class="o">:</span> <span class="nx">notification_msg</span>
+              <span class="p">});</span>
+            <span class="p">}</span>
+          <span class="p">},</span>
+          <span class="nx">error</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">m</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">notification_msg</span> <span class="o">=</span> <span class="s1">&#39;Error occurred while saving&#39;</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nx">responseText</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">notification_msg</span> <span class="o">=</span> <span class="nx">notification_msg</span> <span class="o">+</span> <span class="s1">&#39;:&lt;br /&gt;&#39;</span> <span class="o">+</span> <span class="nx">err</span><span class="p">.</span><span class="nx">responseText</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="nx">options</span><span class="p">.</span><span class="nx">error</span><span class="p">();</span>
+            <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">).</span><span class="nx">data</span><span class="p">(</span><span class="s1">&#39;midgardCreate&#39;</span><span class="p">).</span><span class="nx">showNotification</span><span class="p">({</span>
+              <span class="nx">body</span><span class="o">:</span> <span class="nx">notification_msg</span>
+            <span class="p">});</span>
+          <span class="p">}</span>
+        <span class="p">});</span>
+      <span class="p">});</span>
+    <span class="p">},</span>
+
+    <span class="nx">_saveLocal</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">localStorage</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">isNew</span><span class="p">())</span> <span class="p">{</span></pre></div></td></tr><tr id="section-6"><td class="docs"><div class="pilwrap"><a href="#section-6" class="pilcrow">&#182;</a></div><p>Anonymous object, save as refs instead</p>
+</td><td class="code"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">model</span><span class="p">.</span><span class="nx">primaryCollection</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_saveLocalReferences</span><span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">primaryCollection</span><span class="p">.</span><span class="nx">subject</span><span class="p">,</span> <span class="nx">model</span><span class="p">.</span><span class="nx">primaryCollection</span><span class="p">.</span><span class="nx">predicate</span><span class="p">,</span> <span class="nx">model</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="nx">localStorage</span><span class="p">.</span><span class="nx">setItem</span><span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">getSubjectUri</span><span class="p">(),</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">toJSONLD</span><span class="p">()));</span>
+    <span class="p">},</span>
+
+    <span class="nx">_getReferenceId</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">model</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="nx">property</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="nx">_saveLocalReferences</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">subject</span><span class="p">,</span> <span class="nx">predicate</span><span class="p">,</span> <span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">localStorage</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">subject</span> <span class="o">||</span> <span class="o">!</span><span class="nx">predicate</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+
+      <span class="kd">var</span> <span class="nx">widget</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+      <span class="kd">var</span> <span class="nx">identifier</span> <span class="o">=</span> <span class="nx">subject</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="nx">predicate</span><span class="p">;</span>
+      <span class="kd">var</span> <span class="nx">json</span> <span class="o">=</span> <span class="nx">model</span><span class="p">.</span><span class="nx">toJSONLD</span><span class="p">();</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">localStorage</span><span class="p">.</span><span class="nx">getItem</span><span class="p">(</span><span class="nx">identifier</span><span class="p">))</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">referenceList</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">localStorage</span><span class="p">.</span><span class="nx">getItem</span><span class="p">(</span><span class="nx">identifier</span><span class="p">));</span>
+        <span class="kd">var</span> <span class="nx">index</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">pluck</span><span class="p">(</span><span class="nx">referenceList</span><span class="p">,</span> <span class="s1">&#39;@&#39;</span><span class="p">).</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">json</span><span class="p">[</span><span class="s1">&#39;@&#39;</span><span class="p">]);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">index</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">referenceList</span><span class="p">[</span><span class="nx">index</span><span class="p">]</span> <span class="o">=</span> <span class="nx">json</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+          <span class="nx">referenceList</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">json</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">localStorage</span><span class="p">.</span><span class="nx">setItem</span><span class="p">(</span><span class="nx">identifier</span><span class="p">,</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">referenceList</span><span class="p">));</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="nx">localStorage</span><span class="p">.</span><span class="nx">setItem</span><span class="p">(</span><span class="nx">identifier</span><span class="p">,</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">([</span><span class="nx">json</span><span class="p">]));</span>
+    <span class="p">},</span>
+
+    <span class="nx">_readLocal</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">localStorage</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+
+      <span class="kd">var</span> <span class="nx">local</span> <span class="o">=</span> <span class="nx">localStorage</span><span class="p">.</span><span class="nx">getItem</span><span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">getSubjectUri</span><span class="p">());</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">local</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">model</span><span class="p">.</span><span class="nx">originalAttributes</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">model</span><span class="p">.</span><span class="nx">originalAttributes</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">attributes</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="kd">var</span> <span class="nx">parsed</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">local</span><span class="p">);</span>
+      <span class="kd">var</span> <span class="nx">entity</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">vie</span><span class="p">.</span><span class="nx">entities</span><span class="p">.</span><span class="nx">addOrUpdate</span><span class="p">(</span><span class="nx">parsed</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">overrideAttributes</span><span class="o">:</span> <span class="kc">true</span>
+      <span class="p">});</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">_trigger</span><span class="p">(</span><span class="s1">&#39;loaded&#39;</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">instance</span><span class="o">:</span> <span class="nx">entity</span>
+      <span class="p">});</span>
+    <span class="p">},</span>
+
+    <span class="nx">_readLocalReferences</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">property</span><span class="p">,</span> <span class="nx">collection</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">localStorage</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+
+      <span class="kd">var</span> <span class="nx">identifier</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getReferenceId</span><span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">property</span><span class="p">);</span>
+      <span class="kd">var</span> <span class="nx">local</span> <span class="o">=</span> <span class="nx">localStorage</span><span class="p">.</span><span class="nx">getItem</span><span class="p">(</span><span class="nx">identifier</span><span class="p">);</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">local</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="nx">collection</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">local</span><span class="p">));</span>
+    <span class="p">},</span>
+
+    <span class="nx">_restoreLocal</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">widget</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span></pre></div></td></tr><tr id="section-7"><td class="docs"><div class="pilwrap"><a href="#section-7" class="pilcrow">&#182;</a></div><p>Remove unsaved collection members</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span><span class="p">;</span> <span class="p">}</span>
+      <span class="nx">_</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">attributes</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">attributeValue</span><span class="p">,</span> <span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">attributeValue</span> <span class="k">instanceof</span> <span class="nx">widget</span><span class="p">.</span><span class="nx">vie</span><span class="p">.</span><span class="nx">Collection</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">attributeValue</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">model</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">attributeValue</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">model</span><span class="p">);</span>
+            <span class="p">}</span>
+          <span class="p">});</span>
+        <span class="p">}</span>
+      <span class="p">});</span></pre></div></td></tr><tr id="section-8"><td class="docs"><div class="pilwrap"><a href="#section-8" class="pilcrow">&#182;</a></div><p>Restore original object properties</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="k">if</span> <span class="p">(</span><span class="nx">jQuery</span><span class="p">.</span><span class="nx">isEmptyObject</span><span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">changedAttributes</span><span class="p">()))</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">originalAttributes</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">model</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">originalAttributes</span><span class="p">);</span>
+          <span class="k">delete</span> <span class="nx">model</span><span class="p">.</span><span class="nx">originalAttributes</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="nx">model</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">previousAttributes</span><span class="p">());</span>
+    <span class="p">},</span>
+
+    <span class="nx">_removeLocal</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">localStorage</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+
+      <span class="nx">localStorage</span><span class="p">.</span><span class="nx">removeItem</span><span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">getSubjectUri</span><span class="p">());</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+<span class="p">})(</span><span class="nx">jQuery</span><span class="p">);</span>
+
+</pre></div></td></tr></tbody></table><div id="generated">generated Mon Apr 23 2012 17:46:12 GMT+0200 (CEST)  </div></div></body></html>

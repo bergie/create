@@ -1,0 +1,628 @@
+<!DOCTYPE html><html><head><title>jquery.Midgard.midgardNotifications.js</title><meta http-equiv="Content-Type" content="text/html" charset="UTF-8"><link rel="stylesheet" media="all" href="../docco.css"></head><body><div id="container"><div id="background"></div><div id="jump_to">Jump To &hellip;<div id="jump_wrapper"><div id="jump_page"><a href="../index.html" class="source"><span class="file_name">README</span></a><a href="../src/editingWidgets/jquery.Midgard.midgardEditableEditorAloha.js.html" class="source "><span class="base_path">src / editingWidgets / </span><span class="file_name">jquery.Midgard.midgardEditableEditorAloha.js</span></a><a href="../src/editingWidgets/jquery.Midgard.midgardEditableBase.js.html" class="source "><span class="base_path">src / editingWidgets / </span><span class="file_name">jquery.Midgard.midgardEditableBase.js</span></a><a href="../src/editingWidgets/jquery.Midgard.midgardEditableEditorHallo.js.html" class="source "><span class="base_path">src / editingWidgets / </span><span class="file_name">jquery.Midgard.midgardEditableEditorHallo.js</span></a><a href="../src/jquery.Midgard.midgardToolbar.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardToolbar.js</span></a><a href="../src/jquery.Midgard.midgardNotifications.js.html" class="source selected"><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardNotifications.js</span></a><a href="../src/jquery.Midgard.midgardEditable.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardEditable.js</span></a><a href="../src/jquery.Midgard.midgardStorage.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardStorage.js</span></a><a href="../src/jquery.Midgard.midgardTags.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardTags.js</span></a><a href="../src/jquery.Midgard.midgardCreate.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardCreate.js</span></a><a href="../src/jquery.Midgard.midgardWorkflows.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardWorkflows.js</span></a></div></div></div><table cellpadding="0" cellspacing="0"><thead><tr><th class="docs"><h1>jquery.Midgard.midgardNotifications.js</h1><div class="filepath">src/</div></th><th class="code"></th></tr></thead><tbody><tr id="section-1"><td class="docs"><div class="pilwrap"><a href="#section-1" class="pilcrow">&#182;</a></div><pre><code>Create - On-site web editing interface
+(c) 2012 Jerry Jalava, IKS Consortium
+Create may be freely distributed under the MIT license.
+For all details and documentation:
+http://createjs.org/
+</code></pre>
+
+<div class="dox"><div class="summary"><p>jQuery(this.element).data('midgardNotifications').create({body: 'Content here!'});<br /> jQuery(this.element).data('midgardNotifications').create({<br /> body: "Do you wan't to run tests now?",<br />     actions: [<br />         {<br />             name: 'runtests', label: 'Run tests',<br />             cb: function(e, notification) {<br />                 alert('Running tests');<br />                 notification.close();<br />             }<br />         },<br />         {<br />             name: 'cancel', label: 'Cancel',<br />             cb: function(e, notification) {<br />                 notification.close();<br />             }<br />         }<br />     ]<br /> });</p></div><div class="body"></div></div>
+</td><td class="code"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">jQuery</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">_midgardnotifications_active</span> <span class="o">=</span> <span class="p">[];</span>
+  <span class="kd">var</span> <span class="nx">MidgardNotification</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">parent</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">_defaults</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">class_prefix</span><span class="o">:</span> <span class="s1">&#39;midgardNotifications&#39;</span><span class="p">,</span>
+        <span class="nx">timeout</span><span class="o">:</span> <span class="mi">3000</span><span class="p">,</span></pre></div></td></tr><tr id="section-2"><td class="docs"><div class="pilwrap"><a href="#section-2" class="pilcrow">&#182;</a></div><p>Set to 0 for sticky</p>
+</td><td class="code"><div class="highlight"><pre>        <span class="nx">auto_show</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="nx">body</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="nx">bindTo</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+        <span class="nx">gravity</span><span class="o">:</span> <span class="s1">&#39;T&#39;</span><span class="p">,</span>
+        <span class="nx">effects</span><span class="o">:</span> <span class="p">{</span>
+          <span class="nx">onShow</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">item</span><span class="p">,</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">item</span><span class="p">.</span><span class="nx">animate</span><span class="p">({</span>
+              <span class="nx">opacity</span><span class="o">:</span> <span class="s1">&#39;show&#39;</span>
+            <span class="p">},</span> <span class="mi">600</span><span class="p">,</span> <span class="nx">cb</span><span class="p">);</span>
+          <span class="p">},</span>
+          <span class="nx">onHide</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">item</span><span class="p">,</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">item</span><span class="p">.</span><span class="nx">animate</span><span class="p">({</span>
+              <span class="nx">opacity</span><span class="o">:</span> <span class="s1">&#39;hide&#39;</span>
+            <span class="p">},</span> <span class="mi">600</span><span class="p">,</span> <span class="nx">cb</span><span class="p">);</span>
+          <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nx">actions</span><span class="o">:</span> <span class="p">[],</span>
+        <span class="nx">callbacks</span><span class="o">:</span> <span class="p">{}</span>
+      <span class="p">};</span>
+      <span class="kd">var</span> <span class="nx">_config</span> <span class="o">=</span> <span class="p">{};</span>
+      <span class="kd">var</span> <span class="nx">_classes</span> <span class="o">=</span> <span class="p">{};</span>
+      <span class="kd">var</span> <span class="nx">_item</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+      <span class="kd">var</span> <span class="nx">_id</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+      <span class="kd">var</span> <span class="nx">_bind_target</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+      <span class="kd">var</span> <span class="nx">_parent</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">;</span>
+
+      <span class="kd">var</span> <span class="nx">_story</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+      <span class="kd">var</span> <span class="nx">base</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">constructor</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">_config</span> <span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">_defaults</span><span class="p">,</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{});</span>
+
+          <span class="nx">_classes</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="nx">container</span><span class="o">:</span> <span class="nx">_config</span><span class="p">.</span><span class="nx">class_prefix</span> <span class="o">+</span> <span class="s1">&#39;-container&#39;</span><span class="p">,</span>
+            <span class="nx">item</span><span class="o">:</span> <span class="p">{</span>
+              <span class="nx">wrapper</span><span class="o">:</span> <span class="nx">_config</span><span class="p">.</span><span class="nx">class_prefix</span> <span class="o">+</span> <span class="s1">&#39;-item&#39;</span><span class="p">,</span>
+              <span class="nx">arrow</span><span class="o">:</span> <span class="nx">_config</span><span class="p">.</span><span class="nx">class_prefix</span> <span class="o">+</span> <span class="s1">&#39;-arrow&#39;</span><span class="p">,</span>
+              <span class="nx">disregard</span><span class="o">:</span> <span class="nx">_config</span><span class="p">.</span><span class="nx">class_prefix</span> <span class="o">+</span> <span class="s1">&#39;-disregard&#39;</span><span class="p">,</span>
+              <span class="nx">content</span><span class="o">:</span> <span class="nx">_config</span><span class="p">.</span><span class="nx">class_prefix</span> <span class="o">+</span> <span class="s1">&#39;-content&#39;</span><span class="p">,</span>
+              <span class="nx">actions</span><span class="o">:</span> <span class="nx">_config</span><span class="p">.</span><span class="nx">class_prefix</span> <span class="o">+</span> <span class="s1">&#39;-actions&#39;</span><span class="p">,</span>
+              <span class="nx">action</span><span class="o">:</span> <span class="nx">_config</span><span class="p">.</span><span class="nx">class_prefix</span> <span class="o">+</span> <span class="s1">&#39;-action&#39;</span>
+            <span class="p">}</span>
+          <span class="p">};</span>
+
+          <span class="k">this</span><span class="p">.</span><span class="nx">_generate</span><span class="p">();</span>
+        <span class="p">},</span>
+        <span class="nx">getId</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="nx">_id</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="nx">getElement</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="nx">_item</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="nx">_generate</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+          <span class="kd">var</span> <span class="nx">_self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+          <span class="kd">var</span> <span class="nx">outer</span><span class="p">,</span> <span class="nx">inner</span><span class="p">,</span> <span class="nx">content</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+          <span class="nx">_item</span> <span class="o">=</span> <span class="nx">outer</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;&lt;div class=&quot;&#39;</span> <span class="o">+</span> <span class="nx">_classes</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">wrapper</span> <span class="o">+</span> <span class="s1">&#39;-outer&quot;/&gt;&#39;</span><span class="p">);</span>
+          <span class="nx">outer</span><span class="p">.</span><span class="nx">css</span><span class="p">({</span>
+            <span class="nx">display</span><span class="o">:</span> <span class="s1">&#39;none&#39;</span>
+          <span class="p">});</span>
+          <span class="nx">inner</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;&lt;div class=&quot;&#39;</span> <span class="o">+</span> <span class="nx">_classes</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">wrapper</span> <span class="o">+</span> <span class="s1">&#39;-inner&quot;/&gt;&#39;</span><span class="p">);</span>
+          <span class="nx">inner</span><span class="p">.</span><span class="nx">appendTo</span><span class="p">(</span><span class="nx">outer</span><span class="p">);</span>
+
+          <span class="k">if</span> <span class="p">(</span><span class="nx">_config</span><span class="p">.</span><span class="nx">bindTo</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">outer</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">_classes</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">wrapper</span> <span class="o">+</span> <span class="s1">&#39;-binded&#39;</span><span class="p">);</span>
+
+            <span class="kd">var</span> <span class="nx">arrow</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;&lt;div class=&quot;&#39;</span> <span class="o">+</span> <span class="nx">_classes</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">arrow</span> <span class="o">+</span> <span class="s1">&#39;&quot;/&gt;&#39;</span><span class="p">);</span>
+            <span class="nx">arrow</span><span class="p">.</span><span class="nx">appendTo</span><span class="p">(</span><span class="nx">outer</span><span class="p">);</span>
+          <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">outer</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">_classes</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">wrapper</span> <span class="o">+</span> <span class="s1">&#39;-normal&#39;</span><span class="p">);</span>
+          <span class="p">}</span>
+
+          <span class="nx">content</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;&lt;div class=&quot;&#39;</span> <span class="o">+</span> <span class="nx">_classes</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">content</span> <span class="o">+</span> <span class="s1">&#39;&quot;/&gt;&#39;</span><span class="p">);</span>
+          <span class="nx">content</span><span class="p">.</span><span class="nx">html</span><span class="p">(</span><span class="nx">_config</span><span class="p">.</span><span class="nx">body</span><span class="p">);</span>
+          <span class="nx">content</span><span class="p">.</span><span class="nx">appendTo</span><span class="p">(</span><span class="nx">inner</span><span class="p">);</span>
+
+          <span class="k">if</span> <span class="p">(</span><span class="nx">_config</span><span class="p">.</span><span class="nx">actions</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">actions_holder</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;&lt;div class=&quot;&#39;</span> <span class="o">+</span> <span class="nx">_classes</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">actions</span> <span class="o">+</span> <span class="s1">&#39;&quot;/&gt;&#39;</span><span class="p">);</span>
+            <span class="nx">actions_holder</span><span class="p">.</span><span class="nx">appendTo</span><span class="p">(</span><span class="nx">inner</span><span class="p">);</span>
+            <span class="nx">jQuery</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">_config</span><span class="p">.</span><span class="nx">actions</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">opts</span><span class="p">)</span> <span class="p">{</span>
+              <span class="kd">var</span> <span class="nx">action</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;&lt;button name=&quot;&#39;</span> <span class="o">+</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;&quot; class=&quot;button-&#39;</span> <span class="o">+</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&#39;</span> <span class="o">+</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">label</span> <span class="o">+</span> <span class="s1">&#39;&lt;/button&gt;&#39;</span><span class="p">).</span><span class="nx">button</span><span class="p">();</span>
+              <span class="nx">action</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">_story</span><span class="p">)</span> <span class="p">{</span>
+                  <span class="nx">opts</span><span class="p">.</span><span class="nx">cb</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">_story</span><span class="p">,</span> <span class="nx">_self</span><span class="p">);</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                  <span class="nx">opts</span><span class="p">.</span><span class="nx">cb</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">_self</span><span class="p">);</span>
+                <span class="p">}</span>
+
+              <span class="p">});</span>
+              <span class="nx">actions_holder</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">action</span><span class="p">);</span>
+            <span class="p">});</span>
+          <span class="p">}</span>
+
+          <span class="nx">_item</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">_config</span><span class="p">.</span><span class="nx">callbacks</span><span class="p">.</span><span class="nx">onClick</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">_config</span><span class="p">.</span><span class="nx">callbacks</span><span class="p">.</span><span class="nx">onClick</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">_self</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+              <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">_story</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">_self</span><span class="p">.</span><span class="nx">close</span><span class="p">();</span>
+              <span class="p">}</span>
+            <span class="p">}</span>
+          <span class="p">});</span>
+
+          <span class="k">if</span> <span class="p">(</span><span class="nx">_config</span><span class="p">.</span><span class="nx">auto_show</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
+          <span class="p">}</span>
+
+          <span class="k">this</span><span class="p">.</span><span class="nx">_setPosition</span><span class="p">();</span>
+
+          <span class="nx">_id</span> <span class="o">=</span> <span class="nx">_midgardnotifications_active</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+
+          <span class="nx">_parent</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">_item</span><span class="p">);</span>
+        <span class="p">},</span>
+        <span class="nx">_setPosition</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">_config</span><span class="p">.</span><span class="nx">bindTo</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">_bind_target</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">(</span><span class="nx">_config</span><span class="p">.</span><span class="nx">bindTo</span><span class="p">);</span>
+            <span class="kd">var</span> <span class="nx">trgt_w</span> <span class="o">=</span> <span class="nx">_bind_target</span><span class="p">.</span><span class="nx">outerWidth</span><span class="p">();</span>
+            <span class="kd">var</span> <span class="nx">trgt_h</span> <span class="o">=</span> <span class="nx">_bind_target</span><span class="p">.</span><span class="nx">outerHeight</span><span class="p">();</span>
+            <span class="kd">var</span> <span class="nx">trgt_l</span> <span class="o">=</span> <span class="nx">_bind_target</span><span class="p">.</span><span class="nx">offset</span><span class="p">().</span><span class="nx">left</span><span class="p">;</span>
+            <span class="kd">var</span> <span class="nx">trgt_t</span> <span class="o">=</span> <span class="nx">_bind_target</span><span class="p">.</span><span class="nx">offset</span><span class="p">().</span><span class="nx">top</span><span class="p">;</span>
+
+            <span class="k">switch</span> <span class="p">(</span><span class="nx">_config</span><span class="p">.</span><span class="nx">gravity</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">case</span> <span class="s1">&#39;TL&#39;</span><span class="o">:</span>
+              <span class="nx">properties</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;left&#39;</span><span class="o">:</span> <span class="nx">trgt_l</span><span class="p">,</span>
+                <span class="s1">&#39;top&#39;</span><span class="o">:</span> <span class="nx">trgt_t</span> <span class="o">+</span> <span class="nx">trgt_h</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span>
+              <span class="p">};</span>
+              <span class="nx">_item</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="nx">_classes</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">arrow</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">_classes</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">arrow</span> <span class="o">+</span> <span class="s1">&#39;_TL&#39;</span><span class="p">);</span>
+              <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="s1">&#39;TR&#39;</span><span class="o">:</span>
+              <span class="nx">properties</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;left&#39;</span><span class="o">:</span> <span class="nx">trgt_l</span> <span class="o">+</span> <span class="nx">trgt_w</span> <span class="o">-</span> <span class="nx">_item</span><span class="p">.</span><span class="nx">width</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;top&#39;</span><span class="o">:</span> <span class="nx">trgt_t</span> <span class="o">+</span> <span class="nx">trgt_h</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span>
+              <span class="p">};</span>
+              <span class="nx">_item</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="nx">_classes</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">arrow</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">_classes</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">arrow</span> <span class="o">+</span> <span class="s1">&#39;_TR&#39;</span><span class="p">);</span>
+              <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="s1">&#39;BL&#39;</span><span class="o">:</span>
+              <span class="nx">properties</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;left&#39;</span><span class="o">:</span> <span class="nx">trgt_l</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;top&#39;</span><span class="o">:</span> <span class="nx">trgt_t</span> <span class="o">-</span> <span class="nx">_item</span><span class="p">.</span><span class="nx">height</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span>
+              <span class="p">};</span>
+              <span class="nx">_item</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="nx">_classes</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">arrow</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">_classes</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">arrow</span> <span class="o">+</span> <span class="s1">&#39;_BL&#39;</span><span class="p">);</span>
+              <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="s1">&#39;BR&#39;</span><span class="o">:</span>
+              <span class="nx">properties</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;left&#39;</span><span class="o">:</span> <span class="nx">trgt_l</span> <span class="o">+</span> <span class="nx">trgt_w</span> <span class="o">-</span> <span class="nx">_item</span><span class="p">.</span><span class="nx">width</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;top&#39;</span><span class="o">:</span> <span class="nx">trgt_t</span> <span class="o">-</span> <span class="nx">_item</span><span class="p">.</span><span class="nx">height</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span>
+              <span class="p">};</span>
+              <span class="nx">_item</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="nx">_classes</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">arrow</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">_classes</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">arrow</span> <span class="o">+</span> <span class="s1">&#39;_BR&#39;</span><span class="p">);</span>
+              <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="s1">&#39;LT&#39;</span><span class="o">:</span>
+              <span class="nx">properties</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;left&#39;</span><span class="o">:</span> <span class="nx">trgt_l</span> <span class="o">+</span> <span class="nx">trgt_w</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;top&#39;</span><span class="o">:</span> <span class="nx">trgt_t</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span>
+              <span class="p">};</span>
+              <span class="nx">_item</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="nx">_classes</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">arrow</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">_classes</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">arrow</span> <span class="o">+</span> <span class="s1">&#39;_LT&#39;</span><span class="p">);</span>
+              <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="s1">&#39;LB&#39;</span><span class="o">:</span>
+              <span class="nx">properties</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;left&#39;</span><span class="o">:</span> <span class="nx">trgt_l</span> <span class="o">+</span> <span class="nx">trgt_w</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;top&#39;</span><span class="o">:</span> <span class="nx">trgt_t</span> <span class="o">+</span> <span class="nx">trgt_h</span> <span class="o">-</span> <span class="nx">_item</span><span class="p">.</span><span class="nx">height</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span>
+              <span class="p">};</span>
+              <span class="nx">_item</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="nx">_classes</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">arrow</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">_classes</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">arrow</span> <span class="o">+</span> <span class="s1">&#39;_LB&#39;</span><span class="p">);</span>
+              <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="s1">&#39;RT&#39;</span><span class="o">:</span>
+              <span class="nx">properties</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;left&#39;</span><span class="o">:</span> <span class="nx">trgt_l</span> <span class="o">-</span> <span class="nx">_item</span><span class="p">.</span><span class="nx">width</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;top&#39;</span><span class="o">:</span> <span class="nx">trgt_t</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span>
+              <span class="p">};</span>
+              <span class="nx">_item</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="nx">_classes</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">arrow</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">_classes</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">arrow</span> <span class="o">+</span> <span class="s1">&#39;_RT&#39;</span><span class="p">);</span>
+              <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="s1">&#39;RB&#39;</span><span class="o">:</span>
+              <span class="nx">properties</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;left&#39;</span><span class="o">:</span> <span class="nx">trgt_l</span> <span class="o">-</span> <span class="nx">_item</span><span class="p">.</span><span class="nx">width</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;top&#39;</span><span class="o">:</span> <span class="nx">trgt_t</span> <span class="o">+</span> <span class="nx">trgt_h</span> <span class="o">-</span> <span class="nx">_item</span><span class="p">.</span><span class="nx">height</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span>
+              <span class="p">};</span>
+              <span class="nx">_item</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="nx">_classes</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">arrow</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">_classes</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">arrow</span> <span class="o">+</span> <span class="s1">&#39;_RB&#39;</span><span class="p">);</span>
+              <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="s1">&#39;T&#39;</span><span class="o">:</span>
+              <span class="nx">properties</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;left&#39;</span><span class="o">:</span> <span class="nx">trgt_l</span> <span class="o">+</span> <span class="nx">trgt_w</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="nx">_item</span><span class="p">.</span><span class="nx">width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;top&#39;</span><span class="o">:</span> <span class="nx">trgt_t</span> <span class="o">+</span> <span class="nx">trgt_h</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span>
+              <span class="p">};</span>
+              <span class="nx">_item</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="nx">_classes</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">arrow</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">_classes</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">arrow</span> <span class="o">+</span> <span class="s1">&#39;_T&#39;</span><span class="p">);</span>
+              <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="s1">&#39;R&#39;</span><span class="o">:</span>
+              <span class="nx">properties</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;left&#39;</span><span class="o">:</span> <span class="nx">trgt_l</span> <span class="o">-</span> <span class="nx">_item</span><span class="p">.</span><span class="nx">width</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;top&#39;</span><span class="o">:</span> <span class="nx">trgt_t</span> <span class="o">+</span> <span class="nx">trgt_h</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="nx">_item</span><span class="p">.</span><span class="nx">height</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span>
+              <span class="p">};</span>
+              <span class="nx">_item</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="nx">_classes</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">arrow</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">_classes</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">arrow</span> <span class="o">+</span> <span class="s1">&#39;_R&#39;</span><span class="p">);</span>
+              <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="s1">&#39;B&#39;</span><span class="o">:</span>
+              <span class="nx">properties</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;left&#39;</span><span class="o">:</span> <span class="nx">trgt_l</span> <span class="o">+</span> <span class="nx">trgt_w</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="nx">_item</span><span class="p">.</span><span class="nx">width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;top&#39;</span><span class="o">:</span> <span class="nx">trgt_t</span> <span class="o">-</span> <span class="nx">_item</span><span class="p">.</span><span class="nx">height</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span>
+              <span class="p">};</span>
+              <span class="nx">_item</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="nx">_classes</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">arrow</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">_classes</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">arrow</span> <span class="o">+</span> <span class="s1">&#39;_B&#39;</span><span class="p">);</span>
+              <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="s1">&#39;L&#39;</span><span class="o">:</span>
+              <span class="nx">properties</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;left&#39;</span><span class="o">:</span> <span class="nx">trgt_l</span> <span class="o">+</span> <span class="nx">trgt_w</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;top&#39;</span><span class="o">:</span> <span class="nx">trgt_t</span> <span class="o">+</span> <span class="nx">trgt_h</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="nx">_item</span><span class="p">.</span><span class="nx">height</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span>
+              <span class="p">};</span>
+              <span class="nx">_item</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="nx">_classes</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">arrow</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">_classes</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">arrow</span> <span class="o">+</span> <span class="s1">&#39;_L&#39;</span><span class="p">);</span>
+              <span class="k">break</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="nx">properties</span><span class="p">.</span><span class="nx">position</span> <span class="o">=</span> <span class="s1">&#39;absolute&#39;</span><span class="p">;</span>
+            <span class="nx">_item</span><span class="p">.</span><span class="nx">css</span><span class="p">(</span><span class="nx">properties</span><span class="p">);</span>
+
+            <span class="k">return</span><span class="p">;</span>
+          <span class="p">}</span>
+
+          <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">_config</span><span class="p">.</span><span class="nx">position</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">_config</span><span class="p">.</span><span class="nx">position</span> <span class="o">=</span> <span class="s1">&#39;top right&#39;</span><span class="p">;</span>
+          <span class="p">}</span>
+
+          <span class="kd">var</span> <span class="nx">marginTop</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;.create-ui-toolbar-wrapper&#39;</span><span class="p">).</span><span class="nx">outerHeight</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span> <span class="o">+</span> <span class="mi">6</span><span class="p">;</span>
+          <span class="nx">pos</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="nx">position</span><span class="o">:</span> <span class="s1">&#39;fixed&#39;</span>
+          <span class="p">};</span>
+
+          <span class="kd">var</span> <span class="nx">activeHeight</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">items</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">total_height</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="nx">jQuery</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">items</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
+              <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span><span class="p">;</span>
+              <span class="p">}</span>
+              <span class="nx">total_height</span> <span class="o">+=</span> <span class="nx">item</span><span class="p">.</span><span class="nx">getElement</span><span class="p">().</span><span class="nx">height</span><span class="p">();</span>
+            <span class="p">});</span>
+            <span class="k">return</span> <span class="nx">total_height</span><span class="p">;</span>
+          <span class="p">};</span>
+
+          <span class="k">if</span> <span class="p">(</span><span class="nx">_config</span><span class="p">.</span><span class="nx">position</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/top/</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">pos</span><span class="p">.</span><span class="nx">top</span> <span class="o">=</span> <span class="nx">marginTop</span> <span class="o">+</span> <span class="nx">activeHeight</span><span class="p">(</span><span class="nx">_midgardnotifications_active</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">;</span>
+          <span class="p">}</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">_config</span><span class="p">.</span><span class="nx">position</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/bottom/</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">pos</span><span class="p">.</span><span class="nx">bottom</span> <span class="o">=</span> <span class="p">(</span><span class="nx">_midgardnotifications_active</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">*</span> <span class="nx">item</span><span class="p">.</span><span class="nx">height</span><span class="p">())</span> <span class="o">+</span> <span class="nx">item</span><span class="p">.</span><span class="nx">height</span><span class="p">()</span> <span class="o">+</span> <span class="mi">10</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">;</span>
+          <span class="p">}</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">_config</span><span class="p">.</span><span class="nx">position</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/right/</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">pos</span><span class="p">.</span><span class="nx">right</span> <span class="o">=</span> <span class="mi">20</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">;</span>
+          <span class="p">}</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">_config</span><span class="p">.</span><span class="nx">position</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/left/</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">pos</span><span class="p">.</span><span class="nx">left</span> <span class="o">=</span> <span class="mi">20</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">;</span>
+          <span class="p">}</span>
+
+          <span class="nx">_item</span><span class="p">.</span><span class="nx">css</span><span class="p">(</span><span class="nx">pos</span><span class="p">);</span>
+        <span class="p">},</span>
+        <span class="nx">show</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+          <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+          <span class="kd">var</span> <span class="nx">w_t</span><span class="p">,</span> <span class="nx">w_b</span><span class="p">,</span> <span class="nx">b_b</span><span class="p">,</span> <span class="nx">b_t</span><span class="p">,</span> <span class="nx">e_t</span><span class="p">,</span> <span class="nx">e_h</span><span class="p">;</span>
+
+          <span class="k">if</span> <span class="p">(</span><span class="nx">_config</span><span class="p">.</span><span class="nx">callbacks</span><span class="p">.</span><span class="nx">beforeShow</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">_config</span><span class="p">.</span><span class="nx">callbacks</span><span class="p">.</span><span class="nx">beforeShow</span><span class="p">(</span><span class="nx">self</span><span class="p">);</span>
+          <span class="p">}</span>
+
+          <span class="k">if</span> <span class="p">(</span><span class="nx">_config</span><span class="p">.</span><span class="nx">bindTo</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">w_t</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">scrollTop</span><span class="p">();</span>
+            <span class="nx">w_b</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">scrollTop</span><span class="p">()</span> <span class="o">+</span> <span class="nx">jQuery</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">height</span><span class="p">();</span>
+            <span class="nx">b_t</span> <span class="o">=</span> <span class="nb">parseFloat</span><span class="p">(</span><span class="nx">_item</span><span class="p">.</span><span class="nx">offset</span><span class="p">().</span><span class="nx">top</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+            <span class="nx">e_t</span> <span class="o">=</span> <span class="nx">_bind_target</span><span class="p">.</span><span class="nx">offset</span><span class="p">().</span><span class="nx">top</span><span class="p">;</span>
+            <span class="nx">e_h</span> <span class="o">=</span> <span class="nx">_bind_target</span><span class="p">.</span><span class="nx">outerHeight</span><span class="p">();</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">e_t</span> <span class="o">&lt;</span> <span class="nx">b_t</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">b_t</span> <span class="o">=</span> <span class="nx">e_t</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="nx">b_b</span> <span class="o">=</span> <span class="nb">parseFloat</span><span class="p">(</span><span class="nx">_item</span><span class="p">.</span><span class="nx">offset</span><span class="p">().</span><span class="nx">top</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="o">+</span> <span class="nx">_item</span><span class="p">.</span><span class="nx">height</span><span class="p">();</span>
+            <span class="k">if</span> <span class="p">((</span><span class="nx">e_t</span> <span class="o">+</span> <span class="nx">e_h</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nx">b_b</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">b_b</span> <span class="o">=</span> <span class="nx">e_t</span> <span class="o">+</span> <span class="nx">e_h</span><span class="p">;</span>
+            <span class="p">}</span>
+          <span class="p">}</span>
+
+          <span class="k">if</span> <span class="p">(</span><span class="nx">_config</span><span class="p">.</span><span class="nx">timeout</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">_config</span><span class="p">.</span><span class="nx">actions</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+              <span class="nx">self</span><span class="p">.</span><span class="nx">close</span><span class="p">();</span>
+            <span class="p">},</span> <span class="nx">_config</span><span class="p">.</span><span class="nx">timeout</span><span class="p">);</span>
+          <span class="p">}</span>
+
+          <span class="k">if</span> <span class="p">(</span><span class="nx">_config</span><span class="p">.</span><span class="nx">bindTo</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">b_t</span> <span class="o">&lt;</span> <span class="nx">w_t</span> <span class="o">||</span> <span class="nx">b_t</span> <span class="o">&gt;</span> <span class="nx">w_b</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="nx">b_b</span> <span class="o">&lt;</span> <span class="nx">w_t</span> <span class="o">||</span> <span class="nx">b_b</span> <span class="o">&gt;</span> <span class="nx">w_b</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;html, body&#39;</span><span class="p">).</span><span class="nx">stop</span><span class="p">().</span><span class="nx">animate</span><span class="p">({</span>
+              <span class="nx">scrollTop</span><span class="o">:</span> <span class="nx">b_t</span>
+            <span class="p">},</span> <span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;easeInOutExpo&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+              <span class="nx">_config</span><span class="p">.</span><span class="nx">effects</span><span class="p">.</span><span class="nx">onShow</span><span class="p">(</span><span class="nx">_item</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">_config</span><span class="p">.</span><span class="nx">callbacks</span><span class="p">.</span><span class="nx">afterShow</span><span class="p">)</span> <span class="p">{</span>
+                  <span class="nx">_config</span><span class="p">.</span><span class="nx">callbacks</span><span class="p">.</span><span class="nx">afterShow</span><span class="p">(</span><span class="nx">self</span><span class="p">);</span>
+                <span class="p">}</span>
+              <span class="p">});</span>
+            <span class="p">});</span>
+          <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">_config</span><span class="p">.</span><span class="nx">effects</span><span class="p">.</span><span class="nx">onShow</span><span class="p">(</span><span class="nx">_item</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+              <span class="k">if</span> <span class="p">(</span><span class="nx">_config</span><span class="p">.</span><span class="nx">callbacks</span><span class="p">.</span><span class="nx">afterShow</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">_config</span><span class="p">.</span><span class="nx">callbacks</span><span class="p">.</span><span class="nx">afterShow</span><span class="p">(</span><span class="nx">self</span><span class="p">);</span>
+              <span class="p">}</span>
+            <span class="p">});</span>
+          <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nx">close</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+          <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">_config</span><span class="p">.</span><span class="nx">callbacks</span><span class="p">.</span><span class="nx">beforeClose</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">_config</span><span class="p">.</span><span class="nx">callbacks</span><span class="p">.</span><span class="nx">beforeClose</span><span class="p">(</span><span class="nx">self</span><span class="p">);</span>
+          <span class="p">}</span>
+          <span class="nx">_config</span><span class="p">.</span><span class="nx">effects</span><span class="p">.</span><span class="nx">onHide</span><span class="p">(</span><span class="nx">_item</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">_config</span><span class="p">.</span><span class="nx">callbacks</span><span class="p">.</span><span class="nx">afterClose</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">_config</span><span class="p">.</span><span class="nx">callbacks</span><span class="p">.</span><span class="nx">afterClose</span><span class="p">(</span><span class="nx">self</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="nx">self</span><span class="p">.</span><span class="nx">destroy</span><span class="p">();</span>
+          <span class="p">});</span>
+        <span class="p">},</span>
+        <span class="nx">destroy</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+          <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+          <span class="nx">jQuery</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">_midgardnotifications_active</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
+              <span class="k">if</span> <span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">getId</span><span class="p">()</span> <span class="o">==</span> <span class="nx">self</span><span class="p">.</span><span class="nx">getId</span><span class="p">())</span> <span class="p">{</span>
+                <span class="k">delete</span> <span class="nx">_midgardnotifications_active</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+              <span class="p">}</span>
+            <span class="p">}</span>
+          <span class="p">});</span>
+          <span class="nx">jQuery</span><span class="p">(</span><span class="nx">_item</span><span class="p">).</span><span class="nx">remove</span><span class="p">();</span>
+        <span class="p">},</span>
+        <span class="nx">setStory</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">story</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">_story</span> <span class="o">=</span> <span class="nx">story</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="nx">setName</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">_item</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">_classes</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">wrapper</span> <span class="o">+</span> <span class="s1">&#39;-custom-&#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="p">);</span>
+          <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+        <span class="p">}</span>
+      <span class="p">};</span>
+      <span class="nx">base</span><span class="p">.</span><span class="nx">constructor</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+      <span class="k">delete</span> <span class="nx">base</span><span class="p">.</span><span class="nx">constructor</span><span class="p">;</span>
+
+      <span class="k">return</span> <span class="nx">base</span><span class="p">;</span>
+    <span class="p">};</span>
+
+  <span class="kd">var</span> <span class="nx">MidgardNotificationStoryline</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="nx">items</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">_defaults</span> <span class="o">=</span> <span class="p">{};</span>
+      <span class="kd">var</span> <span class="nx">_config</span> <span class="o">=</span> <span class="p">{};</span>
+      <span class="kd">var</span> <span class="nx">_storyline</span> <span class="o">=</span> <span class="p">{};</span>
+      <span class="kd">var</span> <span class="nx">_current_notification</span> <span class="o">=</span> <span class="p">{};</span>
+      <span class="kd">var</span> <span class="nx">_previous_item_name</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+      <span class="kd">var</span> <span class="nx">_first_item_name</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+      <span class="kd">var</span> <span class="nx">_last_item_name</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+      <span class="kd">var</span> <span class="nx">base</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">constructor</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">_config</span> <span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">_defaults</span><span class="p">,</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{});</span>
+        <span class="p">},</span>
+        <span class="nx">setStoryline</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">items</span><span class="p">)</span> <span class="p">{</span>
+          <span class="kd">var</span> <span class="nx">default_structure</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="nx">content</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="nx">actions</span><span class="o">:</span> <span class="p">[],</span>
+            <span class="nx">show_actions</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+            <span class="nx">notification</span><span class="o">:</span> <span class="p">{},</span></pre></div></td></tr><tr id="section-3"><td class="docs"><div class="pilwrap"><a href="#section-3" class="pilcrow">&#182;</a></div><p>Notification options to override</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="nx">back</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+            <span class="nx">back_label</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+            <span class="nx">forward</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+            <span class="nx">forward_label</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+            <span class="nx">beforeShow</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+            <span class="nx">afterShow</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+            <span class="nx">beforeClose</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+            <span class="nx">afterClose</span><span class="o">:</span> <span class="kc">null</span>
+          <span class="p">};</span>
+
+          <span class="nx">_storyline</span> <span class="o">=</span> <span class="p">{};</span>
+          <span class="nx">_current_item</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+          <span class="nx">_previous_item_name</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+          <span class="nx">_first_item_name</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+          <span class="nx">_last_item_name</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+          <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+          <span class="nx">jQuery</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">items</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">it</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">item</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">.</span><span class="nx">extend</span><span class="p">({},</span> <span class="nx">default_structure</span><span class="p">,</span> <span class="nx">it</span><span class="p">);</span>
+            <span class="nx">item</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+            <span class="kd">var</span> <span class="nx">notification</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">.</span><span class="nx">extend</span><span class="p">({},</span> <span class="nx">default_structure</span><span class="p">.</span><span class="nx">notification</span><span class="p">,</span> <span class="nx">it</span><span class="p">.</span><span class="nx">notification</span> <span class="o">||</span> <span class="p">{});</span>
+            <span class="nx">notification</span><span class="p">.</span><span class="nx">body</span> <span class="o">=</span> <span class="nx">item</span><span class="p">.</span><span class="nx">content</span><span class="p">;</span>
+
+            <span class="nx">notification</span><span class="p">.</span><span class="nx">auto_show</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">actions</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">notification</span><span class="p">.</span><span class="nx">delay</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="nx">notification</span><span class="p">.</span><span class="nx">callbacks</span> <span class="o">=</span> <span class="p">{</span>
+              <span class="nx">beforeShow</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">notif</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">beforeShow</span><span class="p">)</span> <span class="p">{</span>
+                  <span class="nx">item</span><span class="p">.</span><span class="nx">beforeShow</span><span class="p">(</span><span class="nx">notif</span><span class="p">,</span> <span class="nx">self</span><span class="p">);</span>
+                <span class="p">}</span>
+              <span class="p">},</span>
+              <span class="nx">afterShow</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">notif</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">afterShow</span><span class="p">)</span> <span class="p">{</span>
+                  <span class="nx">item</span><span class="p">.</span><span class="nx">afterShow</span><span class="p">(</span><span class="nx">notif</span><span class="p">,</span> <span class="nx">self</span><span class="p">);</span>
+                <span class="p">}</span>
+              <span class="p">},</span>
+              <span class="nx">beforeClose</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">notif</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">beforeClose</span><span class="p">)</span> <span class="p">{</span>
+                  <span class="nx">item</span><span class="p">.</span><span class="nx">beforeClose</span><span class="p">(</span><span class="nx">notif</span><span class="p">,</span> <span class="nx">self</span><span class="p">);</span>
+                <span class="p">}</span>
+              <span class="p">},</span>
+              <span class="nx">afterClose</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">notif</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">afterClose</span><span class="p">)</span> <span class="p">{</span>
+                  <span class="nx">item</span><span class="p">.</span><span class="nx">afterClose</span><span class="p">(</span><span class="nx">notif</span><span class="p">,</span> <span class="nx">self</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="nx">_previous_item_name</span> <span class="o">=</span> <span class="nx">notif</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+              <span class="p">}</span>
+            <span class="p">};</span>
+
+            <span class="nx">notification</span><span class="p">.</span><span class="nx">actions</span> <span class="o">=</span> <span class="p">[];</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">show_actions</span><span class="p">)</span> <span class="p">{</span>
+              <span class="k">if</span> <span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">back</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">back_label</span> <span class="o">=</span> <span class="nx">item</span><span class="p">.</span><span class="nx">back_label</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">back_label</span><span class="p">)</span> <span class="p">{</span>
+                  <span class="nx">back_label</span> <span class="o">=</span> <span class="s1">&#39;Back&#39;</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="nx">notification</span><span class="p">.</span><span class="nx">actions</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+                  <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;back&#39;</span><span class="p">,</span>
+                  <span class="nx">label</span><span class="o">:</span> <span class="nx">back_label</span><span class="p">,</span>
+                  <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">story</span><span class="p">,</span> <span class="nx">notif</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">story</span><span class="p">.</span><span class="nx">previous</span><span class="p">();</span>
+                  <span class="p">}</span>
+                <span class="p">});</span>
+              <span class="p">}</span>
+
+              <span class="k">if</span> <span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">forward</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">forward_label</span> <span class="o">=</span> <span class="nx">item</span><span class="p">.</span><span class="nx">forward_label</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">forward_label</span><span class="p">)</span> <span class="p">{</span>
+                  <span class="nx">forward_label</span> <span class="o">=</span> <span class="s1">&#39;Back&#39;</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="nx">notification</span><span class="p">.</span><span class="nx">actions</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+                  <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span>
+                  <span class="nx">label</span><span class="o">:</span> <span class="nx">forward_label</span><span class="p">,</span>
+                  <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">story</span><span class="p">,</span> <span class="nx">notif</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">story</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
+                  <span class="p">}</span>
+                <span class="p">});</span>
+              <span class="p">}</span>
+
+              <span class="k">if</span> <span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">actions</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">jQuery</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">actions</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">act</span><span class="p">)</span> <span class="p">{</span>
+                  <span class="nx">notification</span><span class="p">.</span><span class="nx">actions</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">actions</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                <span class="p">});</span>
+              <span class="p">}</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">_first_item_name</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">_first_item_name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="nx">_last_item_name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+
+            <span class="nx">item</span><span class="p">.</span><span class="nx">notification</span> <span class="o">=</span> <span class="nx">notification</span><span class="p">;</span>
+
+            <span class="nx">_storyline</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">item</span><span class="p">;</span>
+          <span class="p">});</span>
+          <span class="k">return</span> <span class="nx">_storyline</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="nx">start</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+          <span class="k">this</span><span class="p">.</span><span class="nx">_showNotification</span><span class="p">(</span><span class="nx">_storyline</span><span class="p">[</span><span class="nx">_first_item_name</span><span class="p">]);</span>
+        <span class="p">},</span>
+        <span class="nx">stop</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+          <span class="nx">_current_item</span><span class="p">.</span><span class="nx">close</span><span class="p">();</span>
+          <span class="nx">_current_item</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+          <span class="nx">_previous_item_name</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="nx">next</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+          <span class="nx">_current_item</span><span class="p">.</span><span class="nx">close</span><span class="p">();</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">_storyline</span><span class="p">[</span><span class="nx">_current_item</span><span class="p">.</span><span class="nx">name</span><span class="p">].</span><span class="nx">forward</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">next_item</span> <span class="o">=</span> <span class="nx">_storyline</span><span class="p">[</span><span class="nx">_current_item</span><span class="p">.</span><span class="nx">name</span><span class="p">].</span><span class="nx">forward</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_showNotification</span><span class="p">(</span><span class="nx">_storyline</span><span class="p">[</span><span class="nx">next_item</span><span class="p">]);</span>
+          <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_showNotification</span><span class="p">(</span><span class="nx">_storyline</span><span class="p">[</span><span class="nx">_last_item_name</span><span class="p">]);</span>
+          <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nx">previous</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">_previous_item_name</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">_current_item</span><span class="p">.</span><span class="nx">close</span><span class="p">();</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">_storyline</span><span class="p">[</span><span class="nx">_current_item</span><span class="p">.</span><span class="nx">name</span><span class="p">].</span><span class="nx">back</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">prev_item</span> <span class="o">=</span> <span class="nx">_storyline</span><span class="p">[</span><span class="nx">_current_item</span><span class="p">.</span><span class="nx">name</span><span class="p">].</span><span class="nx">back</span><span class="p">;</span>
+              <span class="k">this</span><span class="p">.</span><span class="nx">_showNotification</span><span class="p">(</span><span class="nx">_storyline</span><span class="p">[</span><span class="nx">prev_item</span><span class="p">]);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+              <span class="k">this</span><span class="p">.</span><span class="nx">_showNotification</span><span class="p">(</span><span class="nx">_storyline</span><span class="p">[</span><span class="nx">_previous_item_name</span><span class="p">]);</span>
+            <span class="p">}</span>
+          <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
+          <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nx">_showNotification</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">_current_item</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MidgardNotification</span><span class="p">(</span><span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">),</span> <span class="nx">item</span><span class="p">.</span><span class="nx">notification</span><span class="p">);</span>
+          <span class="nx">_current_item</span><span class="p">.</span><span class="nx">setStory</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+          <span class="nx">_current_item</span><span class="p">.</span><span class="nx">setName</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+          <span class="nx">_current_item</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
+
+          <span class="k">return</span> <span class="nx">_current_item</span><span class="p">;</span>
+        <span class="p">}</span>
+      <span class="p">};</span>
+      <span class="nx">base</span><span class="p">.</span><span class="nx">constructor</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+      <span class="k">delete</span> <span class="nx">base</span><span class="p">.</span><span class="nx">constructor</span><span class="p">;</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">items</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">base</span><span class="p">.</span><span class="nx">setStoryline</span><span class="p">(</span><span class="nx">items</span><span class="p">);</span>
+      <span class="p">}</span>
+
+      <span class="k">return</span> <span class="nx">base</span><span class="p">;</span>
+    <span class="p">};</span>
+
+  <span class="kd">var</span> <span class="nx">_createTutorialStoryline</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;start&#39;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">content</span><span class="o">:</span> <span class="s1">&#39;Welcome to CreateJS tutorial!&#39;</span><span class="p">,</span>
+      <span class="nx">forward</span><span class="o">:</span> <span class="s1">&#39;toolbar_toggle&#39;</span><span class="p">,</span>
+      <span class="nx">forward_label</span><span class="o">:</span> <span class="s1">&#39;Start tutorial&#39;</span><span class="p">,</span>
+      <span class="nx">actions</span><span class="o">:</span> <span class="p">[{</span>
+        <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;quit&#39;</span><span class="p">,</span>
+        <span class="nx">label</span><span class="o">:</span> <span class="s1">&#39;Quit&#39;</span><span class="p">,</span>
+        <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">story</span><span class="p">,</span> <span class="nx">notif</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">story</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
+        <span class="p">}</span>
+      <span class="p">}]</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;toolbar_toggle&#39;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">content</span><span class="o">:</span> <span class="s1">&#39;This is the CreateJS toolbars toggle button.&lt;br /&gt;You can hide and show the full toolbar by clicking here.&lt;br /&gt;Try it now.&#39;</span><span class="p">,</span>
+      <span class="nx">forward</span><span class="o">:</span> <span class="s1">&#39;edit_button&#39;</span><span class="p">,</span>
+      <span class="nx">show_actions</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+      <span class="nx">afterShow</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">notification</span><span class="p">,</span> <span class="nx">story</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">).</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;midgardtoolbarstatechange&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">display</span> <span class="o">==</span> <span class="s1">&#39;full&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">story</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
+            <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">).</span><span class="nx">unbind</span><span class="p">(</span><span class="s1">&#39;midgardtoolbarstatechange&#39;</span><span class="p">);</span>
+          <span class="p">}</span>
+        <span class="p">});</span>
+      <span class="p">},</span>
+      <span class="nx">notification</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">bindTo</span><span class="o">:</span> <span class="s1">&#39;#midgard-bar-hidebutton&#39;</span><span class="p">,</span>
+        <span class="nx">timeout</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="nx">gravity</span><span class="o">:</span> <span class="s1">&#39;TL&#39;</span>
+      <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;edit_button&#39;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">content</span><span class="o">:</span> <span class="s1">&#39;This is the edit button.&lt;br /&gt;Try it now.&#39;</span><span class="p">,</span>
+      <span class="nx">show_actions</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+      <span class="nx">afterShow</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">notification</span><span class="p">,</span> <span class="nx">story</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">).</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;midgardcreatestatechange&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">state</span> <span class="o">==</span> <span class="s1">&#39;edit&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">story</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
+            <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">).</span><span class="nx">unbind</span><span class="p">(</span><span class="s1">&#39;midgardcreatestatechange&#39;</span><span class="p">);</span>
+          <span class="p">}</span>
+        <span class="p">});</span>
+      <span class="p">},</span>
+      <span class="nx">notification</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">bindTo</span><span class="o">:</span> <span class="s1">&#39;.ui-button[for=midgardcreate-edit]&#39;</span><span class="p">,</span>
+        <span class="nx">timeout</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="nx">gravity</span><span class="o">:</span> <span class="s1">&#39;TL&#39;</span>
+      <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;end&#39;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">content</span><span class="o">:</span> <span class="s1">&#39;Thank you for watching!&lt;br /&gt;Happy content editing times await you!&#39;</span>
+    <span class="p">}</span>
+  <span class="p">};</span>
+
+  <span class="nx">jQuery</span><span class="p">.</span><span class="nx">widget</span><span class="p">(</span><span class="s1">&#39;Midgard.midgardNotifications&#39;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">options</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">notification_defaults</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">class_prefix</span><span class="o">:</span> <span class="s1">&#39;midgardNotifications&#39;</span><span class="p">,</span>
+        <span class="nx">position</span><span class="o">:</span> <span class="s1">&#39;top right&#39;</span>
+      <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="nx">_create</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">classes</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">container</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">notification_defaults</span><span class="p">.</span><span class="nx">class_prefix</span> <span class="o">+</span> <span class="s1">&#39;-container&#39;</span>
+      <span class="p">};</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">classes</span><span class="p">.</span><span class="nx">container</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">element</span><span class="p">).</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">container</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">classes</span><span class="p">.</span><span class="nx">container</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">element</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_parseFromDOM</span><span class="p">();</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">container</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;&lt;div class=&quot;&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">classes</span><span class="p">.</span><span class="nx">container</span> <span class="o">+</span> <span class="s1">&#39;&quot; /&gt;&#39;</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">element</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">container</span><span class="p">);</span>
+      <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="nx">destroy</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">container</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
+      <span class="nx">$</span><span class="p">.</span><span class="nx">Widget</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">destroy</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="nx">_init</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{},</span>
+
+    <span class="nx">_parseFromDOM</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="p">},</span>
+
+    <span class="nx">showStory</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="nx">items</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">story</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MidgardNotificationStoryline</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="nx">items</span><span class="p">);</span>
+      <span class="nx">story</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
+
+      <span class="k">return</span> <span class="nx">story</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="nx">create</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">options</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">.</span><span class="nx">extend</span><span class="p">({},</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">notification_defaults</span><span class="p">,</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{});</span>
+
+      <span class="nx">item</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MidgardNotification</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">container</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+      <span class="nx">item</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
+
+      <span class="k">return</span> <span class="nx">item</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="nx">showTutorial</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">showStory</span><span class="p">({},</span> <span class="nx">_createTutorialStoryline</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+
+<span class="p">})(</span><span class="nx">jQuery</span><span class="p">);</span>
+
+</pre></div></td></tr></tbody></table><div id="generated">generated Mon Apr 23 2012 17:46:12 GMT+0200 (CEST)  </div></div></body></html>

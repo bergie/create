@@ -1,0 +1,230 @@
+<!DOCTYPE html><html><head><title>jquery.Midgard.midgardEditable.js</title><meta http-equiv="Content-Type" content="text/html" charset="UTF-8"><link rel="stylesheet" media="all" href="../docco.css"></head><body><div id="container"><div id="background"></div><div id="jump_to">Jump To &hellip;<div id="jump_wrapper"><div id="jump_page"><a href="../index.html" class="source"><span class="file_name">README</span></a><a href="../src/editingWidgets/jquery.Midgard.midgardEditableEditorAloha.js.html" class="source "><span class="base_path">src / editingWidgets / </span><span class="file_name">jquery.Midgard.midgardEditableEditorAloha.js</span></a><a href="../src/editingWidgets/jquery.Midgard.midgardEditableBase.js.html" class="source "><span class="base_path">src / editingWidgets / </span><span class="file_name">jquery.Midgard.midgardEditableBase.js</span></a><a href="../src/editingWidgets/jquery.Midgard.midgardEditableEditorHallo.js.html" class="source "><span class="base_path">src / editingWidgets / </span><span class="file_name">jquery.Midgard.midgardEditableEditorHallo.js</span></a><a href="../src/jquery.Midgard.midgardToolbar.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardToolbar.js</span></a><a href="../src/jquery.Midgard.midgardNotifications.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardNotifications.js</span></a><a href="../src/jquery.Midgard.midgardEditable.js.html" class="source selected"><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardEditable.js</span></a><a href="../src/jquery.Midgard.midgardStorage.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardStorage.js</span></a><a href="../src/jquery.Midgard.midgardTags.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardTags.js</span></a><a href="../src/jquery.Midgard.midgardCreate.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardCreate.js</span></a><a href="../src/jquery.Midgard.midgardWorkflows.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardWorkflows.js</span></a></div></div></div><table cellpadding="0" cellspacing="0"><thead><tr><th class="docs"><h1>jquery.Midgard.midgardEditable.js</h1><div class="filepath">src/</div></th><th class="code"></th></tr></thead><tbody><tr id="section-1"><td class="docs"><div class="pilwrap"><a href="#section-1" class="pilcrow">&#182;</a></div><pre><code>Create - On-site web editing interface
+(c) 2011-2012 Henri Bergius, IKS Consortium
+Create may be freely distributed under the MIT license.
+For all details and documentation:
+http://createjs.org/
+</code></pre>
+</td><td class="code"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">jQuery</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span></pre></div></td></tr><tr id="section-2"><td class="docs"><div class="pilwrap"><a href="#section-2" class="pilcrow">&#182;</a></div><h1>Create editing widget</h1>
+</td><td class="code"><div class="highlight"><pre>  <span class="nx">jQuery</span><span class="p">.</span><span class="nx">widget</span><span class="p">(</span><span class="s1">&#39;Midgard.midgardEditable&#39;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">options</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">editables</span><span class="o">:</span> <span class="p">[],</span>
+      <span class="nx">model</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+      <span class="nx">editorOptions</span><span class="o">:</span> <span class="p">{},</span></pre></div></td></tr><tr id="section-3"><td class="docs"><div class="pilwrap"><a href="#section-3" class="pilcrow">&#182;</a></div><p>the available widgets by data type
+TODO: needs a comprehensive list of types and their appropriate widgets</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="nx">widgets</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s1">&#39;Text&#39;</span><span class="o">:</span> <span class="s1">&#39;halloWidget&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;default&#39;</span><span class="o">:</span> <span class="s1">&#39;halloWidget&#39;</span>
+      <span class="p">},</span>
+      <span class="nx">toolbarState</span><span class="o">:</span> <span class="s1">&#39;full&#39;</span><span class="p">,</span></pre></div></td></tr><tr id="section-4"><td class="docs"><div class="pilwrap"><a href="#section-4" class="pilcrow">&#182;</a></div><p>returns the name of the widget to use for the given property</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="nx">widgetName</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span></pre></div></td></tr><tr id="section-5"><td class="docs"><div class="pilwrap"><a href="#section-5" class="pilcrow">&#182;</a></div><p>TODO: make sure type is already loaded into VIE</p>
+</td><td class="code"><div class="highlight"><pre>        <span class="kd">var</span> <span class="nx">propertyType</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">type</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;@type&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">type</span><span class="p">.</span><span class="nx">attributes</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">property</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">propertyType</span> <span class="o">=</span> <span class="nx">type</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">property</span><span class="p">).</span><span class="nx">range</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+          <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">widgets</span><span class="p">[</span><span class="nx">propertyType</span><span class="p">])</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">widgets</span><span class="p">[</span><span class="nx">propertyType</span><span class="p">];</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">widgets</span><span class="p">[</span><span class="s1">&#39;default&#39;</span><span class="p">];</span>
+      <span class="p">},</span>
+      <span class="nx">enableEditor</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">widgetName</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">widgetName</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+        <span class="nx">data</span><span class="p">.</span><span class="nx">disabled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">jQuery</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">element</span><span class="p">)[</span><span class="nx">widgetName</span><span class="p">]</span> <span class="o">!==</span> <span class="s1">&#39;function&#39;</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="nx">widgetName</span> <span class="o">+</span> <span class="s1">&#39; widget is not available&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">jQuery</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">element</span><span class="p">)[</span><span class="nx">widgetName</span><span class="p">](</span><span class="nx">data</span><span class="p">);</span>
+        <span class="nx">jQuery</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">element</span><span class="p">).</span><span class="nx">data</span><span class="p">(</span><span class="s1">&#39;createWidgetName&#39;</span><span class="p">,</span> <span class="nx">widgetName</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">jQuery</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">element</span><span class="p">);</span>
+      <span class="p">},</span>
+      <span class="nx">disableEditor</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">widgetName</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">element</span><span class="p">).</span><span class="nx">data</span><span class="p">(</span><span class="s1">&#39;createWidgetName&#39;</span><span class="p">);</span>
+        <span class="nx">data</span><span class="p">.</span><span class="nx">disabled</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">widgetName</span><span class="p">)</span> <span class="p">{</span></pre></div></td></tr><tr id="section-6"><td class="docs"><div class="pilwrap"><a href="#section-6" class="pilcrow">&#182;</a></div><p>only if there has been an editing widget registered</p>
+</td><td class="code"><div class="highlight"><pre>          <span class="nx">jQuery</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">element</span><span class="p">)[</span><span class="nx">widgetName</span><span class="p">](</span><span class="nx">data</span><span class="p">);</span>
+          <span class="nx">jQuery</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">element</span><span class="p">).</span><span class="nx">removeClass</span><span class="p">(</span><span class="s1">&#39;ui-state-disabled&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+      <span class="p">},</span>
+      <span class="nx">addButton</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+      <span class="nx">enable</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{},</span>
+      <span class="nx">enableproperty</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{},</span>
+      <span class="nx">disable</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{},</span>
+      <span class="nx">activated</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{},</span>
+      <span class="nx">deactivated</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{},</span>
+      <span class="nx">changed</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{},</span>
+      <span class="nx">vie</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+      <span class="nx">enableCollectionAdd</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="p">},</span>
+
+    <span class="nx">_create</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">vie</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">vie</span><span class="p">;</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">widget</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">vie</span><span class="p">.</span><span class="nx">load</span><span class="p">({</span><span class="nx">element</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">element</span><span class="p">}).</span><span class="nx">from</span><span class="p">(</span><span class="s1">&#39;rdfa&#39;</span><span class="p">).</span><span class="nx">execute</span><span class="p">().</span><span class="nx">done</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">entities</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">widget</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">model</span> <span class="o">=</span> <span class="nx">entities</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+        <span class="p">});</span>
+      <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="nx">_init</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">disabled</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">disable</span><span class="p">();</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">enable</span><span class="p">();</span>
+    <span class="p">},</span>
+
+    <span class="nx">enable</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">widget</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">vie</span><span class="p">.</span><span class="nx">services</span><span class="p">.</span><span class="nx">rdfa</span><span class="p">.</span><span class="nx">findPredicateElements</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;[property]&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">element</span><span class="p">),</span> <span class="kc">false</span><span class="p">).</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">widget</span><span class="p">.</span><span class="nx">_enableProperty</span><span class="p">(</span><span class="nx">jQuery</span><span class="p">(</span><span class="k">this</span><span class="p">));</span>
+      <span class="p">});</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">_trigger</span><span class="p">(</span><span class="s1">&#39;enable&#39;</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">instance</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">model</span><span class="p">,</span>
+        <span class="nx">entityElement</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">element</span>
+      <span class="p">});</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">enableCollectionAdd</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="nx">_</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">vie</span><span class="p">.</span><span class="nx">services</span><span class="p">.</span><span class="nx">rdfa</span><span class="p">.</span><span class="nx">views</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">view</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">view</span> <span class="k">instanceof</span> <span class="nx">widget</span><span class="p">.</span><span class="nx">vie</span><span class="p">.</span><span class="nx">view</span><span class="p">.</span><span class="nx">Collection</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">widget</span><span class="p">.</span><span class="nx">_enableCollection</span><span class="p">(</span><span class="nx">view</span><span class="p">);</span>
+        <span class="p">}</span>
+      <span class="p">});</span>
+    <span class="p">},</span>
+
+    <span class="nx">disable</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">widget</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+      <span class="nx">jQuery</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">editables</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="nx">editable</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">widget</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">disableEditor</span><span class="p">({</span>
+          <span class="nx">widget</span><span class="o">:</span> <span class="nx">widget</span><span class="p">,</span>
+          <span class="nx">editable</span><span class="o">:</span> <span class="nx">editable</span><span class="p">,</span>
+          <span class="nx">entity</span><span class="o">:</span> <span class="nx">widget</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">model</span><span class="p">,</span>
+          <span class="nx">element</span><span class="o">:</span> <span class="nx">jQuery</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+        <span class="p">});</span>
+      <span class="p">});</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">editables</span> <span class="o">=</span> <span class="p">[];</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">addButton</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">addButton</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
+        <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">addButton</span><span class="p">;</span>
+      <span class="p">}</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">_trigger</span><span class="p">(</span><span class="s1">&#39;disable&#39;</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">instance</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">model</span><span class="p">,</span>
+        <span class="nx">entityElement</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">element</span>
+      <span class="p">});</span>
+    <span class="p">},</span>
+
+    <span class="nx">_enableProperty</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">element</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">widget</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+      <span class="kd">var</span> <span class="nx">propertyName</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">vie</span><span class="p">.</span><span class="nx">services</span><span class="p">.</span><span class="nx">rdfa</span><span class="p">.</span><span class="nx">getElementPredicate</span><span class="p">(</span><span class="nx">element</span><span class="p">);</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">propertyName</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">propertyName</span><span class="p">)</span> <span class="k">instanceof</span> <span class="nb">Array</span><span class="p">)</span> <span class="p">{</span></pre></div></td></tr><tr id="section-7"><td class="docs"><div class="pilwrap"><a href="#section-7" class="pilcrow">&#182;</a></div><p>For now we don't deal with multivalued properties in the editable</p>
+</td><td class="code"><div class="highlight"><pre>        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+      <span class="p">}</span>
+
+      <span class="kd">var</span> <span class="nx">editable</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">enableEditor</span><span class="p">({</span>
+        <span class="nx">widget</span><span class="o">:</span> <span class="k">this</span><span class="p">,</span>
+        <span class="nx">element</span><span class="o">:</span> <span class="nx">element</span><span class="p">,</span>
+        <span class="nx">entity</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">model</span><span class="p">,</span>
+        <span class="nx">property</span><span class="o">:</span> <span class="nx">propertyName</span><span class="p">,</span>
+        <span class="nx">editorOptions</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">editorOptions</span><span class="p">,</span>
+        <span class="nx">toolbarState</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">toolbarState</span><span class="p">,</span>
+        <span class="nx">vie</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">vie</span><span class="p">,</span>
+        <span class="nx">modified</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">content</span><span class="p">)</span> <span class="p">{</span>
+          <span class="kd">var</span> <span class="nx">changedProperties</span> <span class="o">=</span> <span class="p">{};</span>
+          <span class="nx">changedProperties</span><span class="p">[</span><span class="nx">propertyName</span><span class="p">]</span> <span class="o">=</span> <span class="nx">content</span><span class="p">;</span>
+          <span class="nx">widget</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">changedProperties</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">silent</span><span class="o">:</span> <span class="kc">true</span>
+          <span class="p">});</span>
+          <span class="nx">widget</span><span class="p">.</span><span class="nx">_trigger</span><span class="p">(</span><span class="s1">&#39;changed&#39;</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">property</span><span class="o">:</span> <span class="nx">propertyName</span><span class="p">,</span>
+            <span class="nx">instance</span><span class="o">:</span> <span class="nx">widget</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">model</span><span class="p">,</span>
+            <span class="nx">element</span><span class="o">:</span> <span class="nx">element</span><span class="p">,</span>
+            <span class="nx">entityElement</span><span class="o">:</span> <span class="nx">widget</span><span class="p">.</span><span class="nx">element</span>
+          <span class="p">});</span>
+        <span class="p">},</span>
+        <span class="nx">activated</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+          <span class="nx">widget</span><span class="p">.</span><span class="nx">_trigger</span><span class="p">(</span><span class="s1">&#39;activated&#39;</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">property</span><span class="o">:</span> <span class="nx">propertyName</span><span class="p">,</span>
+            <span class="nx">instance</span><span class="o">:</span> <span class="nx">widget</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">model</span><span class="p">,</span>
+            <span class="nx">element</span><span class="o">:</span> <span class="nx">element</span><span class="p">,</span>
+            <span class="nx">entityElement</span><span class="o">:</span> <span class="nx">widget</span><span class="p">.</span><span class="nx">element</span>
+          <span class="p">});</span>
+        <span class="p">},</span>
+        <span class="nx">deactivated</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+          <span class="nx">widget</span><span class="p">.</span><span class="nx">_trigger</span><span class="p">(</span><span class="s1">&#39;deactivated&#39;</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">property</span><span class="o">:</span> <span class="nx">propertyName</span><span class="p">,</span>
+            <span class="nx">instance</span><span class="o">:</span> <span class="nx">widget</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">model</span><span class="p">,</span>
+            <span class="nx">element</span><span class="o">:</span> <span class="nx">element</span><span class="p">,</span>
+            <span class="nx">entityElement</span><span class="o">:</span> <span class="nx">widget</span><span class="p">.</span><span class="nx">element</span>
+          <span class="p">});</span>
+        <span class="p">}</span>
+      <span class="p">});</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">_trigger</span><span class="p">(</span><span class="s1">&#39;enableproperty&#39;</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">editable</span><span class="o">:</span> <span class="nx">editable</span><span class="p">,</span>
+        <span class="nx">property</span><span class="o">:</span> <span class="nx">propertyName</span><span class="p">,</span>
+        <span class="nx">instance</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">model</span><span class="p">,</span>
+        <span class="nx">element</span><span class="o">:</span> <span class="nx">element</span><span class="p">,</span>
+        <span class="nx">entityElement</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">element</span>
+      <span class="p">});</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">editables</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">editable</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="nx">_enableCollection</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">collectionView</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">widget</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">collectionView</span><span class="p">.</span><span class="nx">owner</span> <span class="o">||</span> <span class="nx">collectionView</span><span class="p">.</span><span class="nx">owner</span><span class="p">.</span><span class="nx">getSubject</span><span class="p">()</span> <span class="o">!==</span> <span class="nx">widget</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">getSubject</span><span class="p">())</span> <span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="nx">widget</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">addButton</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="nx">collectionView</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span></pre></div></td></tr><tr id="section-8"><td class="docs"><div class="pilwrap"><a href="#section-8" class="pilcrow">&#182;</a></div><p>Collection view has no template and so can't add</p>
+</td><td class="code"><div class="highlight"><pre>        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+
+      <span class="nx">collectionView</span><span class="p">.</span><span class="nx">collection</span><span class="p">.</span><span class="nx">url</span> <span class="o">=</span> <span class="nx">widget</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">url</span><span class="p">();</span>
+
+      <span class="nx">collectionView</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">itemView</span><span class="p">)</span> <span class="p">{</span></pre></div></td></tr><tr id="section-9"><td class="docs"><div class="pilwrap"><a href="#section-9" class="pilcrow">&#182;</a></div><p>itemView.el.effect('slide');</p>
+</td><td class="code"><div class="highlight"><pre>        <span class="nx">itemView</span><span class="p">.</span><span class="nx">el</span><span class="p">.</span><span class="nx">midgardEditable</span><span class="p">({</span>
+          <span class="nx">disabled</span><span class="o">:</span> <span class="nx">widget</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">disabled</span><span class="p">,</span>
+          <span class="nx">model</span><span class="o">:</span> <span class="nx">itemView</span><span class="p">.</span><span class="nx">model</span><span class="p">,</span>
+          <span class="nx">vie</span><span class="o">:</span> <span class="nx">widget</span><span class="p">.</span><span class="nx">vie</span><span class="p">,</span>
+          <span class="nx">widgets</span><span class="o">:</span> <span class="nx">widget</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">widgets</span>
+        <span class="p">});</span>
+      <span class="p">});</span>
+
+      <span class="nx">collectionView</span><span class="p">.</span><span class="nx">collection</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">model</span><span class="p">.</span><span class="nx">primaryCollection</span> <span class="o">=</span> <span class="nx">collectionView</span><span class="p">.</span><span class="nx">collection</span><span class="p">;</span>
+        <span class="nx">widget</span><span class="p">.</span><span class="nx">vie</span><span class="p">.</span><span class="nx">entities</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">model</span><span class="p">);</span>
+        <span class="nx">model</span><span class="p">.</span><span class="nx">collection</span> <span class="o">=</span> <span class="nx">collectionView</span><span class="p">.</span><span class="nx">collection</span><span class="p">;</span>
+      <span class="p">});</span>
+
+      <span class="nx">collectionView</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;remove&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">itemView</span><span class="p">)</span> <span class="p">{</span></pre></div></td></tr><tr id="section-10"><td class="docs"><div class="pilwrap"><a href="#section-10" class="pilcrow">&#182;</a></div><p>itemView.el.hide('drop');</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="p">});</span>
+
+      <span class="nx">widget</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">addButton</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;&lt;button class=&quot;btn&quot;&gt;&lt;i class=&quot;icon-plus&quot;&gt;&lt;/i&gt; Add&lt;/button&gt;&#39;</span><span class="p">).</span><span class="nx">button</span><span class="p">();</span>
+      <span class="nx">widget</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">addButton</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="s1">&#39;midgard-create-add&#39;</span><span class="p">);</span>
+      <span class="nx">widget</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">addButton</span><span class="p">.</span><span class="nx">click</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="nx">collectionView</span><span class="p">.</span><span class="nx">collection</span><span class="p">.</span><span class="nx">add</span><span class="p">({});</span>
+      <span class="p">});</span>
+
+      <span class="nx">collectionView</span><span class="p">.</span><span class="nx">el</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="nx">widget</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">addButton</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+<span class="p">})(</span><span class="nx">jQuery</span><span class="p">);</span>
+
+</pre></div></td></tr></tbody></table><div id="generated">generated Mon Apr 23 2012 17:46:12 GMT+0200 (CEST)  </div></div></body></html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html><html><head><title>jquery.Midgard.midgardTags.js</title><meta http-equiv="Content-Type" content="text/html" charset="UTF-8"><link rel="stylesheet" media="all" href="../docco.css"></head><body><div id="container"><div id="background"></div><div id="jump_to">Jump To &hellip;<div id="jump_wrapper"><div id="jump_page"><a href="../index.html" class="source"><span class="file_name">README</span></a><a href="../src/editingWidgets/jquery.Midgard.midgardEditableEditorAloha.js.html" class="source "><span class="base_path">src / editingWidgets / </span><span class="file_name">jquery.Midgard.midgardEditableEditorAloha.js</span></a><a href="../src/editingWidgets/jquery.Midgard.midgardEditableBase.js.html" class="source "><span class="base_path">src / editingWidgets / </span><span class="file_name">jquery.Midgard.midgardEditableBase.js</span></a><a href="../src/editingWidgets/jquery.Midgard.midgardEditableEditorHallo.js.html" class="source "><span class="base_path">src / editingWidgets / </span><span class="file_name">jquery.Midgard.midgardEditableEditorHallo.js</span></a><a href="../src/jquery.Midgard.midgardToolbar.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardToolbar.js</span></a><a href="../src/jquery.Midgard.midgardNotifications.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardNotifications.js</span></a><a href="../src/jquery.Midgard.midgardEditable.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardEditable.js</span></a><a href="../src/jquery.Midgard.midgardStorage.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardStorage.js</span></a><a href="../src/jquery.Midgard.midgardTags.js.html" class="source selected"><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardTags.js</span></a><a href="../src/jquery.Midgard.midgardCreate.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardCreate.js</span></a><a href="../src/jquery.Midgard.midgardWorkflows.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardWorkflows.js</span></a></div></div></div><table cellpadding="0" cellspacing="0"><thead><tr><th class="docs"><h1>jquery.Midgard.midgardTags.js</h1><div class="filepath">src/</div></th><th class="code"></th></tr></thead><tbody><tr id="section-1"><td class="docs"><div class="pilwrap"><a href="#section-1" class="pilcrow">&#182;</a></div><pre><code>Create - On-site web editing interface
+(c) 2012 IKS Consortium
+Create may be freely distributed under the MIT license.
+For all details and documentation:
+http://createjs.org/
+</code></pre>
+</td><td class="code"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">jQuery</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">jQuery</span><span class="p">.</span><span class="nx">widget</span><span class="p">(</span><span class="s1">&#39;Midgard.midgardTags&#39;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">options</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">vie</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+      <span class="nx">entity</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+      <span class="nx">element</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+      <span class="nx">entityElement</span><span class="o">:</span> <span class="kc">null</span>
+    <span class="p">},</span>
+
+    <span class="nx">_init</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">vie</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">vie</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">entity</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">entity</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">element</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">element</span><span class="p">;</span>
+
+      <span class="kd">var</span> <span class="nx">subject</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">entity</span><span class="p">.</span><span class="nx">getSubject</span><span class="p">();</span></pre></div></td></tr><tr id="section-2"><td class="docs"><div class="pilwrap"><a href="#section-2" class="pilcrow">&#182;</a></div><p>insert settings pane</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="kd">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">subject</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/[^A-Za-z]/g</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">pane</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;&lt;div class=&quot;hiddenfieldsContainer&quot;&gt;&lt;div class=&quot;hiddenfieldsToggle&quot;&gt;&lt;/div&gt;&lt;div class=&quot;hiddenfields&quot;&gt;&lt;div class=&quot;hiddenfieldsCloseButton&quot;&gt;&lt;/div&gt;&lt;h2&gt;Article settings&lt;/h2&gt;&lt;div id=&quot;articleTagsWrapper&quot;&gt;&lt;form&gt;&lt;div class=&quot;articleTags&quot;&gt;&lt;h3&gt;Article tags&lt;/h3&gt;&lt;input type=&quot;text&quot; id=&quot;&#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;-articleTags&quot; class=&quot;tags&quot; value=&quot;&quot; /&gt;&lt;/div&gt;&lt;div class=&quot;articleSuggestedTags&quot;&gt;&lt;h3&gt;Suggested tags&lt;/h3&gt;&lt;input type=&quot;text&quot; id=&quot;&#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;-suggestedTags&quot; class=&quot;tags&quot; value=&quot;&quot; /&gt;&lt;/div&gt;&lt;/form&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;hiddenfieldsCloseCorner&quot;&gt;&lt;/div&gt;&lt;/div&gt;&#39;</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">pane</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">pane</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">element</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">articleTags</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">pane</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;.articleTags input&#39;</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">suggestedTags</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">pane</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;.articleSuggestedTags input&#39;</span><span class="p">);</span></pre></div></td></tr><tr id="section-3"><td class="docs"><div class="pilwrap"><a href="#section-3" class="pilcrow">&#182;</a></div><p>bind toggle events for settings pane</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="k">this</span><span class="p">.</span><span class="nx">pane</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;.hiddenfieldsToggle&#39;</span><span class="p">).</span><span class="nx">click</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">context</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">closest</span><span class="p">(</span><span class="s1">&#39;.hiddenfieldsContainer&#39;</span><span class="p">);</span>
+        <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;.hiddenfields&#39;</span><span class="p">,</span> <span class="nx">context</span><span class="p">).</span><span class="nx">show</span><span class="p">();</span>
+        <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;.hiddenfieldsToggle&#39;</span><span class="p">,</span> <span class="nx">context</span><span class="p">).</span><span class="nx">hide</span><span class="p">();</span>
+        <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;.hiddenfieldsCloseCorner&#39;</span><span class="p">,</span> <span class="nx">context</span><span class="p">).</span><span class="nx">show</span><span class="p">();</span>
+        <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;.hiddenfieldsCloseButton&#39;</span><span class="p">,</span> <span class="nx">context</span><span class="p">).</span><span class="nx">show</span><span class="p">();</span>
+      <span class="p">});</span>
+
+      <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">pane</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;.hiddenfieldsCloseCorner, .hiddenfieldsCloseButton&#39;</span><span class="p">).</span><span class="nx">click</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">that</span><span class="p">.</span><span class="nx">closeTags</span><span class="p">();</span>
+      <span class="p">});</span>
+
+      <span class="nx">jQuery</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">click</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">jQuery</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">closest</span><span class="p">(</span><span class="s1">&#39;.hiddenfieldsContainer&#39;</span><span class="p">).</span><span class="nx">size</span><span class="p">()</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;.hiddenfieldsCloseCorner:visible&#39;</span><span class="p">).</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">that</span><span class="p">.</span><span class="nx">closeTags</span><span class="p">();</span>
+        <span class="p">}</span>
+      <span class="p">});</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">articleTags</span><span class="p">.</span><span class="nx">tagsInput</span><span class="p">({</span>
+        <span class="nx">width</span><span class="o">:</span> <span class="s1">&#39;auto&#39;</span><span class="p">,</span>
+        <span class="nx">height</span><span class="o">:</span> <span class="s1">&#39;auto&#39;</span><span class="p">,</span>
+        <span class="nx">onAddTag</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">tag</span><span class="p">)</span> <span class="p">{</span>
+
+          <span class="kd">var</span> <span class="nx">entity</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">entity</span><span class="p">;</span></pre></div></td></tr><tr id="section-4"><td class="docs"><div class="pilwrap"><a href="#section-4" class="pilcrow">&#182;</a></div><p>convert to reference url</p>
+</td><td class="code"><div class="highlight"><pre>          <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">entity</span><span class="p">.</span><span class="nx">isReference</span><span class="p">(</span><span class="nx">tag</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">tag</span> <span class="o">=</span> <span class="s1">&#39;urn:tag:&#39;</span> <span class="o">+</span> <span class="nx">tag</span><span class="p">;</span>
+          <span class="p">}</span></pre></div></td></tr><tr id="section-5"><td class="docs"><div class="pilwrap"><a href="#section-5" class="pilcrow">&#182;</a></div><p>add tag to entity</p>
+</td><td class="code"><div class="highlight"><pre>          <span class="nx">entity</span><span class="p">.</span><span class="nx">attributes</span><span class="p">[</span><span class="s1">&#39;&lt;http://purl.org/dc/elements/1.1/subject&gt;&#39;</span><span class="p">].</span><span class="nx">vie</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">vie</span><span class="p">;</span>
+          <span class="nx">entity</span><span class="p">.</span><span class="nx">attributes</span><span class="p">[</span><span class="s1">&#39;&lt;http://purl.org/dc/elements/1.1/subject&gt;&#39;</span><span class="p">].</span><span class="nx">addOrUpdate</span><span class="p">({</span>
+            <span class="s1">&#39;@subject&#39;</span><span class="o">:</span> <span class="nx">tag</span>
+          <span class="p">});</span>
+        <span class="p">},</span>
+        <span class="nx">onRemoveTag</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">tag</span><span class="p">)</span> <span class="p">{</span></pre></div></td></tr><tr id="section-6"><td class="docs"><div class="pilwrap"><a href="#section-6" class="pilcrow">&#182;</a></div><p>remove tag from entity</p>
+</td><td class="code"><div class="highlight"><pre>          <span class="nx">that</span><span class="p">.</span><span class="nx">entity</span><span class="p">.</span><span class="nx">attributes</span><span class="p">[</span><span class="s1">&#39;&lt;http://purl.org/dc/elements/1.1/subject&gt;&#39;</span><span class="p">].</span><span class="nx">remove</span><span class="p">(</span><span class="nx">tag</span><span class="p">);</span>
+        <span class="p">},</span>
+        <span class="nx">label</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">tagLabel</span>
+      <span class="p">});</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">suggestedTags</span><span class="p">.</span><span class="nx">tagsInput</span><span class="p">({</span>
+        <span class="nx">width</span><span class="o">:</span> <span class="s1">&#39;auto&#39;</span><span class="p">,</span>
+        <span class="nx">height</span><span class="o">:</span> <span class="s1">&#39;auto&#39;</span><span class="p">,</span>
+        <span class="nx">interactive</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="nx">label</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">tagLabel</span><span class="p">,</span>
+        <span class="nx">remove</span><span class="o">:</span> <span class="kc">false</span>
+      <span class="p">});</span></pre></div></td></tr><tr id="section-7"><td class="docs"><div class="pilwrap"><a href="#section-7" class="pilcrow">&#182;</a></div><p>add suggested tag on click to tags</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;-suggestedTags_tagsinput .tag span&#39;</span><span class="p">).</span><span class="nx">live</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+
+        <span class="kd">var</span> <span class="nx">tag</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">text</span><span class="p">();</span>
+        <span class="nx">that</span><span class="p">.</span><span class="nx">articleTags</span><span class="p">.</span><span class="nx">addTag</span><span class="p">(</span><span class="nx">jQuery</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">data</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">));</span>
+        <span class="nx">that</span><span class="p">.</span><span class="nx">suggestedTags</span><span class="p">.</span><span class="nx">removeTag</span><span class="p">(</span><span class="nx">$</span><span class="p">.</span><span class="nx">trim</span><span class="p">(</span><span class="nx">tag</span><span class="p">));</span>
+
+        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+      <span class="p">});</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">loadTags</span><span class="p">();</span>
+    <span class="p">},</span>
+
+    <span class="nx">closeTags</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">context</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;.hiddenfieldsContainer&#39;</span><span class="p">);</span>
+      <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;.hiddenfields&#39;</span><span class="p">,</span> <span class="nx">context</span><span class="p">).</span><span class="nx">hide</span><span class="p">();</span>
+      <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;.hiddenfieldsToggle&#39;</span><span class="p">,</span> <span class="nx">context</span><span class="p">).</span><span class="nx">show</span><span class="p">();</span>
+      <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;.hiddenfieldsCloseCorner&#39;</span><span class="p">,</span> <span class="nx">context</span><span class="p">).</span><span class="nx">hide</span><span class="p">();</span>
+      <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;.hiddenfieldsCloseButton&#39;</span><span class="p">,</span> <span class="nx">context</span><span class="p">).</span><span class="nx">hide</span><span class="p">();</span></pre></div></td></tr><tr id="section-8"><td class="docs"><div class="pilwrap"><a href="#section-8" class="pilcrow">&#182;</a></div><p>save on close</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">deactivated</span><span class="p">();</span>
+    <span class="p">},</span>
+
+    <span class="nx">loadTags</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+
+      <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span></pre></div></td></tr><tr id="section-9"><td class="docs"><div class="pilwrap"><a href="#section-9" class="pilcrow">&#182;</a></div><p>load article tags</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="kd">var</span> <span class="nx">tags</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">entity</span><span class="p">.</span><span class="nx">attributes</span><span class="p">[</span><span class="s1">&#39;&lt;http://purl.org/dc/elements/1.1/subject&gt;&#39;</span><span class="p">].</span><span class="nx">models</span><span class="p">;</span>
+      <span class="nx">jQuery</span><span class="p">(</span><span class="nx">tags</span><span class="p">).</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="nx">that</span><span class="p">.</span><span class="nx">articleTags</span><span class="p">.</span><span class="nx">addTag</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+      <span class="p">});</span></pre></div></td></tr><tr id="section-10"><td class="docs"><div class="pilwrap"><a href="#section-10" class="pilcrow">&#182;</a></div><p>load suggested tags</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="nx">that</span><span class="p">.</span><span class="nx">vie</span><span class="p">.</span><span class="nx">analyze</span><span class="p">({</span>
+        <span class="nx">element</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">entityElement</span>
+      <span class="p">}).</span><span class="nx">using</span><span class="p">([</span><span class="s1">&#39;stanbol&#39;</span><span class="p">]).</span><span class="nx">execute</span><span class="p">().</span><span class="nx">success</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">enhancements</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">jQuery</span><span class="p">(</span><span class="nx">enhancements</span><span class="p">).</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+
+          <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">e</span><span class="p">.</span><span class="nx">attributes</span> <span class="o">==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">[</span><span class="s1">&#39;&lt;http://www.w3.org/2000/01/rdf-schema#label&gt;&#39;</span><span class="p">])</span> <span class="p">{</span>
+              <span class="nx">that</span><span class="p">.</span><span class="nx">suggestedTags</span><span class="p">.</span><span class="nx">addTag</span><span class="p">(</span><span class="nx">e</span><span class="p">[</span><span class="s1">&#39;@subject&#39;</span><span class="p">]);</span>
+            <span class="p">}</span>
+
+          <span class="p">}</span> <span class="k">else</span> <span class="p">{</span></pre></div></td></tr><tr id="section-11"><td class="docs"><div class="pilwrap"><a href="#section-11" class="pilcrow">&#182;</a></div><p>Backward compability</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">attributes</span><span class="p">[</span><span class="s1">&#39;&lt;rdfschema:label&gt;&#39;</span><span class="p">])</span> <span class="p">{</span>
+              <span class="nx">that</span><span class="p">.</span><span class="nx">suggestedTags</span><span class="p">.</span><span class="nx">addTag</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+            <span class="p">}</span>
+          <span class="p">}</span>
+        <span class="p">});</span>
+      <span class="p">}).</span><span class="nx">fail</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">xhr</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">xhr</span><span class="p">);</span>
+      <span class="p">});</span>
+    <span class="p">},</span>
+
+    <span class="nx">tagLabel</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="nx">value</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;&lt;urn:tag:&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">value</span> <span class="o">=</span> <span class="nx">value</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="nx">value</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+      <span class="p">}</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="nx">value</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;&lt;http://&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">value</span> <span class="o">=</span> <span class="nx">value</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="nx">value</span><span class="p">.</span><span class="nx">lastIndexOf</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">value</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="nx">value</span> <span class="o">=</span> <span class="nx">value</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/_/g</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">);</span>
+      <span class="p">}</span>
+
+      <span class="k">return</span> <span class="nx">value</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+<span class="p">})(</span><span class="nx">jQuery</span><span class="p">);</span>
+
+</pre></div></td></tr></tbody></table><div id="generated">generated Mon Apr 23 2012 17:46:12 GMT+0200 (CEST)  </div></div></body></html>

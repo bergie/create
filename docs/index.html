@@ -1,0 +1,241 @@
+<!DOCTYPE html><html><head><title>README</title><meta http-equiv="Content-Type" content="text/html" charset="UTF-8"><link rel="stylesheet" media="all" href="./docco.css"></head><body><div id="container"><div id="background"></div><div id="jump_to">Jump To &hellip;<div id="jump_wrapper"><div id="jump_page"><a href="./index.html" class="source"><span class="file_name">README</span></a><a href="./src/editingWidgets/jquery.Midgard.midgardEditableEditorAloha.js.html" class="source "><span class="base_path">src / editingWidgets / </span><span class="file_name">jquery.Midgard.midgardEditableEditorAloha.js</span></a><a href="./src/editingWidgets/jquery.Midgard.midgardEditableBase.js.html" class="source "><span class="base_path">src / editingWidgets / </span><span class="file_name">jquery.Midgard.midgardEditableBase.js</span></a><a href="./src/editingWidgets/jquery.Midgard.midgardEditableEditorHallo.js.html" class="source "><span class="base_path">src / editingWidgets / </span><span class="file_name">jquery.Midgard.midgardEditableEditorHallo.js</span></a><a href="./src/jquery.Midgard.midgardToolbar.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardToolbar.js</span></a><a href="./src/jquery.Midgard.midgardNotifications.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardNotifications.js</span></a><a href="./src/jquery.Midgard.midgardEditable.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardEditable.js</span></a><a href="./src/jquery.Midgard.midgardStorage.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardStorage.js</span></a><a href="./src/jquery.Midgard.midgardTags.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardTags.js</span></a><a href="./src/jquery.Midgard.midgardCreate.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardCreate.js</span></a><a href="./src/jquery.Midgard.midgardWorkflows.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardWorkflows.js</span></a></div></div></div><table cellpadding="0" cellspacing="0"><thead><tr><th class="docs"></th><th class="code"></th></tr></thead><tbody><tr id="section"><td class="docs"><h1>create
+</h1><h3>Version</h3><p>0.0.1</p><h3>Author</h3><p><span class="gravatar"><img src="http://www.gravatar.com/avatar/995f27ce7205a79c55d4e44223cd6de0"/><span>Henri Bergius &lt;henri.bergius@iki.fi&gt;</span></span></p><h3>Dependencies </h3><ul></ul><p><h3>Stats</h3><pre class="code_stats">
+http://cloc.sourceforge.net v 1.55  T=0.5 s (20.0 files/s, 4118.0 lines/s)
+-------------------------------------------------------------------------------
+Language                     files          blank        comment           code
+-------------------------------------------------------------------------------
+Javascript                      10            211            162           1686
+-------------------------------------------------------------------------------
+SUM:                            10            211            162           1686
+-------------------------------------------------------------------------------
+</pre></p></td><td id="content" class="code"><h1>Create - On-site web editing interface</h1>
+
+<p><img src="https://github.com/bergie/create/raw/master/design/create.png" alt="Create logo" title="" /></p>
+
+<p>Create, from the <a href="http://www.midgard-project.org/">Midgard Project</a>, is a comprehensive web editing interface for Content Management Systems. It is designed to provide a modern, fully browser-based HTML5 environment for managing content. Create can be adapted to work on almost any content management backend.</p>
+
+<p><img src="http://bergie.iki.fi/static/1/1e045994d03c25e459911e0ab235550c1aac901c901_midgardcreate-enter-edit-state-small.png" alt="Midgard Create user interface, in March 2011" title="" /> <img src="http://bergie.iki.fi/static/1/1e04599abfee694459911e0bf1021b4fddbed1bed1b_midgardcreate-save-transition-small.png" alt="Midgard Create user interface, in March 2011" title="" /></p>
+
+<h2>Features</h2>
+
+<ul>
+<li>Making RDFa-annotated content on pages editable</li>
+<li>Managing collections of content (add, remove)</li>
+<li>Local, in-browser storage and retrieval of unsaved content</li>
+<li>Adaptable connector for communicating with the back-end system</li>
+<li>Running workflows (approval, etc.) for content items</li>
+<li>Browsing and reverting content history</li>
+<li>Easy rebranding of the interface with some CSS</li>
+</ul>
+
+<h2>Future plans</h2>
+
+<ul>
+<li>Adopt the <a href="http://webintents.org/">Web Intents</a> specification for better image and link handling</li>
+<li>Content annotation and auto-tagging with <a href="http://incubator.apache.org/stanbol/">Apache Stanbol</a></li>
+<li>Wrapper for using Create inside <a href="http://code.google.com/webtoolkit/">Google Web Toolkit</a> via <a href="https://github.com/alkacon/vie-gwt">VIE-GWT</a></li>
+</ul>
+
+<h2>Dependencies</h2>
+
+<ul>
+<li><a href="http://bergie.github.com/hallo/">Hallo</a> - distraction-free content editor (optionally, <a href="http://aloha-editor.org/">Aloha Editor</a>)</li>
+<li><a href="https://github.com/bergie/vie">VIE</a> - editable RDFa library</li>
+<li><a href="http://documentcloud.github.com/backbone/">Backbone.js</a> - client-side management of models, views, and collections</li>
+<li><a href="http://jqueryui.com/">jQuery UI</a> - widget and effect library</li>
+<li><a href="http://www.modernizr.com/">Modernizr</a> - HTML5 browser compatibility library</li>
+</ul>
+
+<h2>Integrating Create with your CMS</h2>
+
+<p>In nutshell, you have to do the following:</p>
+
+<ul>
+<li>Annotate your content with RDFa</li>
+<li>Include the Create dependencies (jQuery, jQuery UI, Underscore, Backbone, VIE, the editor of your choice)</li>
+<li>Include the Create JavaScript file (see <code>examples/create.js</code> and <code>examples/create-min.js</code>)</li>
+<li>Implement <a href="http://documentcloud.github.com/backbone/#Sync">Backbone.sync</a> for your back-end</li>
+</ul>
+
+<p><a href="https://github.com/bergie/blogsiple">Blogsiple</a> is a <a href="http://nodejs.org/">Node.js</a> based CMS integration testbed for Create. It may provide useful examples on how the connection between Create and a REST-capable web tool works.</p>
+
+<h3>RDFa annotations</h3>
+
+<p>Create uses the <a href="http://viejs.org/">VIE</a> library to turn content in your pages into editable <a href="http://documentcloud.github.com/backbone/#Model">Backbone models</a>. This process is guided by <a href="http://www.w3.org/TR/xhtml-rdfa-primer/#id84624">RDFa annotations</a> that let your web framework to explain the content model being shown on the pages.</p>
+
+<h4>Annotating entities</h4>
+
+<p>The main editable unit in Create is an entity. For example, you could make a blog post editable with this mark-up:</p>
+
+<pre><code>&lt;div about="http://example.net/blog/my-post" typeof="sioc:Post"&gt;
+  &lt;h1 property="dcterms:title"&gt;Blog post title&lt;/h1&gt;
+  &lt;div property="sioc:content"&gt;
+    ...
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+
+<p>This is enough to tell Create that the div contains an editable blog post entity. The important points here are:</p>
+
+<ul>
+<li><code>about</code> gives the identifier of an object. The identifiers should be <a href="http://en.wikipedia.org/wiki/Uniform_resource_identifier">URIs</a>, but basically anything that your back-end will understand is fine</li>
+<li><code>typeof</code> is not necessary, but it tells us that the editable entity is a <a href="http://rdfs.org/sioc/spec/#term_Post">blog post</a></li>
+<li><code>property</code> tells that the h1 contains the title of the post, and the div contains the contents. These become attributes of our Backbone model instance</li>
+</ul>
+
+<h4>Annotating collections</h4>
+
+<p>Relationships between entities allow you to communicate structured content to Create, which will turn them into <a href="http://documentcloud.github.com/backbone/#Collection">Backbone collections</a>. For example, to annotate a list of blog posts:</p>
+
+<pre><code>&lt;div about="http://example.net/blog/" rel="dcTerms:hasPart"&gt;
+  &lt;div about="http://example.net/my-post"&gt;...&lt;/div&gt;
+  &lt;div about="http://example.net/second-post"&gt;...&lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+
+<p>This tells Create that there is a blog entity, which contains a collection of two posts. The important things here are:</p>
+
+<ul>
+<li>The first <code>about</code> identifies also the blog post container as an entity</li>
+<li><code>rel</code> tells that there is a relation between the blog container, and the blog posts under it</li>
+</ul>
+
+<p>Create will use the first entity inside a collection as a "template", and knows how to add or remove entities from the collection. In <em>Edit</em> mode the user would see an <em>Add</em> button next to the collection.</p>
+
+<h3>Starting Create</h3>
+
+<p>Starting Create:</p>
+
+<pre><code>jQuery(document).ready(function() {
+    jQuery('body').midgardCreate({
+        url: function() { return '/some/backend/url'; }
+    });
+});
+</code></pre>
+
+<p>You can pass Create configuration options when calling the <code>midgardCreate</code> widget. For example, to use Aloha Editor instead of Hallo, do:</p>
+
+<pre><code>jQuery('body').midgardCreate({
+    url: function() { return '/some/backend/url'; },
+    editor: 'aloha',
+    workflows: {
+        url: function(model) {
+            return '/some/backend/workflows/fetch/url/' + model.id;
+        }
+    }
+});
+</code></pre>
+
+<h3>Communications with the back-end</h3>
+
+<p>Create communicates with your server-side system using <a href="http://documentcloud.github.com/backbone/#Sync">Backbone.sync</a>. By default this means that we send and retrieve content encoded in <a href="http://json-ld.org/">JSON-LD</a> over XmlHttpRequest calls.</p>
+
+<p>If you're using this default approach, it is important to provide the URL of the endpoint on your server that you want Backbone and Create to talk with. This can be done by passing a string when initializing <code>midgardCreate</code>:</p>
+
+<pre><code>jQuery('body').midgardCreate({
+    url: function() { return '/some/backend/url'; }
+});
+</code></pre>
+
+<p>When implemented this way, all communications from Create will happen using normal RESTful HTTP calls to that URL.</p>
+
+<ul>
+<li>Creating a new object makes a <code>HTTP POST</code> to the URL</li>
+<li>Updating or fetching an object makes a <code>HTTP PUT</code> or <code>HTTP GET</code> to that URL with the <code>id</code> of the object appended (for example <code>/some/backend/url/objectId</code>)</li>
+</ul>
+
+<p>If you need more flexibility with your URL structure, you can also pass a function that returns the URL for an object.</p>
+
+<p>You can override this default communications layer by <a href="http://stackoverflow.com/questions/5096549/how-to-override-backbone-sync">implementing your own</a> <code>Backbone.sync</code> method. Some examples:</p>
+
+<ul>
+<li><a href="https://github.com/janmonschke/backbone-couchdb">Backbone.sync with CouchDB</a></li>
+<li><a href="https://github.com/developmentseed/backbone-simpledb">Backbone.sync with Amazon SimpleDB</a></li>
+</ul>
+
+<h3>Events</h3>
+
+<p>Create is an event-based user interface. Normally integrators shouldn't need to deal with these events, but they're explained here in case of some customization needs.</p>
+
+<ul>
+<li><code>midgardcreatestatechange</code>: when user switches between <em>browse</em> and <em>edit</em> modes. Event data contains an object with key <code>state</code> telling the state being changed to</li>
+<li><code>midgardtoolbarstatechange</code>: when user opens or minimizes the toolbar. Event data contains an object with key <code>display</code> telling the new state</li>
+<li><code>midgardeditableenable</code>: when an object has been made editable. Event data contains an object with key <code>instance</code> providing the Backbone model instance and <code>entityElement</code> providing the element containing the object</li>
+<li><code>midgardeditabledisable</code>: when an object has been made non-editable. Event data contains an object with key <code>instance</code> providing the Backbone model instance and <code>entityElement</code> providing the element containing the object</li>
+<li><code>midgardeditableactivated</code>: when a particular property of an object has been activated in an editor. Event data contains keys <code>property</code>, <code>instance</code>, <code>element</code> and <code>entityElement</code></li>
+<li><code>midgardeditabledeactivated</code>: when a particular property of an object has been deactivated in an editor. Event data contains keys <code>property</code>, <code>instance</code>, <code>element</code> and <code>entityElement</code></li>
+<li><code>midgardeditablechanged</code>: when a particular property of an object has been changed in an editor. Event data contains keys <code>property</code>, <code>instance</code>, <code>element</code> and <code>entityElement</code></li>
+<li><code>midgardstoragesave</code>: when save to back-end has been initiated. Event data contains <code>models</code> key with all the changed entities</li>
+<li><code>midgardstoragesaved</code>: when save has completed succesfully</li>
+</ul>
+
+<p>You can use normal <a href="http://api.jquery.com/category/events/">jQuery event methods</a> to deal with these events.</p>
+
+<h2>Building Create</h2>
+
+<p>Use the supplied <code>Cakefile</code> to generate the merged JavaScript file for Create:</p>
+
+<pre><code>$ cake build
+</code></pre>
+
+<p>You can also generate a minified version (requires uglifyjs):</p>
+
+<pre><code>$ cake min
+</code></pre>
+
+<h2>Read more</h2>
+
+<ul>
+<li><a href="http://bergie.iki.fi/blog/introducing_the_midgard_create_user_interface/">Introducing the Midgard Create user interface</a></li>
+<li><a href="http://bergie.iki.fi/blog/using_rdfa_to_make_a_web_page_editable/">Using RDFa to make a web page editable</a></li>
+<li><a href="http://bergie.iki.fi/blog/midgard_create_and_vie_in_the_aloha_editor_conference/">Midgard Create and VIE presentation in the Aloha Editor conference</a></li>
+<li><a href="http://groups.google.com/group/symfony-cmf-devs/browse_thread/thread/6c609030661cee08">Proposal for using Create as the reference UI in Symfony CMF</a></li>
+<li><a href="http://drupal.org/sandbox/dominikb1888/1388900">CreateJS integration module for Drupal</a></li>
+</ul>
+
+<h2>Discussion</h2>
+
+<ul>
+<li><a href="http://groups.google.com/group/createjs">CreateJS Google Groups mailing list</a></li>
+<li><a href="irc://irc.freenode.net/iks"><code>#iks</code> IRC channel on Freenode</a></li>
+</ul>
+
+<h2>Similar projects</h2>
+
+<ul>
+<li><a href="http://etchjs.com/">Etch</a></li>
+</ul>
+
+<h2>Using Aloha Editor</h2>
+
+<p>By default, Create uses the <a href="http://bergie.github.com/hallo/">Hallo Editor</a>. To use Create with <a href="http://aloha-editor.org/">Aloha Editor</a> you need to:</p>
+
+<ul>
+<li><a href="http://aloha-editor.org/builds/development/latest.zip">Download the latest version of Aloha Editor</a></li>
+<li>Extract the archive file and move the <code>aloha</code> directory into the <code>create/deps</code> folder -- check to have it like this: <code>create/deps/aloha/lib/aloha.js</code></li>
+<li>For more information about using Aloha Editor see the <a href="http://aloha-editor.org/builds/development/latest/doc/guides/output/">Aloha Editor Guides</a></li>
+</ul>
+
+<p>Using Aloha Editor with Create is covered by Aloha's FOSS License Exception:</p>
+
+<blockquote>
+  <p>Aloha Editor’s Free and Open Source Software ("FOSS") License Exception allows developers of FOSS applications to include Aloha Editor with their FOSS applications. Aloha Editor is typically licensed pursuant to version 3 of the General Afero Public License ("AGPLv3"), but this exception permits distribution of Aloha Editor with a developer’s FOSS applications licensed under the terms of another FOSS license listed below [MIT license is included], even though such other FOSS license may be incompatible with the AGPLv3.</p>
+</blockquote>
+
+<h3>Running Unit Tests</h3>
+
+<p>Direct your browser to the <code>test/index.html</code> file to run Create's <a href="http://docs.jquery.com/Qunit">QUnit</a> tests.</p>
+
+<h4>Unit tests on Node.js</h4>
+
+<p>You need Node.js and <a href="http://npmjs.org/">NPM</a>. Then just run:</p>
+
+<pre><code>$ npm install --dev
+$ npm test
+</code></pre>
+
+<h4>Continuous integration</h4>
+
+<p>Create uses <a href="http://travis-ci.org/">Travis</a> for continuous integration. Simply add your fork there and every time you push you'll get the tests run.</p>
+
+<p><a href="http://travis-ci.org/bergie/create"><img src="https://secure.travis-ci.org/bergie/create.png" alt="Build Status" title="" /></a></p>  </td></tr></tbody></table><div id="generated">generated Mon Apr 23 2012 17:46:10 GMT+0200 (CEST)  </div></div></body></html>

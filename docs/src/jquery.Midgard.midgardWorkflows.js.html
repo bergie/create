@@ -1,0 +1,244 @@
+<!DOCTYPE html><html><head><title>jquery.Midgard.midgardWorkflows.js</title><meta http-equiv="Content-Type" content="text/html" charset="UTF-8"><link rel="stylesheet" media="all" href="../docco.css"></head><body><div id="container"><div id="background"></div><div id="jump_to">Jump To &hellip;<div id="jump_wrapper"><div id="jump_page"><a href="../index.html" class="source"><span class="file_name">README</span></a><a href="../src/editingWidgets/jquery.Midgard.midgardEditableEditorAloha.js.html" class="source "><span class="base_path">src / editingWidgets / </span><span class="file_name">jquery.Midgard.midgardEditableEditorAloha.js</span></a><a href="../src/editingWidgets/jquery.Midgard.midgardEditableBase.js.html" class="source "><span class="base_path">src / editingWidgets / </span><span class="file_name">jquery.Midgard.midgardEditableBase.js</span></a><a href="../src/editingWidgets/jquery.Midgard.midgardEditableEditorHallo.js.html" class="source "><span class="base_path">src / editingWidgets / </span><span class="file_name">jquery.Midgard.midgardEditableEditorHallo.js</span></a><a href="../src/jquery.Midgard.midgardToolbar.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardToolbar.js</span></a><a href="../src/jquery.Midgard.midgardNotifications.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardNotifications.js</span></a><a href="../src/jquery.Midgard.midgardEditable.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardEditable.js</span></a><a href="../src/jquery.Midgard.midgardStorage.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardStorage.js</span></a><a href="../src/jquery.Midgard.midgardTags.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardTags.js</span></a><a href="../src/jquery.Midgard.midgardCreate.js.html" class="source "><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardCreate.js</span></a><a href="../src/jquery.Midgard.midgardWorkflows.js.html" class="source selected"><span class="base_path">src / </span><span class="file_name">jquery.Midgard.midgardWorkflows.js</span></a></div></div></div><table cellpadding="0" cellspacing="0"><thead><tr><th class="docs"><h1>jquery.Midgard.midgardWorkflows.js</h1><div class="filepath">src/</div></th><th class="code"></th></tr></thead><tbody><tr id="section-1"><td class="docs"><div class="pilwrap"><a href="#section-1" class="pilcrow">&#182;</a></div><pre><code>Create - On-site web editing interface
+(c) 2012 Jerry Jalava, IKS Consortium
+Create may be freely distributed under the MIT license.
+For all details and documentation:
+http://createjs.org/
+</code></pre>
+</td><td class="code"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">jQuery</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">jQuery</span><span class="p">.</span><span class="nx">widget</span><span class="p">(</span><span class="s1">&#39;Midgard.midgardWorkflows&#39;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">options</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">url</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{},</span>
+      <span class="nx">renderers</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">button</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">workflow</span><span class="p">,</span> <span class="nx">action_cb</span><span class="p">,</span> <span class="nx">final_cb</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">button_id</span> <span class="o">=</span> <span class="s1">&#39;midgardcreate-workflow_&#39;</span> <span class="o">+</span> <span class="nx">workflow</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span>
+          <span class="nx">html</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;&lt;button class=&quot;create-ui-btn&quot; id=&quot;&#39;</span> <span class="o">+</span> <span class="nx">button_id</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&#39;</span> <span class="o">+</span> <span class="nx">workflow</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&lt;/button&gt;&#39;</span><span class="p">).</span><span class="nx">button</span><span class="p">();</span>
+
+          <span class="nx">html</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">action_cb</span><span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">workflow</span><span class="p">,</span> <span class="nx">final_cb</span><span class="p">);</span>
+          <span class="p">});</span>
+          <span class="k">return</span> <span class="nx">html</span><span class="p">;</span>
+        <span class="p">}</span>
+      <span class="p">},</span>
+      <span class="nx">action_types</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">backbone_save</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">workflow</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">copy_of_url</span> <span class="o">=</span> <span class="nx">model</span><span class="p">.</span><span class="nx">url</span><span class="p">;</span>
+          <span class="nx">original_model</span> <span class="o">=</span> <span class="nx">model</span><span class="p">.</span><span class="nx">clone</span><span class="p">();</span>
+          <span class="nx">original_model</span><span class="p">.</span><span class="nx">url</span> <span class="o">=</span> <span class="nx">copy_of_url</span><span class="p">;</span>
+
+          <span class="nx">action</span> <span class="o">=</span> <span class="nx">workflow</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;action&#39;</span><span class="p">);</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">model</span><span class="p">.</span><span class="nx">url</span> <span class="o">=</span> <span class="nx">action</span><span class="p">.</span><span class="nx">url</span><span class="p">;</span>
+          <span class="p">}</span>
+          <span class="nx">original_model</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">m</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">model</span><span class="p">.</span><span class="nx">url</span> <span class="o">=</span> <span class="nx">copy_of_url</span><span class="p">;</span>
+              <span class="nx">model</span><span class="p">.</span><span class="nx">change</span><span class="p">();</span>
+              <span class="nx">callback</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">model</span><span class="p">);</span>
+            <span class="p">},</span>
+            <span class="nx">error</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">m</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">model</span><span class="p">.</span><span class="nx">url</span> <span class="o">=</span> <span class="nx">copy_of_url</span><span class="p">;</span>
+              <span class="nx">model</span><span class="p">.</span><span class="nx">change</span><span class="p">();</span>
+              <span class="nx">callback</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">model</span><span class="p">);</span>
+            <span class="p">}</span>
+          <span class="p">});</span>
+        <span class="p">},</span>
+        <span class="nx">backbone_destroy</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">workflow</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">copy_of_url</span> <span class="o">=</span> <span class="nx">model</span><span class="p">.</span><span class="nx">url</span><span class="p">;</span>
+          <span class="nx">original_model</span> <span class="o">=</span> <span class="nx">model</span><span class="p">.</span><span class="nx">clone</span><span class="p">();</span>
+          <span class="nx">original_model</span><span class="p">.</span><span class="nx">url</span> <span class="o">=</span> <span class="nx">copy_of_url</span><span class="p">;</span>
+
+          <span class="nx">action</span> <span class="o">=</span> <span class="nx">workflow</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;action&#39;</span><span class="p">);</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">model</span><span class="p">.</span><span class="nx">url</span> <span class="o">=</span> <span class="nx">action</span><span class="p">.</span><span class="nx">url</span><span class="p">;</span>
+          <span class="p">}</span>
+
+          <span class="nx">model</span><span class="p">.</span><span class="nx">destroy</span><span class="p">({</span>
+            <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">m</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">model</span><span class="p">.</span><span class="nx">url</span> <span class="o">=</span> <span class="nx">copy_of_url</span><span class="p">;</span>
+              <span class="nx">model</span><span class="p">.</span><span class="nx">change</span><span class="p">();</span>
+              <span class="nx">callback</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">m</span><span class="p">);</span>
+            <span class="p">},</span>
+            <span class="nx">error</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">m</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">model</span><span class="p">.</span><span class="nx">url</span> <span class="o">=</span> <span class="nx">copy_of_url</span><span class="p">;</span>
+              <span class="nx">model</span><span class="p">.</span><span class="nx">change</span><span class="p">();</span>
+              <span class="nx">callback</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">model</span><span class="p">);</span>
+            <span class="p">}</span>
+          <span class="p">});</span>
+        <span class="p">},</span>
+        <span class="nx">http</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">workflow</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">action</span> <span class="o">=</span> <span class="nx">workflow</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;action&#39;</span><span class="p">);</span>
+          <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">action</span><span class="p">.</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">callback</span><span class="p">(</span><span class="s1">&#39;No action url defined!&#39;</span><span class="p">);</span>
+          <span class="p">}</span>
+
+          <span class="nx">wf_opts</span> <span class="o">=</span> <span class="p">{};</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">http</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">wf_opts</span> <span class="o">=</span> <span class="nx">action</span><span class="p">.</span><span class="nx">http</span><span class="p">;</span>
+          <span class="p">}</span>
+
+          <span class="nx">ajax_options</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+            <span class="nx">url</span><span class="o">:</span> <span class="nx">action</span><span class="p">.</span><span class="nx">url</span><span class="p">,</span>
+            <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;POST&#39;</span><span class="p">,</span>
+            <span class="nx">data</span><span class="o">:</span> <span class="nx">model</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">(),</span>
+            <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+              <span class="nx">model</span><span class="p">.</span><span class="nx">fetch</span><span class="p">({</span>
+                <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+                  <span class="nx">callback</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">model</span><span class="p">);</span>
+                <span class="p">},</span>
+                <span class="nx">error</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+                  <span class="nx">callback</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">model</span><span class="p">);</span>
+                <span class="p">}</span>
+              <span class="p">});</span>
+            <span class="p">}</span>
+          <span class="p">},</span> <span class="nx">wf_opts</span><span class="p">);</span>
+
+          <span class="nx">jQuery</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="nx">ajax_options</span><span class="p">);</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="nx">_init</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">_renderers</span> <span class="o">=</span> <span class="p">{};</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">_action_types</span> <span class="o">=</span> <span class="p">{};</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">_parseRenderersAndTypes</span><span class="p">();</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">_last_instance</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">ModelWorkflowModel</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Model</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+        <span class="nx">defaults</span><span class="o">:</span> <span class="p">{</span>
+          <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+          <span class="nx">label</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+          <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;button&#39;</span><span class="p">,</span>
+          <span class="nx">action</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;backbone_save&#39;</span>
+          <span class="p">}</span>
+        <span class="p">}</span>
+      <span class="p">});</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">workflows</span> <span class="o">=</span> <span class="p">{};</span>
+
+      <span class="kd">var</span> <span class="nx">widget</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+      <span class="nx">jQuery</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">element</span><span class="p">).</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;midgardeditableactivated&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">widget</span><span class="p">.</span><span class="nx">_fetchWorkflows</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">instance</span><span class="p">);</span>
+      <span class="p">});</span>
+    <span class="p">},</span>
+
+    <span class="nx">_fetchWorkflows</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">widget</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">isNew</span><span class="p">())</span> <span class="p">{</span>
+        <span class="nx">widget</span><span class="p">.</span><span class="nx">_trigger</span><span class="p">(</span><span class="s1">&#39;changed&#39;</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="p">{</span>
+          <span class="nx">instance</span><span class="o">:</span> <span class="nx">model</span><span class="p">,</span>
+          <span class="nx">workflows</span><span class="o">:</span> <span class="p">[]</span>
+        <span class="p">});</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="nx">widget</span><span class="p">.</span><span class="nx">_last_instance</span> <span class="o">==</span> <span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">widget</span><span class="p">.</span><span class="nx">workflows</span><span class="p">[</span><span class="nx">model</span><span class="p">.</span><span class="nx">cid</span><span class="p">])</span> <span class="p">{</span>
+          <span class="nx">widget</span><span class="p">.</span><span class="nx">_trigger</span><span class="p">(</span><span class="s1">&#39;changed&#39;</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">instance</span><span class="o">:</span> <span class="nx">model</span><span class="p">,</span>
+            <span class="nx">workflows</span><span class="o">:</span> <span class="nx">widget</span><span class="p">.</span><span class="nx">workflows</span><span class="p">[</span><span class="nx">model</span><span class="p">.</span><span class="nx">cid</span><span class="p">]</span>
+          <span class="p">});</span>
+        <span class="p">}</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="nx">widget</span><span class="p">.</span><span class="nx">_last_instance</span> <span class="o">=</span> <span class="nx">model</span><span class="p">;</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="nx">widget</span><span class="p">.</span><span class="nx">workflows</span><span class="p">[</span><span class="nx">model</span><span class="p">.</span><span class="nx">cid</span><span class="p">])</span> <span class="p">{</span>
+        <span class="nx">widget</span><span class="p">.</span><span class="nx">_trigger</span><span class="p">(</span><span class="s1">&#39;changed&#39;</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="p">{</span>
+          <span class="nx">instance</span><span class="o">:</span> <span class="nx">model</span><span class="p">,</span>
+          <span class="nx">workflows</span><span class="o">:</span> <span class="nx">widget</span><span class="p">.</span><span class="nx">workflows</span><span class="p">[</span><span class="nx">model</span><span class="p">.</span><span class="nx">cid</span><span class="p">]</span>
+        <span class="p">});</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="nx">widget</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">widget</span><span class="p">.</span><span class="nx">_fetchModelWorkflows</span><span class="p">(</span><span class="nx">model</span><span class="p">);</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">flows</span> <span class="o">=</span> <span class="k">new</span><span class="p">(</span><span class="nx">widget</span><span class="p">.</span><span class="nx">_generateCollectionFor</span><span class="p">(</span><span class="nx">model</span><span class="p">))([],</span> <span class="p">{});</span>
+        <span class="nx">widget</span><span class="p">.</span><span class="nx">_trigger</span><span class="p">(</span><span class="s1">&#39;changed&#39;</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="p">{</span>
+          <span class="nx">instance</span><span class="o">:</span> <span class="nx">model</span><span class="p">,</span>
+          <span class="nx">workflows</span><span class="o">:</span> <span class="nx">flows</span>
+        <span class="p">});</span>
+      <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="nx">_parseRenderersAndTypes</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">widget</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+      <span class="nx">jQuery</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">renderers</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">k</span><span class="p">,</span> <span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">widget</span><span class="p">.</span><span class="nx">setRenderer</span><span class="p">(</span><span class="nx">k</span><span class="p">,</span> <span class="nx">v</span><span class="p">);</span>
+      <span class="p">});</span>
+      <span class="nx">jQuery</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">action_types</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">k</span><span class="p">,</span> <span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">widget</span><span class="p">.</span><span class="nx">setActionType</span><span class="p">(</span><span class="nx">k</span><span class="p">,</span> <span class="nx">v</span><span class="p">);</span>
+      <span class="p">});</span>
+    <span class="p">},</span>
+
+    <span class="nx">setRenderer</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">callbacks</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">_renderers</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">callbacks</span><span class="p">;</span>
+    <span class="p">},</span>
+    <span class="nx">getRenderer</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_renderers</span><span class="p">[</span><span class="nx">name</span><span class="p">])</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+      <span class="p">}</span>
+
+      <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_renderers</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+    <span class="p">},</span>
+    <span class="nx">setActionType</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">_action_types</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">callback</span><span class="p">;</span>
+    <span class="p">},</span>
+    <span class="nx">getActionType</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_action_types</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+    <span class="p">},</span>
+
+    <span class="nx">prepareItem</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">workflow</span><span class="p">,</span> <span class="nx">final_cb</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">widget</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+      <span class="nx">renderer</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getRenderer</span><span class="p">(</span><span class="nx">workflow</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">));</span>
+      <span class="nx">action_type_cb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getActionType</span><span class="p">(</span><span class="nx">workflow</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;action&quot;</span><span class="p">).</span><span class="nx">type</span><span class="p">);</span>
+
+      <span class="k">return</span> <span class="nx">renderer</span><span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">workflow</span><span class="p">,</span> <span class="nx">action_type_cb</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">m</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">delete</span> <span class="nx">widget</span><span class="p">.</span><span class="nx">workflows</span><span class="p">[</span><span class="nx">model</span><span class="p">.</span><span class="nx">cid</span><span class="p">];</span>
+        <span class="nx">widget</span><span class="p">.</span><span class="nx">_last_instance</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">workflow</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;action&#39;</span><span class="p">).</span><span class="nx">type</span> <span class="o">!==</span> <span class="s1">&#39;backbone_destroy&#39;</span><span class="p">)</span> <span class="p">{</span></pre></div></td></tr><tr id="section-2"><td class="docs"><div class="pilwrap"><a href="#section-2" class="pilcrow">&#182;</a></div><p>Get an updated list of workflows</p>
+</td><td class="code"><div class="highlight"><pre>          <span class="nx">widget</span><span class="p">.</span><span class="nx">_fetchModelWorkflows</span><span class="p">(</span><span class="nx">model</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">final_cb</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">m</span><span class="p">);</span>
+      <span class="p">});</span>
+    <span class="p">},</span>
+
+    <span class="nx">_generateCollectionFor</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">collectionSettings</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">model</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">ModelWorkflowModel</span>
+      <span class="p">};</span>
+      <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">collectionSettings</span><span class="p">.</span><span class="nx">url</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">url</span><span class="p">(</span><span class="nx">model</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="k">return</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Collection</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">collectionSettings</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="nx">_fetchModelWorkflows</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">isNew</span><span class="p">())</span> <span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="kd">var</span> <span class="nx">widget</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+      <span class="nx">widget</span><span class="p">.</span><span class="nx">workflows</span><span class="p">[</span><span class="nx">model</span><span class="p">.</span><span class="nx">cid</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_generateCollectionFor</span><span class="p">(</span><span class="nx">model</span><span class="p">))([],</span> <span class="p">{});</span>
+      <span class="nx">widget</span><span class="p">.</span><span class="nx">workflows</span><span class="p">[</span><span class="nx">model</span><span class="p">.</span><span class="nx">cid</span><span class="p">].</span><span class="nx">fetch</span><span class="p">({</span>
+        <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">collection</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">widget</span><span class="p">.</span><span class="nx">workflows</span><span class="p">[</span><span class="nx">model</span><span class="p">.</span><span class="nx">cid</span><span class="p">].</span><span class="nx">reset</span><span class="p">(</span><span class="nx">collection</span><span class="p">.</span><span class="nx">models</span><span class="p">);</span>
+
+          <span class="nx">widget</span><span class="p">.</span><span class="nx">_trigger</span><span class="p">(</span><span class="s1">&#39;changed&#39;</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">instance</span><span class="o">:</span> <span class="nx">model</span><span class="p">,</span>
+            <span class="nx">workflows</span><span class="o">:</span> <span class="nx">widget</span><span class="p">.</span><span class="nx">workflows</span><span class="p">[</span><span class="nx">model</span><span class="p">.</span><span class="nx">cid</span><span class="p">]</span>
+          <span class="p">});</span>
+        <span class="p">},</span>
+        <span class="nx">error</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;error fetching flows&#39;</span><span class="p">,</span> <span class="nx">err</span><span class="p">);</span>
+        <span class="p">}</span>
+      <span class="p">});</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+<span class="p">})(</span><span class="nx">jQuery</span><span class="p">);</span>
+
+</pre></div></td></tr></tbody></table><div id="generated">generated Mon Apr 23 2012 17:46:13 GMT+0200 (CEST)  </div></div></body></html>
