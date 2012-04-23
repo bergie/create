@@ -1,4 +1,17 @@
+//     Create - On-site web editing interface
+//     (c) 2012 Tobias Herrmann, IKS Consortium
+//     (c) 2011 Rene Kapusta, Evo42
+//     Create may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://createjs.org/
 (function (jQuery, undefined) {
+  // # Aloha editing widget
+  //
+  // This widget allows editing textual contents using the
+  // [Aloha](http://aloha-editor.org) rich text editor.
+  //
+  // Due to licensing incompatibilities, Aloha Editor needs to be installed
+  // and configured separately.
   jQuery.widget('Create.alohaWidget', jQuery.Create.editWidget, {
     enable: function () {
       this._initialize();

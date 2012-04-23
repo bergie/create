@@ -1,17 +1,42 @@
+//     Create - On-site web editing interface
+//     (c) 2011-2012 Henri Bergius, IKS Consortium
+//     Create may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://createjs.org/
 (function (jQuery, undefined) {
-
+  // # Create main widget
+  //
+  // The `midgardCreate` widget is the main entry point into using
+  // Create for editing content.
+  //
+  // While most individual Create widgets can also be used separately,
+  // the most common use case is to instantiate `midgardCreate` for
+  // your pages and let it handle editables, toolbars, and storate.
+  //
+  //     jQuery('body').midgardCreate();
   jQuery.widget('Midgard.midgardCreate', {
+    // ## Configuration
+    //
+    // Like most jQuery UI widgets, Create accepts various options 
+    // when being instantiated.
     options: {
-      statechange: function () {},
+      // Initial toolbar rendering style: `full` or `minimized`.
       toolbar: 'full',
+      // The *Save* jQuery UI button instance.
       saveButton: null,
+      // Initial usage state: `browse` or `edit`
       state: 'browse',
+      // Whether to highlight editable elements when entering `edit`
+      // state.
       highlight: true,
+      // Color for the highlights.
       highlightColor: '#67cc08',
+      // Widgets to use for editing various content types.
       editorWidgets: {
         'Text': 'halloWidget',
         'default': 'halloWidget'
       },
+      // Additional editor options.
       editorOptions: {},
       enableEditor: null,
       disableEditor: null,
@@ -212,7 +237,13 @@
     }
   });
 })(jQuery);
+//     Create - On-site web editing interface
+//     (c) 2011-2012 Henri Bergius, IKS Consortium
+//     Create may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://createjs.org/
 (function (jQuery, undefined) {
+  // # Create editing widget
   jQuery.widget('Midgard.midgardEditable', {
     options: {
       editables: [],
@@ -442,10 +473,23 @@
     }
   });
 })(jQuery);
-/**
- * Extend this base for any editing widget.
- */
+//     Create - On-site web editing interface
+//     (c) 2012 Tobias Herrmann, IKS Consortium
+//     Create may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://createjs.org/
 (function (jQuery, undefined) {
+  // # Base editing widget
+  //
+  // This editing widget provides a very simplistic `contentEditable` editor
+  // that can be used as standalone, but should more usually be used as
+  // the baseclass for other editing widgets.
+  //
+  // Basic editing widgets on this is easy:
+  //
+  //     jQuery.widget('Namespace.MyWidget', jQuery.Create.editWidget, {
+  //       // override any properties
+  //     });
   jQuery.widget('Create.editWidget', {
     options: {
       disabled: false,
@@ -460,10 +504,12 @@
       this.element.attr('contenteditable', 'false');
     },
     // called by the jquery ui plugin factory when creating the widget
+    // instance
     _create: function () {
       this._registerWidget();
       this._initialize();
     },
+    // called every time the widget is called
     _init: function () {
       if (this.options.disabled) {
         this.disable();
@@ -495,7 +541,20 @@
     }
   });
 })(jQuery);
+//     Create - On-site web editing interface
+//     (c) 2012 Tobias Herrmann, IKS Consortium
+//     (c) 2011 Rene Kapusta, Evo42
+//     Create may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://createjs.org/
 (function (jQuery, undefined) {
+  // # Aloha editing widget
+  //
+  // This widget allows editing textual contents using the
+  // [Aloha](http://aloha-editor.org) rich text editor.
+  //
+  // Due to licensing incompatibilities, Aloha Editor needs to be installed
+  // and configured separately.
   jQuery.widget('Create.alohaWidget', jQuery.Create.editWidget, {
     enable: function () {
       this._initialize();
@@ -530,7 +589,16 @@
     }
   });
 })(jQuery);
+//     Create - On-site web editing interface
+//     (c) 2012 Tobias Herrmann, IKS Consortium
+//     Create may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://createjs.org/
 (function (jQuery, undefined) {
+  // # Hallo editing widget
+  //
+  // This widget allows editing textual content areas with the
+  // [Hallo](http://hallojs.org) rich text editor.
   jQuery.widget('Create.halloWidget', jQuery.Create.editWidget, {
     options: {
       disabled: true,
@@ -612,26 +680,31 @@
     }
   });
 })(jQuery);
+//     Create - On-site web editing interface
+//     (c) 2012 Jerry Jalava, IKS Consortium
+//     Create may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://createjs.org/
 /*
-// jQuery(this.element).data('midgardNotifications').create({body: 'Content here!'});
-// jQuery(this.element).data('midgardNotifications').create({
-//     body: "Do you wan't to run tests now?",
-//     actions: [
-//         {
-//             name: 'runtests', label: 'Run tests',
-//             cb: function(e, notification) {
-//                 alert('Running tests');
-//                 notification.close();
-//             }
-//         },
-//         {
-//             name: 'cancel', label: 'Cancel',
-//             cb: function(e, notification) {
-//                 notification.close();
-//             }
-//         }
-//     ]
-// });
+ jQuery(this.element).data('midgardNotifications').create({body: 'Content here!'});
+ jQuery(this.element).data('midgardNotifications').create({
+ body: "Do you wan't to run tests now?",
+     actions: [
+         {
+             name: 'runtests', label: 'Run tests',
+             cb: function(e, notification) {
+                 alert('Running tests');
+                 notification.close();
+             }
+         },
+         {
+             name: 'cancel', label: 'Cancel',
+             cb: function(e, notification) {
+                 notification.close();
+             }
+         }
+     ]
+ });
  */
 (function (jQuery, undefined) {
   var _midgardnotifications_active = [];
@@ -1253,6 +1326,11 @@
   });
 
 })(jQuery);
+//     Create - On-site web editing interface
+//     (c) 2011-2012 Henri Bergius, IKS Consortium
+//     Create may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://createjs.org/
 (function (jQuery, undefined) {
   jQuery.widget('Midgard.midgardStorage', {
     options: {
@@ -1492,6 +1570,11 @@
     }
   });
 })(jQuery);
+//     Create - On-site web editing interface
+//     (c) 2012 IKS Consortium
+//     Create may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://createjs.org/
 (function (jQuery, undefined) {
   jQuery.widget('Midgard.midgardTags', {
     options: {
@@ -1644,6 +1727,11 @@
     }
   });
 })(jQuery);
+//     Create - On-site web editing interface
+//     (c) 2011-2012 Henri Bergius, IKS Consortium
+//     Create may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://createjs.org/
 (function (jQuery, undefined) {
   jQuery.widget('Midgard.midgardToolbar', {
     options: {
@@ -1727,8 +1815,12 @@
     }
   });
 })(jQuery);
+//     Create - On-site web editing interface
+//     (c) 2012 Jerry Jalava, IKS Consortium
+//     Create may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://createjs.org/
 (function (jQuery, undefined) {
-
   jQuery.widget('Midgard.midgardWorkflows', {
     options: {
       url: function (model) {},

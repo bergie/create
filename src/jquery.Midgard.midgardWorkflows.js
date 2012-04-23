@@ -1,5 +1,9 @@
+//     Create - On-site web editing interface
+//     (c) 2012 Jerry Jalava, IKS Consortium
+//     Create may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://createjs.org/
 (function (jQuery, undefined) {
-
   jQuery.widget('Midgard.midgardWorkflows', {
     options: {
       url: function (model) {},

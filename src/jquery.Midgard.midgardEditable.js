@@ -1,4 +1,10 @@
+//     Create - On-site web editing interface
+//     (c) 2011-2012 Henri Bergius, IKS Consortium
+//     Create may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://createjs.org/
 (function (jQuery, undefined) {
+  // # Create editing widget
   jQuery.widget('Midgard.midgardEditable', {
     options: {
       editables: [],

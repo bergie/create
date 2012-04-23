@@ -1,17 +1,42 @@
+//     Create - On-site web editing interface
+//     (c) 2011-2012 Henri Bergius, IKS Consortium
+//     Create may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://createjs.org/
 (function (jQuery, undefined) {
-
+  // # Create main widget
+  //
+  // The `midgardCreate` widget is the main entry point into using
+  // Create for editing content.
+  //
+  // While most individual Create widgets can also be used separately,
+  // the most common use case is to instantiate `midgardCreate` for
+  // your pages and let it handle editables, toolbars, and storate.
+  //
+  //     jQuery('body').midgardCreate();
   jQuery.widget('Midgard.midgardCreate', {
+    // ## Configuration
+    //
+    // Like most jQuery UI widgets, Create accepts various options 
+    // when being instantiated.
     options: {
-      statechange: function () {},
+      // Initial toolbar rendering style: `full` or `minimized`.
       toolbar: 'full',
+      // The *Save* jQuery UI button instance.
       saveButton: null,
+      // Initial usage state: `browse` or `edit`
       state: 'browse',
+      // Whether to highlight editable elements when entering `edit`
+      // state.
       highlight: true,
+      // Color for the highlights.
       highlightColor: '#67cc08',
+      // Widgets to use for editing various content types.
       editorWidgets: {
         'Text': 'halloWidget',
         'default': 'halloWidget'
       },
+      // Additional editor options.
       editorOptions: {},
       enableEditor: null,
       disableEditor: null,

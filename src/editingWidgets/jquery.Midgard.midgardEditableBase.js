@@ -1,7 +1,20 @@
-/**
- * Extend this base for any editing widget.
- */
+//     Create - On-site web editing interface
+//     (c) 2012 Tobias Herrmann, IKS Consortium
+//     Create may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://createjs.org/
 (function (jQuery, undefined) {
+  // # Base editing widget
+  //
+  // This editing widget provides a very simplistic `contentEditable` editor
+  // that can be used as standalone, but should more usually be used as
+  // the baseclass for other editing widgets.
+  //
+  // Basic editing widgets on this is easy:
+  //
+  //     jQuery.widget('Namespace.MyWidget', jQuery.Create.editWidget, {
+  //       // override any properties
+  //     });
   jQuery.widget('Create.editWidget', {
     options: {
       disabled: false,
@@ -16,10 +29,12 @@
       this.element.attr('contenteditable', 'false');
     },
     // called by the jquery ui plugin factory when creating the widget
+    // instance
     _create: function () {
       this._registerWidget();
       this._initialize();
     },
+    // called every time the widget is called
     _init: function () {
       if (this.options.disabled) {
         this.disable();

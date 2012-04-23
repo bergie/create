@@ -1,23 +1,28 @@
+//     Create - On-site web editing interface
+//     (c) 2012 Jerry Jalava, IKS Consortium
+//     Create may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://createjs.org/
 /*
-// jQuery(this.element).data('midgardNotifications').create({body: 'Content here!'});
-// jQuery(this.element).data('midgardNotifications').create({
-//     body: "Do you wan't to run tests now?",
-//     actions: [
-//         {
-//             name: 'runtests', label: 'Run tests',
-//             cb: function(e, notification) {
-//                 alert('Running tests');
-//                 notification.close();
-//             }
-//         },
-//         {
-//             name: 'cancel', label: 'Cancel',
-//             cb: function(e, notification) {
-//                 notification.close();
-//             }
-//         }
-//     ]
-// });
+ jQuery(this.element).data('midgardNotifications').create({body: 'Content here!'});
+ jQuery(this.element).data('midgardNotifications').create({
+ body: "Do you wan't to run tests now?",
+     actions: [
+         {
+             name: 'runtests', label: 'Run tests',
+             cb: function(e, notification) {
+                 alert('Running tests');
+                 notification.close();
+             }
+         },
+         {
+             name: 'cancel', label: 'Cancel',
+             cb: function(e, notification) {
+                 notification.close();
+             }
+         }
+     ]
+ });
  */
 (function (jQuery, undefined) {
   var _midgardnotifications_active = [];
