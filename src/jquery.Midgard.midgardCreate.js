@@ -29,9 +29,10 @@
       if (this.options.vie) {
         this.vie = this.options.vie;
       } else {
-        this.vie = new VIE({
-          classic: true
-        });
+        this.vie = new VIE();
+
+        this.vie.use(new this.vie.RdfaService());
+
         if (this.options.stanbolUrl) {
           this.vie.use(new this.vie.StanbolService({
             proxyDisabled: true,

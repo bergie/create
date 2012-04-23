@@ -29,9 +29,10 @@
       if (this.options.vie) {
         this.vie = this.options.vie;
       } else {
-        this.vie = new VIE({
-          classic: true
-        });
+        this.vie = new VIE();
+
+        this.vie.use(new this.vie.RdfaService());
+
         if (this.options.stanbolUrl) {
           this.vie.use(new this.vie.StanbolService({
             proxyDisabled: true,
@@ -272,8 +273,10 @@
     _create: function () {
       this.vie = this.options.vie;
       if (!this.options.model) {
-        var models = this.vie.RDFaEntities.getInstances(this.element);
-        this.options.model = models[0];
+        var widget = this;
+        this.vie.load({element: this.element}).from('rdfa').execute().done(function (entities) {
+          widget.options.model = entities[0];
+        });
       }
     },
 
@@ -290,7 +293,7 @@
       if (!this.options.model) {
         return;
       }
-      this.vie.RDFa.findPredicateElements(this.options.model.id, jQuery('[property]', this.element), false).each(function () {
+      this.vie.services.rdfa.findPredicateElements(this.options.model.id, jQuery('[property]', this.element), false).each(function () {
         return widget._enableProperty(jQuery(this));
       });
       this._trigger('enable', null, {
@@ -332,7 +335,7 @@
 
     _enableProperty: function (element) {
       var widget = this;
-      var propertyName = this.vie.RDFa.getPredicate(element);
+      var propertyName = this.vie.services.rdfa.getElementPredicate(element);
       if (!propertyName) {
         return true;
       }
