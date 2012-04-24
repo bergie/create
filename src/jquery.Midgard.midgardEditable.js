@@ -85,7 +85,7 @@
       if (!this.options.model) {
         return;
       }
-      this.vie.services.rdfa.findPredicateElements(this.options.model.id, jQuery('[property]', this.element), false).each(function () {
+      this.vie.service('rdfa').findPredicateElements(this.options.model.id, jQuery('[property]', this.element), false).each(function () {
         return widget._enableProperty(jQuery(this));
       });
       this._trigger('enable', null, {
@@ -95,7 +95,7 @@
       if (!this.options.enableCollectionAdd) {
         return;
       }
-      _.forEach(this.vie.services.rdfa.views, function (view) {
+      _.forEach(this.vie.service('rdfa').views, function (view) {
         if (view instanceof widget.vie.view.Collection) {
           widget._enableCollection(view);
         }
@@ -127,7 +127,7 @@
 
     _enableProperty: function (element) {
       var widget = this;
-      var propertyName = this.vie.services.rdfa.getElementPredicate(element);
+      var propertyName = this.vie.service('rdfa').getElementPredicate(element);
       if (!propertyName) {
         return true;
       }
