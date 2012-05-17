@@ -7,7 +7,7 @@
   "devDependencies": {
     "underscore": ">=1.2.0",
     "nodeunit": ">=0.6.0",
-    "zombie": ">=0.12.0",
+    "zombie": "0.12.x",
     "express": "2.5.x",
     "request": ">=2.9.3",
     "async": ">=0.1.18",
