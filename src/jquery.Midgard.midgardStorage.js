@@ -215,7 +215,7 @@
       _.each(model.attributes, function (attributeValue, property) {
         if (attributeValue instanceof widget.vie.Collection) {
           attributeValue.forEach(function (model) {
-            if (!model.id) {
+            if (model.isNew()) {
               attributeValue.remove(model);
             }
           });
