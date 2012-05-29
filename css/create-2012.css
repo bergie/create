@@ -1,0 +1,83 @@
+---
+font: "Cantarell, Verdana, sans-serif"
+color_dark: "#555753"
+color_darker: "#2e3436"
+color_mid: "#babdb6"
+color_light: "#eeeeec"
+---
+body {
+  background-color: {{ page.color_light }};
+  padding-top: 1em;
+}
+
+.logo {
+  display: block;
+  position: relative;
+  background-color: transparent;
+  height: 220px;
+  margin-bottom: 2em;
+}
+
+.logo h1 {
+  background-image: url('/img/create.png');
+  background-repeat: no-repeat;
+  width: 524px;
+  height: 209px;
+}
+
+.logo h1 span {
+  display: none;
+}
+
+.logo .shortdesc {
+  font-size: 20pt;
+  position: absolute;
+  top: 188px;
+  left: 170px;
+  font-family: {{ page.font }};
+  font-size: 24px;
+  line-height: 24px;
+  width: 400px;
+  text-align: center;
+}
+
+.slogan p {
+  font-size: 14pt;
+  line-height: 18pt;
+  text-align: justify;
+}
+
+.features {
+  margin-top: 2em;
+}
+
+.features .span3 {
+  min-height: 14em;
+}
+
+.features p {
+  font-size: 11pt;
+  text-align: justify;
+}
+
+footer {
+  margin-top: 2em;
+  display: block;
+}
+
+footer p {
+  font-size: 12pt;
+}
+
+a {
+  color: #000000;
+  font-weight: bold;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+h1, h2, h3, p, li {
+  font-family: {{ page.font }}
+}

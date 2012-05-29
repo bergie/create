@@ -1,0 +1,31 @@
+---
+layout: default
+---
+<article>
+  <div class="logo">
+    <h1><span property="doap:name">{{ site.name }}</span></h1>
+    <p class="shortdesc" property="doap:shortdesc">{{ page.title | capitalize }}</p>
+  </div>
+
+  <div class="row">
+    <div class="slogan span9" property="doap:description">
+      {{ content }}
+    </div>
+
+    <div class="span3">
+      <h2>Try it now</h2>
+      {% for demo in site.categories.demo %}
+      <a class="btn{% if demo.url == page.url %} btn-success{% endif %}" href="{{ demo.url }}">{{ demo.title_short }}</a>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div rel="feature" class="row features">
+    {% for feature in site.categories.features %}
+    <div about="{{ feature.url }}" class="span3">
+      <h3 property="title">{{ feature.title }}</h3>
+      <div property="content">{{ feature.content }}</div>
+    </div>
+    {% endfor %}
+  </div>
+</article>

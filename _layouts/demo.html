@@ -1,0 +1,52 @@
+---
+layout: default
+includes_js:
+  - /js/deps/jquery-1.7.1.min.js 
+  - /js/deps/jquery-ui-1.8.18.custom.min.js
+  - /js/deps/modernizr.custom.80485.js
+  - /js/deps/underscore-min.js
+  - /js/deps/backbone-min.js
+  - /js/deps/vie-min.js
+  - /js/deps/jquery.rdfquery.min.js
+  - /js/deps/annotate-min.js
+
+  - /js/create.js
+includes_css:
+  - /js/deps/font-awesome/css/font-awesome.css
+  - /css/themes/create-ui/css/create-ui.css
+  - /css/themes/midgard-notifications/midgardnotif.css
+canonical: /
+bodyclass: demo 
+---
+<article>
+  <div class="logo">
+    <h1><span property="doap:name">{{ site.name }}</span></h1>
+    <p class="shortdesc" property="doap:shortdesc">{{ page.title }}</p>
+  </div>
+
+  <div class="row">
+    <div class="slogan span9" property="doap:description">
+      <p><strong>Create.js</strong> is a comprehensive web editing interface for Content Management Systems. It is designed to provide a modern, fully browser-based HTML5 environment for managing content. Create can be adapted to work on almost any content management backend.</p>
+
+      <p>The user interface philosophy behind Create is simple: all content that you are allowed to change becomes editable, right there on the page you're reading. Any modifications you make are retained in your browser and can be sent back to the CMS with a push of a button. With Create, it is time to stop filling forms and to start communicating with your web audience.</p>
+    </div>
+
+    <div class="span3">
+      <h2>Try it now</h2>
+      {% for demo in site.categories.demo %}
+      <a class="btn{% if demo.url == page.url %} btn-success{% endif %}" href="{{ demo.url }}">{{ demo.title_short }}</a>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div rel="feature" class="row features">
+    {% for feature in site.categories.features %}
+    <div about="{{ feature.url }}" class="span3">
+      <h3 property="title">{{ feature.title }}</h3>
+      <div property="content">{{ feature.content }}</div>
+    </div>
+    {% endfor %}
+  </div>
+  </article>
+
+{{ content }}

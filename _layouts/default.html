@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ site.name }} - {{ page.title }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% for js in page.includes_js %}
+    <script src="{{ js }}"></script>
+    {% endfor %}
+    {% for js in page.includes_js_extra %}
+    <script src="{{ js }}"></script>
+    {% endfor %}
+    {% for css in page.includes_css %}
+    <link rel="stylesheet" href="{{ css }}" />
+    {% endfor %}
+    {% for css in page.includes_css_extra %}
+    <link rel="stylesheet" href="{{ css }}" />
+    {% endfor %}
+    <link href="http://fonts.googleapis.com/css?family=Cantarell" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="/css/bootstrap.css" />
+    <link rel="stylesheet" href="/css/create-2012.css" />
+    <link rel="shortcut icon" href="/img/favicon.png" />
+    {% if page.canonical %}
+    <link rel="canonical" href="{{ page.canonical }}" />
+    {% endif %}
+    {% if page.head_extra %}
+    {{ page.head_extra }}
+    {% endif %}
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-75936-13']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  </head>
+  <body xmlns:doap="http://usefulinc.com/ns/doap#" xmlns:foaf="http://xmlns.com/foaf/0.1/">
+    <a href="{{ site.github }}"><img style="position: absolute; top: 0; right: 0; border: 0;" src="/img/fork-me.png" alt="Fork me on GitHub"></a>
+    <div class="container" about="{{ page.url }}">
+      {{ content }}
+      {% include footer.html %}
+    </div>
+  </body>
+</html>
