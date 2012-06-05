@@ -1,0 +1,39 @@
+---
+layout: default
+title: "Create.js Integration Guide"
+---
+<article class="row guide">
+  <div class="logo">
+    <h1><span property="doap:name">{{ site.name }}</span></h1>
+    <p class="shortdesc" property="doap:shortdesc">{{ page.title }}</p>
+  </div>
+
+  <div class="span9 slogan">
+    <p>
+    Welcome to the Create.js integration guide. This guide aims to provide all the needed information for CMS developers to integrate Create.js as their front-end editing interface.
+    </p>
+
+    <p>
+    This guide is still in early stages, and so if you notice any errors or omissions, pull requests are more than welcome into the <a href="https://github.com/bergie/create/tree/gh-pages"><code>gh-pages</code> branch of the Create.js repository</a>.
+    </p>
+  </div>
+
+  <div class="span9">
+    {% for document in site.categories.guide %}
+    <section id="{{ document.name }}">
+      <h1>{{ document.title }}</h1>
+      <div>
+        {{ document.content }}
+      </div>
+    </section>
+    {% endfor %}
+  </div>
+
+  <div class="span3">
+    <ul class="nav nav-stacked well">
+      {% for document in site.categories.guide %}
+      <li><a href="#{{ document.name }}">{{ document.title }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+</article>

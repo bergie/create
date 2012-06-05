@@ -79,5 +79,44 @@ a:hover {
 }
 
 h1, h2, h3, p, li {
-  font-family: {{ page.font }}
+  font-family: {{ page.font }};
+}
+
+pre code {
+  color: #000000;
+  border: none;
+}
+
+.guide a code {
+  color: #000000;
+  background-color: transparent;
+  padding: none;
+  border: none;
+}
+
+.guide h1 {
+  margin-bottom: 1em;
+}
+
+.guide p,
+.guide li {
+  font-size: 14pt;
+  line-height: 18pt;
+}
+
+.guide code {
+  font-size: 12pt;
+}
+
+.guide .slogan,
+.guide section {
+  margin-bottom: 2em;
+}
+
+.guide .nav li {
+  margin-bottom: 1em;
+}
+
+.guide .nav li:last-child {
+  margin-bottom: 0px;
 }
