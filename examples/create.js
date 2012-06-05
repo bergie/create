@@ -445,7 +445,7 @@
 
       collectionView.bind('add', function (itemView) {
         //itemView.el.effect('slide');
-        itemView.el.midgardEditable({
+        jQuery(itemView.el).midgardEditable({
           disabled: widget.options.disabled,
           model: itemView.model,
           vie: widget.vie,
@@ -469,7 +469,7 @@
         collectionView.collection.add({});
       });
 
-      collectionView.el.after(widget.options.addButton);
+      jQuery(collectionView.el).after(widget.options.addButton);
     }
   });
 })(jQuery);
