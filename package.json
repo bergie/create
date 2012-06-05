@@ -1,6 +1,6 @@
 {
   "name": "create",
-  "version": "0.0.1",
+  "version": "1.0.0alpha1",
   "url": "http://createjs.org/",
   "author": "Henri Bergius <henri.bergius@iki.fi>",
   "dependencies": {},
