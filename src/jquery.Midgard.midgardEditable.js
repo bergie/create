@@ -1,4 +1,4 @@
-//     Create - On-site web editing interface
+//     Create.js - On-site web editing interface
 //     (c) 2011-2012 Henri Bergius, IKS Consortium
 //     Create may be freely distributed under the MIT license.
 //     For all details and documentation:
