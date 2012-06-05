@@ -136,7 +136,7 @@
           }
         });
       }).fail(function (xhr) {
-        console.log(xhr);
+        // console.log(xhr);
       });
     },
 
