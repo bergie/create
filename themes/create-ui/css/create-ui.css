@@ -211,11 +211,6 @@ a.create-ui-toggle {
     filter: alpha(opacity=90); 
 }
 
-button.create-ui-btn-small {
-    width: 18px;
-    height: 20px;
-}
-
 input[type="checkbox"].create-ui-btn-small {
     display: none !important;
 }
