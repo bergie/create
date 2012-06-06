@@ -121,6 +121,9 @@
                 }
 
               });
+              if (opts.className) {
+                action.addClass(opts.className);
+              }
               actions_holder.append(action);
             });
           }

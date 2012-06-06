@@ -73,7 +73,8 @@
                 label: 'Restore',
                 cb: function() {
                   widget._readLocal(options.instance);
-                }
+                },
+                className: 'create-ui-btn'
               },
               {
                 name: 'ignore',
@@ -81,7 +82,8 @@
                 cb: function(event, notification) {
                   // TODO: Clear from localStorage?
                   notification.close();
-                }
+                },
+                className: 'create-ui-btn'
               }
             ]
           });
