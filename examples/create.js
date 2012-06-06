@@ -1377,6 +1377,7 @@
 
     _bindEditables: function () {
       var widget = this;
+      var restorables = [];
 
       widget.element.bind('midgardeditablechanged', function (event, options) {
         if (_.indexOf(widget.options.changedModels, options.instance) === -1) {
@@ -1395,36 +1396,50 @@
         jQuery('#midgardcreate-save').button({disabled: true});
         jQuery('#midgardcreate-save').show();
         if (!options.instance.isNew() && widget._checkLocal(options.instance)) {
-          jQuery('body').data('midgardCreate').showNotification({
-            bindTo: '#midgardcreate-edit a',
-            gravity: 'TR',
-            body: options.instance.getSubjectUri() + " has local modifications",
-            timeout: 0,
-            actions: [
-              {
-                name: 'restore',
-                label: 'Restore',
-                cb: function() {
-                  widget._readLocal(options.instance);
-                },
-                className: 'create-ui-btn'
-              },
-              {
-                name: 'ignore',
-                label: 'Ignore',
-                cb: function(event, notification) {
-                  // TODO: Clear from localStorage?
-                  notification.close();
-                },
-                className: 'create-ui-btn'
-              }
-            ]
-          });
+          // We have locally-stored modifications, user needs to be asked
+          restorables.push(options.instance);
         }
-        _.each(options.instance.attributes, function (attributeValue, property) {
+
+        /*_.each(options.instance.attributes, function (attributeValue, property) {
           if (attributeValue instanceof widget.vie.Collection) {
-            //widget._readLocalReferences(options.instance, property, attributeValue);
+            widget._readLocalReferences(options.instance, property, attributeValue);
           }
+        });*/
+      });
+
+      widget.element.bind('midgardcreatestatechange', function (event, options) {
+        if (options.state === 'browse' || restorables.length === 0) {
+          return;
+        }
+        
+        jQuery('body').data('midgardCreate').showNotification({
+          bindTo: '#midgardcreate-edit a',
+          gravity: 'TR',
+          body: restorables.length + " items on this page have local modifications",
+          timeout: 0,
+          actions: [
+            {
+              name: 'restore',
+              label: 'Restore',
+              cb: function() {
+                _.each(restorables, function(instance) {
+                  widget._readLocal(instance);
+                });
+                restorables = [];
+              },
+              className: 'create-ui-btn'
+            },
+            {
+              name: 'ignore',
+              label: 'Ignore',
+              cb: function(event, notification) {
+                // TODO: Clear from localStorage?
+                notification.close();
+                restorables = [];
+              },
+              className: 'create-ui-btn'
+            }
+          ]
         });
       });
 
