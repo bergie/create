@@ -335,7 +335,7 @@
         return;
       }
       _.forEach(this.vie.service('rdfa').views, function (view) {
-        if (view instanceof widget.vie.view.Collection) {
+        if (view instanceof widget.vie.view.Collection && widget.options.model === view.owner) {
           widget._enableCollection(view);
         }
       });
