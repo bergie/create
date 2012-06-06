@@ -221,6 +221,7 @@ body > .hallotoolbar {
    background: url("../img/create-ui-bg.png") repeat scroll 0 0 transparent;
    font-family: "Futura","Helvetica",Arial;
    text-decoration: none;
+   border-radius: 4px;
 }
 
 .create-ui-toolbar-wrapper .ui-buttonset {
