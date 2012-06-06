@@ -61,30 +61,30 @@
       widget.element.bind('midgardeditableenable', function (event, options) {
         jQuery('#midgardcreate-save').button({disabled: true});
         jQuery('#midgardcreate-save').show();
-        if (!options.instance.isNew()) {
-          if (widget._checkLocal(options.instance)) {
-              jQuery('body').data('midgardCreate').showNotification({
-                body: options.instance.getSubjectUri() + " has local modifications",
-                timeout: 0,
-                actions: [
-                  {
-                    name: 'restore',
-                    label: 'Restore',
-                    cb: function() {
-                      widget._readLocal(options.instance);
-                    }
-                  },
-                  {
-                    name: 'ignore',
-                    label: 'Ignore',
-                    cb: function(event, notification) {
-                      // TODO: Clear from localStorage?
-                      notification.close();
-                    }
-                  }
-                ]
-              });
-          }
+        if (!options.instance.isNew() && widget._checkLocal(options.instance)) {
+          jQuery('body').data('midgardCreate').showNotification({
+            bindTo: '#midgardcreate-edit a',
+            gravity: 'TR',
+            body: options.instance.getSubjectUri() + " has local modifications",
+            timeout: 0,
+            actions: [
+              {
+                name: 'restore',
+                label: 'Restore',
+                cb: function() {
+                  widget._readLocal(options.instance);
+                }
+              },
+              {
+                name: 'ignore',
+                label: 'Ignore',
+                cb: function(event, notification) {
+                  // TODO: Clear from localStorage?
+                  notification.close();
+                }
+              }
+            ]
+          });
         }
         _.each(options.instance.attributes, function (attributeValue, property) {
           if (attributeValue instanceof widget.vie.Collection) {

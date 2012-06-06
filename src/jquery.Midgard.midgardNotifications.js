@@ -145,8 +145,12 @@
 
           _parent.append(_item);
         },
+
         _setPosition: function () {
           if (_config.bindTo) {
+            var width = _item.width() ? _item.width() : 280
+            var height = _item.height() ? _item.height() : 109
+
             _bind_target = jQuery(_config.bindTo);
             var trgt_w = _bind_target.outerWidth();
             var trgt_h = _bind_target.outerHeight();
@@ -163,7 +167,7 @@
               break;
             case 'TR':
               properties = {
-                'left': trgt_l + trgt_w - _item.width() + 'px',
+                'left': trgt_l + trgt_w - width + 'px',
                 'top': trgt_t + trgt_h + 'px'
               };
               _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_TR');
@@ -171,14 +175,14 @@
             case 'BL':
               properties = {
                 'left': trgt_l + 'px',
-                'top': trgt_t - _item.height() + 'px'
+                'top': trgt_t - height + 'px'
               };
               _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_BL');
               break;
             case 'BR':
               properties = {
-                'left': trgt_l + trgt_w - _item.width() + 'px',
-                'top': trgt_t - _item.height() + 'px'
+                'left': trgt_l + trgt_w - width + 'px',
+                'top': trgt_t - height + 'px'
               };
               _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_BR');
               break;
@@ -192,49 +196,49 @@
             case 'LB':
               properties = {
                 'left': trgt_l + trgt_w + 'px',
-                'top': trgt_t + trgt_h - _item.height() + 'px'
+                'top': trgt_t + trgt_h - height + 'px'
               };
               _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_LB');
               break;
             case 'RT':
               properties = {
-                'left': trgt_l - _item.width() + 'px',
+                'left': trgt_l - width + 'px',
                 'top': trgt_t + 'px'
               };
               _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_RT');
               break;
             case 'RB':
               properties = {
-                'left': trgt_l - _item.width() + 'px',
-                'top': trgt_t + trgt_h - _item.height() + 'px'
+                'left': trgt_l - width + 'px',
+                'top': trgt_t + trgt_h - height + 'px'
               };
               _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_RB');
               break;
             case 'T':
               properties = {
-                'left': trgt_l + trgt_w / 2 - _item.width() / 2 + 'px',
+                'left': trgt_l + trgt_w / 2 - width / 2 + 'px',
                 'top': trgt_t + trgt_h + 'px'
               };
               _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_T');
               break;
             case 'R':
               properties = {
-                'left': trgt_l - _item.width() + 'px',
-                'top': trgt_t + trgt_h / 2 - _item.height() / 2 + 'px'
+                'left': trgt_l - width + 'px',
+                'top': trgt_t + trgt_h / 2 - height / 2 + 'px'
               };
               _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_R');
               break;
             case 'B':
               properties = {
-                'left': trgt_l + trgt_w / 2 - _item.width() / 2 + 'px',
-                'top': trgt_t - _item.height() + 'px'
+                'left': trgt_l + trgt_w / 2 - width / 2 + 'px',
+                'top': trgt_t - height + 'px'
               };
               _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_B');
               break;
             case 'L':
               properties = {
                 'left': trgt_l + trgt_w + 'px',
-                'top': trgt_t + trgt_h / 2 - _item.height() / 2 + 'px'
+                'top': trgt_t + trgt_h / 2 - height / 2 + 'px'
               };
               _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_L');
               break;
@@ -290,6 +294,7 @@
           }
 
           if (_config.bindTo) {
+            var _bind_target = jQuery(_config.bindTo);
             w_t = jQuery(window).scrollTop();
             w_b = jQuery(window).scrollTop() + jQuery(window).height();
             b_t = parseFloat(_item.offset().top, 10);
