@@ -62,7 +62,29 @@
         jQuery('#midgardcreate-save').button({disabled: true});
         jQuery('#midgardcreate-save').show();
         if (!options.instance.isNew()) {
-          widget._readLocal(options.instance);
+          if (widget._checkLocal(options.instance)) {
+              jQuery('body').data('midgardCreate').showNotification({
+                body: options.instance.getSubjectUri() + " has local modifications",
+                timeout: 0,
+                actions: [
+                  {
+                    name: 'restore',
+                    label: 'Restore',
+                    cb: function() {
+                      widget._readLocal(options.instance);
+                    }
+                  },
+                  {
+                    name: 'ignore',
+                    label: 'Ignore',
+                    cb: function(event, notification) {
+                      // TODO: Clear from localStorage?
+                      notification.close();
+                    }
+                  }
+                ]
+              });
+          }
         }
         _.each(options.instance.attributes, function (attributeValue, property) {
           if (attributeValue instanceof widget.vie.Collection) {
@@ -173,6 +195,19 @@
       localStorage.setItem(identifier, JSON.stringify([json]));
     },
 
+    _checkLocal: function (model) {
+      if (!this.options.localStorage) {
+        return false;
+      }
+
+      var local = localStorage.getItem(model.getSubjectUri());
+      if (!local) {
+        return false;
+      }
+
+      return true;
+    },
+
     _readLocal: function (model) {
       if (!this.options.localStorage) {
         return;
@@ -210,6 +245,7 @@
 
     _restoreLocal: function (model) {
       var widget = this;
+
       // Remove unsaved collection members
       if (!model) { return; }
       _.each(model.attributes, function (attributeValue, property) {
@@ -230,6 +266,7 @@
         }
         return;
       }
+
       model.set(model.previousAttributes());
     },
 
