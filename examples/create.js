@@ -1748,12 +1748,26 @@
       return subject;
     },
 
+    _tagLabel: function (subject) {
+      subject = this.entity.fromReference(subject);
+
+      if (subject.substr(0, 8) === 'urn:tag:') {
+        subject = subject.substr(8, subject.length - 1);
+      }
+
+      if (subject.substring(0, 7) == 'http://') {
+        subject = subject.substr(subject.lastIndexOf('/') + 1, subject.length - 1);
+        subject = subject.replace(/_/g, ' ');
+      }
+      return subject;
+    },
+
     // Centralized method for adding new tags to an entity
     // regardless of whether they come from this widget
     // or Annotate.js
     addTag: function (subject, label, type) {
       if (label === undefined) {
-        label = subject;
+        label = this._tagLabel(subject);
       }
 
       subject = this._normalizeSubject(subject);
@@ -1767,9 +1781,16 @@
       if (!tags) {
         tags = new this.vie.Collection();
         this.options.entity.set(this.options.predicate, tags);
+      } else if (!tags.isCollection) {
+        var tags = new this.vie.Collection();
+        this.options.entity.set(this.options.predicate, tags);
       }
 
       tags.addOrUpdate(tagEntity);
+
+      this.options.entityElement.trigger('midgardeditablechanged', {
+        instance: this.options.entity
+      });
     },
 
     removeTag: function (subject) {
@@ -1778,12 +1799,16 @@
         return;
       }
 
+      subject = this._normalizeSubject(subject);
       var tag = tags.get(subject);
       if (!tag) {
         return;
       }
 
-      tags.remove(this._normalizeSubject(subject));
+      tags.remove(subject);
+      this.options.entityElement.trigger('midgardeditablechanged', {
+        instance: this.options.entity
+      });
     },
 
     // Listen for accepted annotations from Annotate.js if that 
@@ -1861,7 +1886,6 @@
       this.articleTags = jQuery('.articleTags input', contentArea).tagsInput({
         width: 'auto',
         height: 'auto',
-        label: this.tagLabel,
         onAddTag: function (tag) {
           widget.addTag(tag);
         },
@@ -1874,7 +1898,6 @@
         width: 'auto',
         height: 'auto',
         interactive: false,
-        label: this.tagLabel,
         remove: false
       });
 
@@ -1889,24 +1912,34 @@
       // Populate existing tags from entity
       var tags = this.entity.get(this.options.predicate);
       if (tags) {
-        tags.each(function (tag) {
-          widget.articleTags.addTag(tag.getSubject());
-        });
+        if (_.isString(tags)) {
+          widget.articleTags.addTag(widget._tagLabel(tags));
+        } else {
+          _.each(tags, function (tag) {
+            if (tag.isEntity) {
+              widget.articleTags.addTag(tag.get('rdfs:label'));
+            } else {
+              widget.articleTags.addTag(widget._tagLabel(tag));
+            }
+          });
+        }
       }
 
       if (this.vie.services.stanbol) {
         widget.enhance();
+      } else {
+        jQuery('.suggestedTags', widget.element).hide();
       }
     },
 
     _addEnhancement: function (enhancement) {
       if (enhancement.isEntity) {
-        this.suggestedTags.addTag(enhancement.getSubject());
+        this.suggestedTags.addTag(entity.get('rdfs:label'));
         return;
       }
 
       if (enhancement['http://www.w3.org/2000/01/rdf-schema#label>']) {
-        this.suggestedTags.addTag(e['@subject']);
+        this.suggestedTags.addTag(enhancement['http://www.w3.org/2000/01/rdf-schema#label>']);
       }
     },
 
@@ -1928,19 +1961,6 @@
       }).fail(function (xhr) {
         // console.log(xhr);
       });
-    },
-
-    tagLabel: function (value) {
-      if (value.substring(0, 9) == '<urn:tag:') {
-        value = value.substring(9, value.length - 1);
-      }
-
-      if (value.substring(0, 8) == '<http://') {
-        value = value.substring(value.lastIndexOf('/') + 1, value.length - 1);
-        value = value.replace(/_/g, ' ');
-      }
-
-      return value;
     }
   });
 })(jQuery);
