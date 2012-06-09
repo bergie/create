@@ -493,6 +493,14 @@ body > .hallotoolbar {
   outline-width: 3px;
   outline-color: #eeeeec;
 }
+
+div.halloEditIndicator {
+  padding: 4px;
+  border-radius: 6px;
+  color: #000000;
+  background-color: #67cc08;
+  opacity: 0.8;
+}
 /* EDITOR END */
 
 /* ANNOTATIONS */
