@@ -47,7 +47,8 @@
       },
       notifications: {},
       vie: null,
-      stanbolUrl: null
+      stanbolUrl: null,
+      tags: false
     },
 
     _create: function () {
@@ -218,8 +219,19 @@
           jQuery(this).unbind('midgardeditableenableproperty', highlightEditable);
         });
 
+        if (widget.options.tags) {
+          jQuery(this).bind('midgardeditableenable', function (event, options) {
+            jQuery(this).midgardTags({
+              vie: widget.vie,
+              entityElement: options.entityElement,
+              entity: options.instance
+            });
+          });
+        }
+
         jQuery(this).midgardEditable(editableOptions);
       });
+
       this._trigger('statechange', null, {
         state: 'edit'
       });
@@ -656,6 +668,7 @@
           halloformat: {},
           halloblock: {},
           hallolists: {},
+          hallolink: {},
           halloindicator: {}
         },
         buttonCssClass: 'create-ui-btn-small',
@@ -1766,13 +1779,11 @@
           }
 
           // add tag to entity
-          entity.attributes['<http://purl.org/dc/elements/1.1/subject>'].vie = that.vie;
           entity.attributes['<http://purl.org/dc/elements/1.1/subject>'].addOrUpdate({
             '@subject': tag
           });
         },
         onRemoveTag: function (tag) {
-
           // remove tag from entity
           that.entity.attributes['<http://purl.org/dc/elements/1.1/subject>'].remove(tag);
         },
@@ -1816,10 +1827,12 @@
       var that = this;
 
       // load article tags
-      var tags = this.entity.attributes['<http://purl.org/dc/elements/1.1/subject>'].models;
-      jQuery(tags).each(function () {
-        that.articleTags.addTag(this.id);
-      });
+      var tags = this.entity.get('<http://purl.org/dc/elements/1.1/subject>');
+      if (tags) {
+        jQuery(tags).each(function () {
+          that.articleTags.addTag(this.id);
+        });
+      }
 
       // load suggested tags
       that.vie.analyze({
