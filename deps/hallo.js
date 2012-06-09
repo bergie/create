@@ -879,16 +879,13 @@ http://hallojs.org
           modal: false,
           resizable: false,
           draggable: true,
-          dialogClass: 'halloimage-dialog',
-          close: function(ev, ui) {
-            return jQuery('.image_button').removeClass('ui-state-clicked');
-          }
+          dialogClass: 'halloimage-dialog'
         },
         dialog: null,
         buttonCssClass: null
       },
       _create: function() {
-        var button, buttonHolder, buttonset, dialogId, id, widget;
+        var buttonHolder, buttonset, dialogId, id, widget;
         widget = this;
         dialogId = "" + this.options.uuid + "-image-dialog";
         this.options.dialog = jQuery("<div id=\"" + dialogId + "\">                <div class=\"nav\">                    <ul class=\"tabs\">                    </ul>                    <div id=\"" + this.options.uuid + "-tab-activeIndicator\" class=\"tab-activeIndicator\" />                </div>                <div class=\"dialogcontent\">            </div>");
@@ -917,8 +914,8 @@ http://hallojs.org
           cssClass: this.options.buttonCssClass
         });
         buttonset.append(buttonHolder);
-        button = buttonHolder;
-        button.bind("change", function(event) {
+        this.button = buttonHolder;
+        this.button.bind("change", function(event) {
           if (widget.options.dialog.dialog("isOpen")) {
             return widget._closeDialog();
           } else {
@@ -980,7 +977,6 @@ http://hallojs.org
             return jQuery("#activitySpinner").hide();
           }
         };
-        jQuery('.image_button').addClass('ui-state-clicked');
         jQuery("#" + this.options.uuid + "-sugg-activeImage").attr("src", jQuery("#" + this.options.uuid + "-tab-suggestions-content .imageThumbnailActive").first().attr("src"));
         jQuery("#" + this.options.uuid + "-sugg-activeImageBg").attr("src", jQuery("#" + this.options.uuid + "-tab-suggestions-content .imageThumbnailActive").first().attr("src"));
         this.lastSelection = this.options.editable.getSelection();
@@ -1038,6 +1034,7 @@ http://hallojs.org
         this.options.editable.keepActivated(true);
         this.options.dialog.dialog("open");
         return this.options.dialog.bind('dialogclose', function() {
+          jQuery('label', _this.button).removeClass('ui-state-active');
           _this.options.editable.element.focus();
           return _this.options.editable.keepActivated(false);
         });
