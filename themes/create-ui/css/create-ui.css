@@ -597,7 +597,8 @@ div.halloEditIndicator {
 /* Image Dialog */
 /****************/
 
-.halloimage-dialog {
+.halloimage-dialog,
+.hallolink-dialog {
    margin-top: 60px;
    background-color: #111111; 
    color: #ffffff;
@@ -606,13 +607,31 @@ div.halloEditIndicator {
    text-decoration: none;
    padding: 4px;
    border-radius: 6px;
+   position: relative;
 }
 
-.halloimage-dialog .ui-dialog-content {
+.halloimage-dialog .ui-dialog-title,
+.hallolink-dialog .ui-dialog-title {
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+
+.halloimage-dialog a.ui-dialog-titlebar-close,
+.hallolink-dialog a.ui-dialog-titlebar-close {
+  position: absolute;
+  right: 2px;
+  top: 0px;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.halloimage-dialog .ui-dialog-content,
+.hallolink-dialog .ui-dialog-content {
     padding: 0;
 }
 
-.halloimage-dialog button {
+.halloimage-dialog button,
+.hallolink-dialog button {
     cursor: pointer;
 }
 

@@ -56,6 +56,7 @@
           halloformat: {},
           halloblock: {},
           hallolists: {},
+          hallolink: {},
           halloindicator: {}
         },
         buttonCssClass: 'create-ui-btn-small',
