@@ -18,6 +18,7 @@ http://hallojs.org
       originalContent: "",
       uuid: "",
       selection: null,
+      _keepActivated: false,
       options: {
         editable: true,
         plugins: {},
@@ -192,6 +193,9 @@ http://hallojs.org
             return widget._protectToolbarFocus = false;
           }, 300);
         });
+      },
+      keepActivated: function(_keepActivated) {
+        this._keepActivated = _keepActivated;
       },
       _generateUUID: function() {
         var S4;
@@ -415,6 +419,9 @@ http://hallojs.org
         return event.data.turnOn();
       },
       _deactivated: function(event) {
+        if (event.data._keepActivated) {
+          return;
+        }
         if (event.data._protectToolbarFocus !== true) {
           return event.data.turnOff();
         } else {
@@ -947,7 +954,8 @@ http://hallojs.org
       },
       _init: function() {},
       _openDialog: function() {
-        var articleTags, cleanUp, i, repoImagesFound, showResults, tagType, thumbId, tmpArticleTags, vie, widget, xposition, yposition;
+        var articleTags, cleanUp, i, repoImagesFound, showResults, tagType, thumbId, tmpArticleTags, vie, widget, xposition, yposition,
+          _this = this;
         widget = this;
         cleanUp = function() {
           return window.setTimeout((function() {
@@ -1027,8 +1035,12 @@ http://hallojs.org
         }
         cleanUp();
         widget.options.loaded = 1;
+        this.options.editable.keepActivated(true);
         this.options.dialog.dialog("open");
-        return this.options.editable.protectFocusFrom(this.options.dialog);
+        return this.options.dialog.bind('dialogclose', function() {
+          _this.options.editable.element.focus();
+          return _this.options.editable.keepActivated(false);
+        });
       },
       _closeDialog: function() {
         return this.options.dialog.dialog("close");
@@ -1625,7 +1637,8 @@ http://hallojs.org
           resizable: false,
           draggable: false,
           dialogClass: 'hallolink-dialog'
-        }
+        },
+        butonCssClass: null
       },
       _create: function() {
         var buttonize, buttonset, dialog, dialogId, dialogSubmitCb, urlInput, widget,
@@ -1636,8 +1649,9 @@ http://hallojs.org
         urlInput = jQuery('input[name=url]', dialog).focus(function(e) {
           return this.select();
         });
-        dialogSubmitCb = function() {
+        dialogSubmitCb = function(event) {
           var link;
+          event.preventDefault();
           link = urlInput.val();
           widget.options.editable.restoreSelection(widget.lastSelection);
           if (((new RegExp(/^\s*$/)).test(link)) || link === widget.options.defaultUrl) {
@@ -1662,10 +1676,20 @@ http://hallojs.org
         dialog.find("form").submit(dialogSubmitCb);
         buttonset = jQuery("<span class=\"" + widget.widgetName + "\"></span>");
         buttonize = function(type) {
-          var button, id;
+          var button, buttonHolder, id;
           id = "" + _this.options.uuid + "-" + type;
-          buttonset.append(jQuery("<input id=\"" + id + "\" type=\"checkbox\" /><label for=\"" + id + "\" class=\"btn anchor_button\" ><i class=\"icon-bookmark\"></i></label>").button());
-          button = jQuery("#" + id, buttonset);
+          buttonHolder = jQuery('<span></span>');
+          buttonHolder.hallobutton({
+            label: 'Link',
+            icon: 'icon-link',
+            editable: _this.options.editable,
+            command: null,
+            queryState: false,
+            uuid: _this.options.uuid,
+            cssClass: _this.options.buttonCssClass
+          });
+          buttonset.append(buttonHolder);
+          button = buttonHolder;
           button.bind("change", function(event) {
             widget.lastSelection = widget.options.editable.getSelection();
             urlInput = jQuery('input[name=url]', dialog);
@@ -1675,22 +1699,23 @@ http://hallojs.org
               urlInput.val(jQuery(widget.lastSelection.startContainer.parentNode).attr('href'));
               jQuery(urlInput[0].form).find('input[type=submit]').val('update');
             }
+            widget.options.editable.keepActivated(true);
             dialog.dialog('open');
-            return widget.options.editable.protectFocusFrom(dialog);
+            return dialog.bind('dialogclose', function() {
+              jQuery('label', buttonHolder).removeClass('ui-state-active');
+              widget.options.editable.element.focus();
+              return widget.options.editable.keepActivated(false);
+            });
           });
           return _this.element.bind("keyup paste change mouseup", function(event) {
             var nodeName, start;
             start = jQuery(widget.options.editable.getSelection().startContainer);
             nodeName = start.prop('nodeName') ? start.prop('nodeName') : start.parent().prop('nodeName');
             if (nodeName && nodeName.toUpperCase() === "A") {
-              button.attr("checked", true);
-              button.next().addClass("ui-state-clicked");
-              return button.button("refresh");
-            } else {
-              button.attr("checked", false);
-              button.next().removeClass("ui-state-clicked");
-              return button.button("refresh");
+              jQuery('label', button).addClass('ui-state-active');
+              return;
             }
+            return jQuery('label', button).removeClass('ui-state-active');
           });
         };
         if (this.options.link) {
