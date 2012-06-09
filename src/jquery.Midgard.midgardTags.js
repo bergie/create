@@ -5,73 +5,153 @@
 //     http://createjs.org/
 (function (jQuery, undefined) {
   jQuery.widget('Midgard.midgardTags', {
+    enhanced: false,
+
     options: {
       vie: null,
       entity: null,
       element: null,
-      entityElement: null
+      entityElement: null,
+      parentElement: '.create-ui-tool-metadataarea',
+      predicate: 'skos:related'
+    },
+
+    // Convert to reference URI as needed
+    _normalizeSubject: function(subject) {
+      if (this.entity.isReference(subject)) {
+        return subject;
+      }
+        
+      if (subject.substr(0, 7) !== 'http://') {
+        subject = 'urn:tag:' + subject;
+      }
+
+      return subject;
+    },
+
+    // Centralized method for adding new tags to an entity
+    // regardless of whether they come from this widget
+    // or Annotate.js
+    addTag: function (subject, label, type) {
+      if (label === undefined) {
+        label = subject;
+      }
+
+      subject = this._normalizeSubject(subject);
+
+      var tagEntity = this.vie.entities.addOrUpdate({
+        '@subject': subject,
+        'rdfs:label': label,
+        '@type': type
+      });
+      var tags = this.options.entity.get(this.options.predicate);
+      if (!tags) {
+        tags = new this.vie.Collection();
+        this.options.entity.set(this.options.predicate, tags);
+      }
+
+      tags.addOrUpdate(tagEntity);
+    },
+
+    removeTag: function (subject) {
+      var tags = this.options.entity.get(this.options.predicate);
+      if (!tags) {
+        return;
+      }
+
+      var tag = tags.get(subject);
+      if (!tag) {
+        return;
+      }
+
+      tags.remove(this._normalizeSubject(subject));
+    },
+
+    // Listen for accepted annotations from Annotate.js if that 
+    // is in use
+    // and register them as tags
+    _listenAnnotate: function () {
+      var widget = this;
+
+      widget.element.bind('annotateselect', function (event, data) {
+        widget.addTag(data.linkedEntity.uri, data.linkedEntity.label, data.linkedEntity.type[0]);
+      });
+
+      widget.element.bind('annotateremove', function (event, data) {
+        widget.removeTag(data.linkedEntity.uri);
+      });
     },
 
     _init: function () {
-
+      var widget = this;
       this.vie = this.options.vie;
       this.entity = this.options.entity;
       this.element = this.options.element;
 
+      jQuery(this.options.entityElement).bind('midgardeditableactivated', function (event, data) {
+        if (data.instance !== widget.options.entity) {
+          return;
+        }
+        widget._renderWidget();
+        widget.loadTags();
+      });
+
+      jQuery(this.options.entityElement).bind('midgardeditablechanged', function (event, data) {
+        if (data.instance !== widget.options.entity) {
+          return;
+        }
+        widget.enhanced = false;
+      });
+    },
+
+    _prepareEditor: function (button) {
+      var contentArea = jQuery('<div class="create-ui-tags"></div>');
+      var articleTags = jQuery('<div class="articleTags"><h3>Article tags</h3><input type="text" class="tags" value="" /></div>');
+      var suggestedTags = jQuery('<div class="suggestedTags"><h3>Suggested tags</h3><input type="text" class="tags" value="" /></div>');
+
+      // Tags plugin requires IDs to exist
+      jQuery('input', articleTags).attr('id', 'articleTags-' + this.entity.cid);
+      jQuery('input', suggestedTags).attr('id', 'suggestedTags-' + this.entity.cid);
+
+      contentArea.append(articleTags);
+      contentArea.append(suggestedTags);
+      contentArea.hide();
+
+      var offset = button.position();
+      contentArea.css('position', 'absolute');
+      contentArea.css('left', offset.left);
+      contentArea.css('top', offset.top);
+
+      return contentArea;
+    },
+
+    _renderWidget: function () {
+      var widget = this;
       var subject = this.entity.getSubject();
 
-      // insert settings pane
-      var id = subject.replace(/[^A-Za-z]/g, '-');
-      this.pane = jQuery('<div class="hiddenfieldsContainer"><div class="hiddenfieldsToggle"></div><div class="hiddenfields"><div class="hiddenfieldsCloseButton"></div><h2>Article settings</h2><div id="articleTagsWrapper"><form><div class="articleTags"><h3>Article tags</h3><input type="text" id="' + id + '-articleTags" class="tags" value="" /></div><div class="articleSuggestedTags"><h3>Suggested tags</h3><input type="text" id="' + id + '-suggestedTags" class="tags" value="" /></div></form></div></div><div class="hiddenfieldsCloseCorner"></div></div>');
-      this.pane = this.pane.insertBefore(this.element);
-      this.articleTags = this.pane.find('.articleTags input');
-      this.suggestedTags = this.pane.find('.articleSuggestedTags input');
+      var button = jQuery('<button class="create-ui-btn"><i class="icon-tags"></i> Tags</a>').button();
 
-      // bind toggle events for settings pane
-      this.pane.find('.hiddenfieldsToggle').click(function (event) {
-        var context = jQuery(this).closest('.hiddenfieldsContainer');
-        jQuery('.hiddenfields', context).show();
-        jQuery('.hiddenfieldsToggle', context).hide();
-        jQuery('.hiddenfieldsCloseCorner', context).show();
-        jQuery('.hiddenfieldsCloseButton', context).show();
-      });
+      var parentElement = jQuery(this.options.parentElement);
+      parentElement.empty();
+      parentElement.append(button);
+      parentElement.show();
 
-      var that = this;
-      this.pane.find('.hiddenfieldsCloseCorner, .hiddenfieldsCloseButton').click(function (event) {
-        that.closeTags();
-      });
+      var contentArea = this._prepareEditor(button);
+      button.after(contentArea);
 
-      jQuery(document).click(function (e) {
-        if (jQuery(e.target).closest('.hiddenfieldsContainer').size() === 0 && jQuery('.hiddenfieldsCloseCorner:visible').length > 0) {
-          that.closeTags();
+      this.articleTags = jQuery('.articleTags input', contentArea).tagsInput({
+        width: 'auto',
+        height: 'auto',
+        label: this.tagLabel,
+        onAddTag: function (tag) {
+          widget.addTag(tag);
+        },
+        onRemoveTag: function (tag) {
+          widget.removeTag(tag);
         }
       });
 
-      this.articleTags.tagsInput({
-        width: 'auto',
-        height: 'auto',
-        onAddTag: function (tag) {
-
-          var entity = that.entity;
-
-          // convert to reference url
-          if (!entity.isReference(tag)) {
-            tag = 'urn:tag:' + tag;
-          }
-
-          // add tag to entity
-          entity.attributes['<http://purl.org/dc/elements/1.1/subject>'].addOrUpdate({
-            '@subject': tag
-          });
-        },
-        onRemoveTag: function (tag) {
-          // remove tag from entity
-          that.entity.attributes['<http://purl.org/dc/elements/1.1/subject>'].remove(tag);
-        },
-        label: this.tagLabel
-      });
-
-      this.suggestedTags.tagsInput({
+      this.suggestedTags = jQuery('.suggestedTags input', contentArea).tagsInput({
         width: 'auto',
         height: 'auto',
         interactive: false,
@@ -79,61 +159,52 @@
         remove: false
       });
 
-      // add suggested tag on click to tags
-      jQuery('#' + id + '-suggestedTags_tagsinput .tag span').live('click', function () {
-
-        var tag = jQuery(this).text();
-        that.articleTags.addTag(jQuery(this).data('value'));
-        that.suggestedTags.removeTag($.trim(tag));
-
-        return false;
+      button.bind('click', function() {
+        contentArea.toggle();
       });
-
-      this.loadTags();
-    },
-
-    closeTags: function () {
-      var context = jQuery('.hiddenfieldsContainer');
-      jQuery('.hiddenfields', context).hide();
-      jQuery('.hiddenfieldsToggle', context).show();
-      jQuery('.hiddenfieldsCloseCorner', context).hide();
-      jQuery('.hiddenfieldsCloseButton', context).hide();
-
-      // save on close
-      this.options.deactivated();
     },
 
     loadTags: function () {
+      var widget = this;
 
-      var that = this;
-
-      // load article tags
-      var tags = this.entity.get('<http://purl.org/dc/elements/1.1/subject>');
+      // Populate existing tags from entity
+      var tags = this.entity.get(this.options.predicate);
       if (tags) {
-        jQuery(tags).each(function () {
-          that.articleTags.addTag(this.id);
+        tags.each(function (tag) {
+          widget.articleTags.addTag(tag.getSubject());
         });
       }
 
+      if (this.vie.services.stanbol) {
+        widget.enhance();
+      }
+    },
+
+    _addEnhancement: function (enhancement) {
+      if (enhancement.isEntity) {
+        this.suggestedTags.addTag(enhancement.getSubject());
+        return;
+      }
+
+      if (enhancement['http://www.w3.org/2000/01/rdf-schema#label>']) {
+        this.suggestedTags.addTag(e['@subject']);
+      }
+    },
+
+    enhance: function () {
+      if (this.enhanced) {
+        return;
+      }
+      this.enhanced = true;
+
+      var widget = this;
+
       // load suggested tags
-      that.vie.analyze({
-        element: this.options.entityElement
+      this.vie.analyze({
+        element: jQuery('[property]', this.options.entityElement)
       }).using(['stanbol']).execute().success(function (enhancements) {
-        return jQuery(enhancements).each(function (i, e) {
-
-          if (typeof e.attributes == 'undefined') {
-
-            if (e['<http://www.w3.org/2000/01/rdf-schema#label>']) {
-              that.suggestedTags.addTag(e['@subject']);
-            }
-
-          } else {
-
-            // Backward compability
-            if (e.attributes['<rdfschema:label>']) {
-              that.suggestedTags.addTag(e.id);
-            }
-          }
+        _.each(enhancements, function (enhancement) {
+          widget._addEnhancement(enhancement);
         });
       }).fail(function (xhr) {
         // console.log(xhr);
@@ -141,7 +212,6 @@
     },
 
     tagLabel: function (value) {
-
       if (value.substring(0, 9) == '<urn:tag:') {
         value = value.substring(9, value.length - 1);
       }

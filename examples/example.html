@@ -10,8 +10,8 @@
     <script src="../deps/backbone-min.js"></script>
     <script src="../deps/vie-min.js"></script>
 
-    <!-- Tags input is needed for the Tag widget
-    <script src="../deps/jquery.tagsinput.min.js"></script>-->
+    <!-- Tags input is needed for the Tag widget -->
+    <script src="../deps/jquery.tagsinput.min.js"></script>
 
     <!-- rdfQuery and annotate are only needed for the Hallo
     annotations plugin -->
@@ -26,7 +26,8 @@
           url: function () {
             return 'javascript:false;';
           },
-          stanbolUrl: 'http://dev.iks-project.eu:8081' 
+          stanbolUrl: 'http://dev.iks-project.eu:8081',
+          tags: true
         });
       });
       // Fake Backbone.sync since there is no server to communicate with

@@ -220,6 +220,7 @@ body > .hallotoolbar {
    background-color: #111111; 
    color: #ffffff;
    background: url("../img/create-ui-bg.png") repeat scroll 0 0 transparent;
+   background: rgba(0, 0, 0, .7);
    font-family: "Futura","Helvetica",Arial;
    text-decoration: none;
    border-radius: 4px;
@@ -365,6 +366,7 @@ body > .hallotoolbar {
 .dropdown-menu {
     background-clip: padding-box;
     background: url("../img/create-ui-bg.png") repeat scroll 0 0 transparent;
+    background: rgba(0, 0, 0, .7);
     border-color: rgba(0, 0, 0, 0.2);
     border-radius: 5px 5px 5px 5px;
     border-style: solid;
@@ -528,6 +530,7 @@ div.halloEditIndicator {
    background-color: #111111; 
    color: #ffffff;
    background: url("../img/create-ui-bg.png") repeat scroll 0 0 transparent;
+   background: rgba(0, 0, 0, .7);
    font-family: "Futura","Helvetica",Arial;
    text-decoration: none;
    padding: 4px;
@@ -560,6 +563,7 @@ div.halloEditIndicator {
    background-color: #111111; 
    color: #ffffff;
    background: url("../img/create-ui-bg.png") repeat scroll 0 0 transparent;
+   background: rgba(0, 0, 0, .7);
    font-family: "Futura","Helvetica",Arial;
    text-decoration: none;
    padding: 4px;
@@ -598,16 +602,53 @@ div.halloEditIndicator {
 /****************/
 
 .halloimage-dialog,
-.hallolink-dialog {
-   margin-top: 60px;
-   background-color: #111111; 
-   color: #ffffff;
-   background: url("../img/create-ui-bg.png") repeat scroll 0 0 transparent;
-   font-family: "Futura","Helvetica",Arial;
-   text-decoration: none;
-   padding: 4px;
-   border-radius: 6px;
-   position: relative;
+.hallolink-dialog,
+.create-ui-tags {
+  margin-top: 60px;
+  background-color: #111111; 
+  color: #ffffff;
+  background: url("../img/create-ui-bg.png") repeat scroll 0 0 transparent;
+  background: rgba(0, 0, 0, .7);
+  font-family: "Futura","Helvetica",Arial;
+  text-decoration: none;
+  padding: 4px;
+  border-radius: 6px;
+  position: relative;
+}
+
+.create-ui-tags {
+  width: 200px;
+}
+
+.create-ui-tags h3 {
+  margin: 0px;
+}
+
+.create-ui-tags .tagsinput {
+  line-height: 1.2em;
+  width: 100% !important;
+}
+
+.create-ui-tags .tag {
+  color: #000000;
+  background-color: #ffffff;
+  border-radius: 6px;
+  padding: 2px;
+  margin: 2px;
+  font-weight: bold;
+}
+
+.create-ui-tags .tag a {
+  color: #000000;
+}
+
+.create-ui-tags input {
+  width: 140px;
+  background-color: #474747;
+  color: #ffffff !important;
+  border: 1px solid #ffffff;
+  padding: 2px;
+  margin: 2px;
 }
 
 .halloimage-dialog .ui-dialog-title,
