@@ -5,12 +5,19 @@
 //     http://createjs.org/
 (function (jQuery, undefined) {
   jQuery.widget('Midgard.midgardStorage', {
+    changedModels: [],
+    saveEnabled: true,
     options: {
+      // Whether to use localstorage
       localStorage: false,
+      // VIE instance to use for storage handling
       vie: null,
-      changedModels: [],
-      loaded: function () {},
-      url: ''
+      // URL callback for Backbone.sync
+      url: '',
+      // Whether to enable automatic saving
+      autoSave: false,
+      // How often to autosave in milliseconds
+      autoSaveInterval: 5000
     },
 
     _create: function () {
@@ -40,6 +47,58 @@
       });
 
       widget._bindEditables();
+      if (widget.options.autoSave) {
+        widget._autoSave();
+      }
+    },
+
+    _autoSave: function () {
+      var widget = this;
+      widget.saveEnabled = true;
+
+      var doAutoSave = function () {
+        if (!widget.saveEnabled) {
+          return;
+        }
+
+        if (widget.changedModels.length === 0) {
+          return;
+        }
+
+        widget._saveRemote({
+          success: function () {
+            jQuery('#midgardcreate-save').button({
+              disabled: true
+            });
+          },
+          error: function () {}
+        });
+      };
+
+      var timeout = window.setInterval(doAutoSave, widget.options.autoSaveInterval);
+
+      this.element.bind('startPreventSave', function () {
+        if (timeout) {
+          window.clearInterval(timeout);
+          timeout = null;
+        }
+        widget.disableSave();
+      });
+      this.element.bind('stopPreventSave', function () {
+        if (!timeout) {
+          timeout = window.setInterval(doAutoSave, widget.options.autoSaveInterval);
+        }
+        widget.enableSave();
+      });
+
+    },
+
+    enableSave: function () {
+      this.saveEnabled = true;
+    },
+
+    disableSave: function () {
+      this.saveEnabled = false;
     },
 
     _bindEditables: function () {
@@ -47,8 +106,8 @@
       var restorables = [];
 
       widget.element.bind('midgardeditablechanged', function (event, options) {
-        if (_.indexOf(widget.options.changedModels, options.instance) === -1) {
-          widget.options.changedModels.push(options.instance);
+        if (_.indexOf(widget.changedModels, options.instance) === -1) {
+          widget.changedModels.push(options.instance);
         }
         widget._saveLocal(options.instance);
         jQuery('#midgardcreate-save').button({disabled: false});
@@ -111,8 +170,8 @@
       });
 
       widget.element.bind('midgardstorageloaded', function (event, options) {
-        if (_.indexOf(widget.options.changedModels, options.instance) === -1) {
-          widget.options.changedModels.push(options.instance);
+        if (_.indexOf(widget.changedModels, options.instance) === -1) {
+          widget.changedModels.push(options.instance);
         }
         jQuery('#midgardcreate-save').button({
           disabled: false
@@ -123,17 +182,19 @@
     _saveRemote: function (options) {
       var widget = this;
       widget._trigger('save', null, {
-        models: widget.options.changedModels
+        models: widget.changedModels
       });
-      var needed = widget.options.changedModels.length;
+
+      var needed = widget.changedModels.length;
       if (needed > 1) {
         notification_msg = needed + ' objects saved successfully';
       } else {
-        subject = widget.options.changedModels[0].getSubjectUri();
+        subject = widget.changedModels[0].getSubjectUri();
         notification_msg = 'Object with subject ' + subject + ' saved successfully';
       }
 
-      _.forEach(widget.options.changedModels, function (model, index) {
+      widget.disableSave();
+      _.forEach(widget.changedModels, function (model, index) {
         model.save(null, {
           success: function () {
             if (model.originalAttributes) {
@@ -141,7 +202,7 @@
               delete model.originalAttributes;
             }
             widget._removeLocal(model);
-            widget.options.changedModels.splice(index, 1);
+            widget.changedModels.splice(index, 1);
             needed--;
             if (needed <= 0) {
               // All models were happily saved
@@ -150,6 +211,7 @@
               jQuery('body').data('midgardCreate').showNotification({
                 body: notification_msg
               });
+              widget.enableSave();
             }
           },
           error: function (m, err) {

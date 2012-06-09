@@ -56,6 +56,7 @@
           halloformat: {},
           halloblock: {},
           hallolists: {},
+          halloindicator: {}
         },
         buttonCssClass: 'create-ui-btn-small',
         placeholder: '[' + this.options.property + ']'
