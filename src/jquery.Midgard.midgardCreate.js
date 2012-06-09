@@ -47,7 +47,8 @@
       },
       notifications: {},
       vie: null,
-      stanbolUrl: null
+      stanbolUrl: null,
+      tags: false
     },
 
     _create: function () {
@@ -218,8 +219,19 @@
           jQuery(this).unbind('midgardeditableenableproperty', highlightEditable);
         });
 
+        if (widget.options.tags) {
+          jQuery(this).bind('midgardeditableenable', function (event, options) {
+            jQuery(this).midgardTags({
+              vie: widget.vie,
+              entityElement: options.entityElement,
+              entity: options.instance
+            });
+          });
+        }
+
         jQuery(this).midgardEditable(editableOptions);
       });
+
       this._trigger('statechange', null, {
         state: 'edit'
       });

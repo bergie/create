@@ -60,13 +60,11 @@
           }
 
           // add tag to entity
-          entity.attributes['<http://purl.org/dc/elements/1.1/subject>'].vie = that.vie;
           entity.attributes['<http://purl.org/dc/elements/1.1/subject>'].addOrUpdate({
             '@subject': tag
           });
         },
         onRemoveTag: function (tag) {
-
           // remove tag from entity
           that.entity.attributes['<http://purl.org/dc/elements/1.1/subject>'].remove(tag);
         },
@@ -110,10 +108,12 @@
       var that = this;
 
       // load article tags
-      var tags = this.entity.attributes['<http://purl.org/dc/elements/1.1/subject>'].models;
-      jQuery(tags).each(function () {
-        that.articleTags.addTag(this.id);
-      });
+      var tags = this.entity.get('<http://purl.org/dc/elements/1.1/subject>');
+      if (tags) {
+        jQuery(tags).each(function () {
+          that.articleTags.addTag(this.id);
+        });
+      }
 
       // load suggested tags
       that.vie.analyze({
