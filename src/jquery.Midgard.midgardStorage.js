@@ -17,7 +17,11 @@
       // Whether to enable automatic saving
       autoSave: false,
       // How often to autosave in milliseconds
-      autoSaveInterval: 5000
+      autoSaveInterval: 5000,
+      // Whether to save entities that are referenced by entities
+      // we're saving to the server.
+      saveReferencedNew: false,
+      saveReferencedChanged: false
     },
 
     _create: function () {
@@ -195,6 +199,29 @@
 
       widget.disableSave();
       _.forEach(widget.changedModels, function (model, index) {
+
+        // Optionally handle entities referenced in this model first
+        _.each(model.attributes, function (value, property) {
+          if (!value.isCollection) {
+            return;
+          }
+
+          value.each(function (referencedModel) {
+            if (widget.changedModels.indexOf(referencedModel) !== -1) {
+              // The referenced model is already in the save queue
+              return;
+            }
+
+            if (referencedModel.isNew() && widget.options.saveReferencedNew) {
+              return referencedModel.save();
+            }
+
+            if (referencedModel.hasChanged() && widget.options.saveReferencedChanged) {
+              return referencedModel.save();
+            }
+          });
+        });
+
         model.save(null, {
           success: function () {
             if (model.originalAttributes) {
