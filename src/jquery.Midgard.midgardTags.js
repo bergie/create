@@ -16,6 +16,31 @@
       predicate: 'skos:related'
     },
 
+    _init: function () {
+      var widget = this;
+
+      this.vie = this.options.vie;
+      this.entity = this.options.entity;
+      this.element = this.options.element;
+
+      jQuery(this.options.entityElement).bind('midgardeditableactivated', function (event, data) {
+        if (data.instance !== widget.options.entity) {
+          return;
+        }
+        widget._renderWidget();
+        widget.loadTags();
+      });
+
+      jQuery(this.options.entityElement).bind('midgardeditablechanged', function (event, data) {
+        if (data.instance !== widget.options.entity) {
+          return;
+        }
+        widget.enhanced = false;
+      });
+
+      this._listenAnnotate(this.options.entityElement);
+    },
+
     // Convert to reference URI as needed
     _normalizeSubject: function(subject) {
       if (this.entity.isReference(subject)) {
@@ -26,6 +51,7 @@
         subject = 'urn:tag:' + subject;
       }
 
+      subject = this.entity.toReference(subject);
       return subject;
     },
 
@@ -53,17 +79,31 @@
 
       subject = this._normalizeSubject(subject);
 
+      if (type && !this.entity.isReference(type)) {
+        type = this.entity.toReference(type);
+      }
+
       var tagEntity = this.vie.entities.addOrUpdate({
         '@subject': subject,
         'rdfs:label': label,
         '@type': type
       });
+
       var tags = this.options.entity.get(this.options.predicate);
       if (!tags) {
         tags = new this.vie.Collection();
+        tags.vie = this.options.vie;
         this.options.entity.set(this.options.predicate, tags);
       } else if (!tags.isCollection) {
-        var tags = new this.vie.Collection();
+        tags = new this.vie.Collection(_.map(tags, function(tag) {
+          if (tag.isEntity) {
+            return tag;
+          }
+          return {
+            '@subject': tag
+          };
+        }));
+        tags.vie = this.options.vie;
         this.options.entity.set(this.options.predicate, tags);
       }
 
@@ -95,37 +135,14 @@
     // Listen for accepted annotations from Annotate.js if that 
     // is in use
     // and register them as tags
-    _listenAnnotate: function () {
+    _listenAnnotate: function (entityElement) {
       var widget = this;
-
-      widget.element.bind('annotateselect', function (event, data) {
+      entityElement.bind('annotateselect', function (event, data) {
         widget.addTag(data.linkedEntity.uri, data.linkedEntity.label, data.linkedEntity.type[0]);
       });
 
-      widget.element.bind('annotateremove', function (event, data) {
+      entityElement.bind('annotateremove', function (event, data) {
         widget.removeTag(data.linkedEntity.uri);
-      });
-    },
-
-    _init: function () {
-      var widget = this;
-      this.vie = this.options.vie;
-      this.entity = this.options.entity;
-      this.element = this.options.element;
-
-      jQuery(this.options.entityElement).bind('midgardeditableactivated', function (event, data) {
-        if (data.instance !== widget.options.entity) {
-          return;
-        }
-        widget._renderWidget();
-        widget.loadTags();
-      });
-
-      jQuery(this.options.entityElement).bind('midgardeditablechanged', function (event, data) {
-        if (data.instance !== widget.options.entity) {
-          return;
-        }
-        widget.enhanced = false;
       });
     },
 
@@ -175,10 +192,24 @@
         }
       });
 
+      var selectSuggested = function () {
+        var tag = jQuery.trim(jQuery(this).text());
+        widget.articleTags.addTag(tag);
+        widget.suggestedTags.removeTag(tag);
+      };
+
       this.suggestedTags = jQuery('.suggestedTags input', contentArea).tagsInput({
         width: 'auto',
         height: 'auto',
         interactive: false,
+        onAddTag: function (tag) {
+          jQuery('.suggestedTags .tag span', contentArea).unbind('click', selectSuggested);
+          jQuery('.suggestedTags .tag span', contentArea).bind('click', selectSuggested);
+        },
+        onRemoveTag: function (tag) {
+          jQuery('.suggestedTags .tag span', contentArea).unbind('click', selectSuggested);
+          jQuery('.suggestedTags .tag span', contentArea).bind('click', selectSuggested);
+        },
         remove: false
       });
 
@@ -195,13 +226,13 @@
       if (tags) {
         if (_.isString(tags)) {
           widget.articleTags.addTag(widget._tagLabel(tags));
+        } else if (tags.isCollection) {
+          tags.each(function (tag) {
+            widget.articleTags.addTag(tag.get('rdfs:label'));
+          });
         } else {
           _.each(tags, function (tag) {
-            if (tag.isEntity) {
-              widget.articleTags.addTag(tag.get('rdfs:label'));
-            } else {
-              widget.articleTags.addTag(widget._tagLabel(tag));
-            }
+            widget.articleTags.addTag(widget._tagLabel(tag));
           });
         }
       }
@@ -213,15 +244,38 @@
       }
     },
 
+    _getLabelLang: function (labels) {
+      if (!_.isArray(labels)) {
+        return null;
+      }
+
+      var langLabel;
+
+      _.each(labels, function (label) {
+        if (label['@language'] === 'en') {
+          langLabel = label['@value'];
+        }
+      });
+
+      return langLabel;
+    },
+
     _addEnhancement: function (enhancement) {
-      if (enhancement.isEntity) {
-        this.suggestedTags.addTag(entity.get('rdfs:label'));
+      if (!enhancement.isEntity) {
         return;
       }
 
-      if (enhancement['http://www.w3.org/2000/01/rdf-schema#label>']) {
-        this.suggestedTags.addTag(enhancement['http://www.w3.org/2000/01/rdf-schema#label>']);
+      var label = this._getLabelLang(enhancement.get('rdfs:label'))
+      if (!label) {
+        return;
       }
+
+      var tags = this.options.entity.get(this.options.predicate);
+      if (tags && tags.isCollection && tags.indexOf(enhancement) !== -1) {
+        return;
+      }
+
+      this.suggestedTags.addTag(label);
     },
 
     enhance: function () {
