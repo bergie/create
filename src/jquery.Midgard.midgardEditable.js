@@ -19,6 +19,12 @@
       toolbarState: 'full',
       // returns the name of the widget to use for the given property
       widgetName: function (data) {
+        if (this.widgets[data.property]) {
+          // Widget configuration set for specific RDF predicate
+          return this.widgets[data.property];
+        }
+
+        // Load the widget configuration for the data type
         // TODO: make sure type is already loaded into VIE
         var propertyType = 'default';
         var type = this.model.get('@type');
