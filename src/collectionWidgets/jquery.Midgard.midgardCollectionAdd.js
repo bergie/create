@@ -4,7 +4,7 @@
 //     For all details and documentation:
 //     http://createjs.org/
 (function (jQuery, undefined) {
-  // # Create editing widget
+  // # Widget for adding items to a collection
   jQuery.widget('Midgard.midgardCollectionAdd', {
     addButton: null,
 
@@ -22,18 +22,27 @@
       var widget = this;
       widget.options.collection.url = widget.options.model.url();
 
-      widget.options.view.bind('add', function (itemView) {
-        //itemView.el.effect('slide');
-        widget.options.editableOptions.disabled = widget.options.disabled;
-        widget.options.editableOptions.model = itemView.model;
-        jQuery(itemView.el).midgardEditable(widget.options.editableOptions);
-      });
-
       widget.options.view.collection.bind('add', function (model) {
         model.primaryCollection = widget.options.collection;
         widget.options.vie.entities.add(model);
         model.collection = widget.options.collection;
       });
+
+      widget._bindCollectionView(widget.options.view);
+    },
+
+    _bindCollectionView: function (view) {
+      var widget = this;
+      view.bind('add', function (itemView) {
+        //itemView.el.effect('slide');
+        widget._makeEditable(itemView);
+      });
+    },
+
+    _makeEditable: function (itemView) {
+      this.options.editableOptions.disabled = this.options.disabled;
+      this.options.editableOptions.model = itemView.model;
+      jQuery(itemView.el).midgardEditable(this.options.editableOptions);
     },
 
     _init: function () {
