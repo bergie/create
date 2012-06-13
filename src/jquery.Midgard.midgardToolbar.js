@@ -33,6 +33,7 @@
       jQuery(this.element).bind('midgardcreatestatechange', function (event, options) {
         if (options.state == 'browse') {
           widget._clearWorkflows();
+          widget._clearMetadata();
         }
       });
 
@@ -83,6 +84,10 @@
 
     _clearWorkflows: function () {
       jQuery('.create-ui-tool-workflowarea', this.element).empty();
+    },
+
+    _clearMetadata: function () {
+      jQuery('.create-ui-tool-metadataarea', this.element).empty();
     }
   });
 })(jQuery);
