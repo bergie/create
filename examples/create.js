@@ -1,3 +1,66 @@
+//     Create.js - On-site web editing interface
+//     (c) 2011-2012 Henri Bergius, IKS Consortium
+//     Create may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://createjs.org/
+(function (jQuery, undefined) {
+  // # Create editing widget
+  jQuery.widget('Midgard.midgardCollectionAdd', {
+    addButton: null,
+
+    options: {
+      editingWidgets: null,
+      collection: null,
+      model: null,
+      view: null,
+      disabled: false,
+      vie: null,
+      editableOptions: null
+    },
+
+    _create: function () {
+      var widget = this;
+      widget.options.collection.url = widget.options.model.url();
+
+      widget.options.view.bind('add', function (itemView) {
+        //itemView.el.effect('slide');
+        widget.options.editableOptions.disabled = widget.options.disabled;
+        widget.options.editableOptions.model = itemView.model;
+        jQuery(itemView.el).midgardEditable(widget.options.editableOptions);
+      });
+
+      widget.options.view.collection.bind('add', function (model) {
+        model.primaryCollection = widget.options.collection;
+        widget.options.vie.entities.add(model);
+        model.collection = widget.options.collection;
+      });
+    },
+
+    _init: function () {
+      if (this.options.disabled) {
+        this.disable();
+        return;
+      }
+      this.enable();
+    },
+
+    enable: function () {
+      var widget = this;
+      widget.addButton = jQuery('<button class="btn"><i class="icon-plus"></i> Add</button>').button();
+      widget.addButton.addClass('midgard-create-add');
+      widget.addButton.click(function () {
+        widget.options.collection.add({});
+      });
+
+      jQuery(widget.options.view.el).after(widget.addButton);
+    },
+
+    disable: function () {
+      this.addButton.remove();
+      delete this.addButton;
+    }
+  });
+})(jQuery);
 //     Create.js 1.0.0alpha1 - On-site web editing interface
 //     (c) 2011-2012 Henri Bergius, IKS Consortium
 //     Create may be freely distributed under the MIT license.
@@ -48,6 +111,7 @@
       notifications: {},
       vie: null,
       stanbolUrl: null,
+      dbPediaUrl: null,
       tags: false
     },
 
@@ -63,6 +127,13 @@
           this.vie.use(new this.vie.StanbolService({
             proxyDisabled: true,
             url: this.options.stanbolUrl
+          }));
+        }
+
+        if (this.options.dbPediaUrl) {
+          this.vie.use(new this.vie.DBPediaService({
+            proxyDisabled: true,
+            url: this.options.dbPediaUrl
           }));
         }
       }
@@ -271,6 +342,7 @@
   jQuery.widget('Midgard.midgardEditable', {
     options: {
       editables: [],
+      collections: [],
       model: null,
       editorOptions: {},
       // the available widgets by data type
@@ -279,9 +351,18 @@
         'Text': 'halloWidget',
         'default': 'halloWidget'
       },
+      collectionWidgets: {
+        'default': 'midgardCollectionAdd'
+      },
       toolbarState: 'full',
       // returns the name of the widget to use for the given property
       widgetName: function (data) {
+        if (this.widgets[data.property]) {
+          // Widget configuration set for specific RDF predicate
+          return this.widgets[data.property];
+        }
+
+        // Load the widget configuration for the data type
         // TODO: make sure type is already loaded into VIE
         var propertyType = 'default';
         var type = this.model.get('@type');
@@ -314,6 +395,29 @@
           jQuery(data.element).removeClass('ui-state-disabled');
         }
       },
+      collectionWidgetName: function (data) {
+        // TODO: Actual selection mechanism
+        return this.collectionWidgets['default'];
+      },
+      enableCollection: function (data) {
+        var widgetName = this.collectionWidgetName(data);
+        data.disabled = false;
+        if (typeof jQuery(data.element)[widgetName] !== 'function') {
+          throw new Error(widgetName + ' widget is not available');
+        }
+        jQuery(data.element)[widgetName](data);
+        jQuery(data.element).data('createCollectionWidgetName', widgetName);
+        return jQuery(data.element);
+      },
+      disableCollection: function (data) {
+        var widgetName = jQuery(data.element).data('createCollectionWidgetName');
+        data.disabled = true;
+        if (widgetName) {
+          // only if there has been an editing widget registered
+          jQuery(data.element)[widgetName](data);
+          jQuery(data.element).removeClass('ui-state-disabled');
+        }
+      },
       addButton: null,
       enable: function () {},
       enableproperty: function () {},
@@ -322,7 +426,6 @@
       deactivated: function () {},
       changed: function () {},
       vie: null,
-      enableCollectionAdd: true
     },
 
     _create: function () {
@@ -355,12 +458,18 @@
         instance: this.options.model,
         entityElement: this.element
       });
-      if (!this.options.enableCollectionAdd) {
-        return;
-      }
+
       _.forEach(this.vie.service('rdfa').views, function (view) {
         if (view instanceof widget.vie.view.Collection && widget.options.model === view.owner) {
-          widget._enableCollection(view);
+          var collection = widget.options.enableCollection({
+            model: widget.options.model,
+            collection: view.collection,
+            view: view,
+            element: view.el,
+            vie: widget.vie,
+            editableOptions: widget.options
+          });
+          widget.options.collections.push(collection);
         }
       });
     },
@@ -376,11 +485,16 @@
         });
       });
       this.options.editables = [];
-
-      if (this.options.addButton) {
-        this.options.addButton.remove();
-        delete this.options.addButton;
-      }
+      jQuery.each(this.options.collections, function (index, collectionWidget) {
+        widget.options.disableCollection({
+          widget: widget,
+          model: widget.options.model,
+          element: collectionWidget,
+          vie: widget.vie,
+          editableOptions: widget.options
+        });
+      });
+      this.options.collections = [];
 
       this._trigger('disable', null, {
         instance: this.options.model,
@@ -447,53 +561,6 @@
       });
 
       this.options.editables.push(editable);
-    },
-
-    _enableCollection: function (collectionView) {
-      var widget = this;
-
-      if (!collectionView.owner || collectionView.owner.getSubject() !== widget.options.model.getSubject()) {
-        return;
-      }
-
-      if (widget.options.addButton) {
-        return;
-      }
-
-      if (collectionView.template.length === 0) {
-        // Collection view has no template and so can't add
-        return;
-      }
-
-      collectionView.collection.url = widget.options.model.url();
-
-      collectionView.bind('add', function (itemView) {
-        //itemView.el.effect('slide');
-        jQuery(itemView.el).midgardEditable({
-          disabled: widget.options.disabled,
-          model: itemView.model,
-          vie: widget.vie,
-          widgets: widget.options.widgets
-        });
-      });
-
-      collectionView.collection.bind('add', function (model) {
-        model.primaryCollection = collectionView.collection;
-        widget.vie.entities.add(model);
-        model.collection = collectionView.collection;
-      });
-
-      collectionView.bind('remove', function (itemView) {
-        //itemView.el.hide('drop');
-      });
-
-      widget.options.addButton = jQuery('<button class="btn"><i class="icon-plus"></i> Add</button>').button();
-      widget.options.addButton.addClass('midgard-create-add');
-      widget.options.addButton.click(function () {
-        collectionView.collection.add({});
-      });
-
-      jQuery(collectionView.el).after(widget.options.addButton);
     }
   });
 })(jQuery);
@@ -624,7 +691,8 @@
     options: {
       disabled: true,
       toolbarState: 'full',
-      vie: null
+      vie: null,
+      entity: null
     },
     enable: function () {
       jQuery(this.element).hallo({
@@ -669,11 +737,15 @@
           halloblock: {},
           hallolists: {},
           hallolink: {},
+          halloimage: {
+            entity: this.options.entity
+          },
           halloindicator: {}
         },
         buttonCssClass: 'create-ui-btn-small',
         placeholder: '[' + this.options.property + ']'
       };
+
       if (typeof this.element.annotate === 'function' && this.options.vie.services.stanbol) {
         // Enable Hallo Annotate plugin by default if user has annotate.js
         // loaded and VIE has Stanbol enabled
@@ -1376,7 +1448,11 @@
       // Whether to enable automatic saving
       autoSave: false,
       // How often to autosave in milliseconds
-      autoSaveInterval: 5000
+      autoSaveInterval: 5000,
+      // Whether to save entities that are referenced by entities
+      // we're saving to the server.
+      saveReferencedNew: false,
+      saveReferencedChanged: false
     },
 
     _create: function () {
@@ -1554,6 +1630,29 @@
 
       widget.disableSave();
       _.forEach(widget.changedModels, function (model, index) {
+
+        // Optionally handle entities referenced in this model first
+        _.each(model.attributes, function (value, property) {
+          if (!value.isCollection) {
+            return;
+          }
+
+          value.each(function (referencedModel) {
+            if (widget.changedModels.indexOf(referencedModel) !== -1) {
+              // The referenced model is already in the save queue
+              return;
+            }
+
+            if (referencedModel.isNew() && widget.options.saveReferencedNew) {
+              return referencedModel.save();
+            }
+
+            if (referencedModel.hasChanged() && widget.options.saveReferencedChanged) {
+              return referencedModel.save();
+            }
+          });
+        });
+
         model.save(null, {
           success: function () {
             if (model.originalAttributes) {
@@ -1735,6 +1834,31 @@
       predicate: 'skos:related'
     },
 
+    _init: function () {
+      var widget = this;
+
+      this.vie = this.options.vie;
+      this.entity = this.options.entity;
+      this.element = this.options.element;
+
+      jQuery(this.options.entityElement).bind('midgardeditableactivated', function (event, data) {
+        if (data.instance !== widget.options.entity) {
+          return;
+        }
+        widget._renderWidget();
+        widget.loadTags();
+      });
+
+      jQuery(this.options.entityElement).bind('midgardeditablechanged', function (event, data) {
+        if (data.instance !== widget.options.entity) {
+          return;
+        }
+        widget.enhanced = false;
+      });
+
+      this._listenAnnotate(this.options.entityElement);
+    },
+
     // Convert to reference URI as needed
     _normalizeSubject: function(subject) {
       if (this.entity.isReference(subject)) {
@@ -1745,6 +1869,7 @@
         subject = 'urn:tag:' + subject;
       }
 
+      subject = this.entity.toReference(subject);
       return subject;
     },
 
@@ -1772,17 +1897,31 @@
 
       subject = this._normalizeSubject(subject);
 
+      if (type && !this.entity.isReference(type)) {
+        type = this.entity.toReference(type);
+      }
+
       var tagEntity = this.vie.entities.addOrUpdate({
         '@subject': subject,
         'rdfs:label': label,
         '@type': type
       });
+
       var tags = this.options.entity.get(this.options.predicate);
       if (!tags) {
         tags = new this.vie.Collection();
+        tags.vie = this.options.vie;
         this.options.entity.set(this.options.predicate, tags);
       } else if (!tags.isCollection) {
-        var tags = new this.vie.Collection();
+        tags = new this.vie.Collection(_.map(tags, function(tag) {
+          if (tag.isEntity) {
+            return tag;
+          }
+          return {
+            '@subject': tag
+          };
+        }));
+        tags.vie = this.options.vie;
         this.options.entity.set(this.options.predicate, tags);
       }
 
@@ -1814,37 +1953,14 @@
     // Listen for accepted annotations from Annotate.js if that 
     // is in use
     // and register them as tags
-    _listenAnnotate: function () {
+    _listenAnnotate: function (entityElement) {
       var widget = this;
-
-      widget.element.bind('annotateselect', function (event, data) {
+      entityElement.bind('annotateselect', function (event, data) {
         widget.addTag(data.linkedEntity.uri, data.linkedEntity.label, data.linkedEntity.type[0]);
       });
 
-      widget.element.bind('annotateremove', function (event, data) {
+      entityElement.bind('annotateremove', function (event, data) {
         widget.removeTag(data.linkedEntity.uri);
-      });
-    },
-
-    _init: function () {
-      var widget = this;
-      this.vie = this.options.vie;
-      this.entity = this.options.entity;
-      this.element = this.options.element;
-
-      jQuery(this.options.entityElement).bind('midgardeditableactivated', function (event, data) {
-        if (data.instance !== widget.options.entity) {
-          return;
-        }
-        widget._renderWidget();
-        widget.loadTags();
-      });
-
-      jQuery(this.options.entityElement).bind('midgardeditablechanged', function (event, data) {
-        if (data.instance !== widget.options.entity) {
-          return;
-        }
-        widget.enhanced = false;
       });
     },
 
@@ -1894,10 +2010,24 @@
         }
       });
 
+      var selectSuggested = function () {
+        var tag = jQuery.trim(jQuery(this).text());
+        widget.articleTags.addTag(tag);
+        widget.suggestedTags.removeTag(tag);
+      };
+
       this.suggestedTags = jQuery('.suggestedTags input', contentArea).tagsInput({
         width: 'auto',
         height: 'auto',
         interactive: false,
+        onAddTag: function (tag) {
+          jQuery('.suggestedTags .tag span', contentArea).unbind('click', selectSuggested);
+          jQuery('.suggestedTags .tag span', contentArea).bind('click', selectSuggested);
+        },
+        onRemoveTag: function (tag) {
+          jQuery('.suggestedTags .tag span', contentArea).unbind('click', selectSuggested);
+          jQuery('.suggestedTags .tag span', contentArea).bind('click', selectSuggested);
+        },
         remove: false
       });
 
@@ -1914,13 +2044,13 @@
       if (tags) {
         if (_.isString(tags)) {
           widget.articleTags.addTag(widget._tagLabel(tags));
+        } else if (tags.isCollection) {
+          tags.each(function (tag) {
+            widget.articleTags.addTag(tag.get('rdfs:label'));
+          });
         } else {
           _.each(tags, function (tag) {
-            if (tag.isEntity) {
-              widget.articleTags.addTag(tag.get('rdfs:label'));
-            } else {
-              widget.articleTags.addTag(widget._tagLabel(tag));
-            }
+            widget.articleTags.addTag(widget._tagLabel(tag));
           });
         }
       }
@@ -1932,15 +2062,38 @@
       }
     },
 
+    _getLabelLang: function (labels) {
+      if (!_.isArray(labels)) {
+        return null;
+      }
+
+      var langLabel;
+
+      _.each(labels, function (label) {
+        if (label['@language'] === 'en') {
+          langLabel = label['@value'];
+        }
+      });
+
+      return langLabel;
+    },
+
     _addEnhancement: function (enhancement) {
-      if (enhancement.isEntity) {
-        this.suggestedTags.addTag(entity.get('rdfs:label'));
+      if (!enhancement.isEntity) {
         return;
       }
 
-      if (enhancement['http://www.w3.org/2000/01/rdf-schema#label>']) {
-        this.suggestedTags.addTag(enhancement['http://www.w3.org/2000/01/rdf-schema#label>']);
+      var label = this._getLabelLang(enhancement.get('rdfs:label'))
+      if (!label) {
+        return;
       }
+
+      var tags = this.options.entity.get(this.options.predicate);
+      if (tags && tags.isCollection && tags.indexOf(enhancement) !== -1) {
+        return;
+      }
+
+      this.suggestedTags.addTag(label);
     },
 
     enhance: function () {
@@ -1999,6 +2152,7 @@
       jQuery(this.element).bind('midgardcreatestatechange', function (event, options) {
         if (options.state == 'browse') {
           widget._clearWorkflows();
+          widget._clearMetadata();
         }
       });
 
@@ -2049,6 +2203,10 @@
 
     _clearWorkflows: function () {
       jQuery('.create-ui-tool-workflowarea', this.element).empty();
+    },
+
+    _clearMetadata: function () {
+      jQuery('.create-ui-tool-metadataarea', this.element).empty();
     }
   });
 })(jQuery);

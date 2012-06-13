@@ -703,6 +703,310 @@ http://hallojs.org
   })(jQuery);
 
   (function(jQuery) {
+    return jQuery.widget('IKS.halloimagecurrent', {
+      options: {
+        imageWidget: null
+      },
+      _create: function() {
+        this.element.html('<div>\
+        <div class="activeImageContainer">\
+          <div class="rotationWrapper">\
+            <div class="hintArrow"></div>\
+              <img src="" class="activeImage" />\
+            </div>\
+            <img src="" class="activeImage activeImageBg" />\
+          </div>\
+          <div class="metadata" style="display: none;">\
+            <input type="text" class="caption" name="caption" />\
+          </div>\
+        </div>');
+        return this.element.hide();
+      },
+      setImage: function(image) {
+        this.element.show();
+        jQuery('.activeImage', this.element).attr('src', image.url);
+        if (image.label) {
+          jQuery('input', this.element).val(image.label);
+          return jQuery('.metadata', this.element).show();
+        }
+      }
+    });
+  })(jQuery);
+
+  (function(jQuery) {
+    return jQuery.widget('IKS.halloimageupload', {
+      options: {
+        uploadCallback: null,
+        uploadUrl: null,
+        imageWidget: null
+      },
+      _create: function() {
+        return this.element.html('\
+        <form>\
+          <input type="file" class="file" accept="image/*" />\
+          <input type="submit" class="uploadSubmit" value="Upload">\
+        </form>\
+      ');
+      },
+      _init: function() {
+        var widget;
+        widget = this;
+        if (widget.options.uploadUrl && !widget.options.uploadCallback) {
+          widget.options.uploadCallback = widget._iframeUpload;
+        }
+        return jQuery('.uploadSubmit', this.element).bind('click', function(event) {
+          var userFile;
+          event.preventDefault();
+          userFile = jQuery('.file', widget.element).val();
+          return widget.options.uploadCallback({
+            widget: widget,
+            file: jQuery('.file', widget.element).val(),
+            success: function(url) {
+              return widget.options.imageWidget.setCurrent({
+                url: url,
+                label: ''
+              });
+            }
+          });
+        });
+      },
+      _prepareIframe: function(widget) {
+        var iframe, iframeName;
+        iframeName = "" + widget.options.uuid + "_" + widget.widgetName + "_postframe";
+        iframe = jQuery("#" + iframeName);
+        if (iframe.length) {
+          return iframe;
+        }
+        iframe = jQuery("<iframe name=\"" + iframeName + "\" id=\"" + iframeName + "\" class=\"hidden\" src=\"javascript:false;\" style=\"display:none\" />");
+        this.element.append(iframe);
+        iframe.get(0).name = iframeName;
+        return iframe;
+      },
+      _iframeUpload: function(data) {
+        var iframe, uploadForm, widget;
+        widget = data.widget;
+        iframe = widget._prepareIframe(widget);
+        uploadForm = jQuery('form', widget.element);
+        uploadForm.attr('action', widget.options.uploadUrl);
+        uploadForm.attr('method', 'post');
+        uploadForm.attr('userfile', data.file);
+        uploadForm.attr('enctype', 'multipart/form-data');
+        uploadForm.attr('encoding', 'multipart/form-data');
+        uploadForm.attr('target', iframe.get(0).name);
+        uploadForm.submit();
+        return iframe.load(function() {
+          var imageUrl;
+          imageUrl = iframe.get(0).contentWindow.location.href;
+          widget.element.hide();
+          return data.success(imageUrl);
+        });
+      }
+    });
+  })(jQuery);
+
+  (function(jQuery) {
+    return jQuery.widget('IKS.halloimagesearch', {
+      options: {
+        imageWidget: null,
+        searchCallback: null,
+        limit: 5
+      },
+      _create: function() {
+        return this.element.html('<div>\
+        <form method="get">\
+          <input type="text" class="searchInput" />\
+          <input type="submit" class="btn searchButton" value="OK" />\
+        </form>\
+        <div class="searchResults imageThumbnailContainer">\
+          <div class="activitySpinner">Loading images...</div>\
+          <ul></ul>\
+        </div>\
+      </div>');
+      },
+      _init: function() {
+        var widget;
+        widget = this;
+        jQuery('.activitySpinner', this.element).hide();
+        return jQuery('form', this.element).submit(function(event) {
+          var query;
+          event.preventDefault();
+          jQuery('.activitySpinner', this.element).show();
+          query = jQuery('.searchInput', widget.element).val();
+          return widget.options.searchCallback(query, widget.options.limit, 0, function(results) {
+            return widget._showResults(results);
+          });
+        });
+      },
+      _showResult: function(image) {
+        var html,
+          _this = this;
+        if (!image.label) {
+          image.label = image.alt;
+        }
+        html = jQuery("<li><img src=\"" + image.url + "\" class=\"imageThumbnail\" title=\"" + image.label + "\"></li>");
+        html.bind('click', function() {
+          return _this.options.imageWidget.setCurrent(image);
+        });
+        return jQuery('.imageThumbnailContainer ul', this.element).append(html);
+      },
+      _showNextPrev: function(results) {
+        var container, widget;
+        widget = this;
+        container = jQuery('imageThumbnailContainer ul', this.element);
+        container.prepend(jQuery('<div class="pager-prev" style="display:none"></div>'));
+        container.append(jQuery('<div class="pager-next" style="display:none"></div>'));
+        if (response.offset > 0) {
+          jQuery('.pager-prev', container).show();
+        }
+        if (response.offset < response.total) {
+          jQuery('.pager-next', container).show();
+        }
+        jQuery('.pager-prev', container).click(function(event) {
+          return widget.options.searchCallback(query, widget.options.limit, response.offset - widget.options.limit, function(results) {
+            return widget._showResults(results);
+          });
+        });
+        return jQuery('.pager-next', container).click(function(event) {
+          return widget.options.searchCallback(query, widget.options.limit, response.offset + widget.options.limit, function(results) {
+            return widget._showResults(results);
+          });
+        });
+      },
+      _showResults: function(results) {
+        var image, _i, _len, _ref;
+        jQuery('.activitySpinner', this.element).hide();
+        jQuery('imageThumbnailContainer ul', this.element).empty();
+        jQuery('imageThumbnailContainer ul', this.element).show();
+        _ref = results.assets;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          image = _ref[_i];
+          this._showResult(image);
+        }
+        this.options.imageWidget.setCurrent(results.assets.shift());
+        return this._showNextPrev(results);
+      }
+    });
+  })(jQuery);
+
+  (function(jQuery) {
+    return jQuery.widget('IKS.halloimagesuggestions', {
+      loaded: false,
+      options: {
+        entity: null,
+        vie: null,
+        dbPediaUrl: null,
+        getSuggestions: null
+      },
+      _create: function() {
+        return this.element.html('\
+      <div id="' + this.options.uuid + '-tab-suggestions">\
+        <div class="imageThumbnailContainer">\
+          <div class="activitySpinner">Loading images...</div>\
+          <ul></ul>\
+        </div>\
+      </div>');
+      },
+      _init: function() {
+        return jQuery('.activitySpinner', this.element).hide();
+      },
+      _normalizeRelated: function(related) {
+        if (_.isString(related)) {
+          return related;
+        }
+        if (_.isArray(related)) {
+          return related.join(',');
+        }
+        return related.pluck('@subject').join(',');
+      },
+      _prepareVIE: function() {
+        if (!this.options.vie) {
+          this.options.vie = new VIE;
+        }
+        if (this.options.vie.services.dbpedia) {
+          return;
+        }
+        if (!this.options.dbPediaUrl) {
+          return;
+        }
+        return this.options.vie.use(new vie.DBPediaService({
+          url: this.options.dbPediaUrl,
+          proxyDisabled: true
+        }));
+      },
+      _getSuggestions: function() {
+        var normalizedTags, tags;
+        if (this.loaded) {
+          return;
+        }
+        if (!this.options.entity) {
+          return;
+        }
+        jQuery('.activitySpinner', this.element).show();
+        tags = this.options.entity.get('skos:related');
+        if (tags.length === 0) {
+          jQuery("#activitySpinner").html('No images found.');
+          return;
+        }
+        jQuery('.imageThumbnailContainer ul', this.element).empty();
+        normalizedTags = this._normalizeRelated(tags);
+        if (this.options.getSuggestions) {
+          this.options.getSuggestions(normalizedTags, widget.options.limit, 0, this._showSuggestions);
+        }
+        this._prepareVIE();
+        if (this.options.vie.services.dbpedia) {
+          this._getSuggestionsDbPedia(tags);
+        }
+        return this.loaded = true;
+      },
+      _getSuggestionsDbPedia: function(tags) {
+        var thumbId, widget;
+        widget = this;
+        thumbId = 1;
+        return _.each(tags, function(tag) {
+          return vie.load({
+            entity: tag
+          }).using('dbpedia').execute().done(function(entities) {
+            jQuery('.activitySpinner', this.element).hide();
+            return _.each(entities, function(entity) {
+              var img, thumbnail;
+              thumbnail = entity.attributes['<http://dbpedia.org/ontology/thumbnail>'];
+              if (!thumbnail) {
+                return;
+              }
+              if (_.isObject(thumbnail)) {
+                img = thumbnail[0].value;
+              }
+              if (_.isString(thumbnail)) {
+                img = widget.options.entity.fromReference(thumbnail);
+              }
+              return widget._showSuggestion({
+                url: img,
+                label: tag
+              });
+            });
+          });
+        });
+      },
+      _showSuggestion: function(image) {
+        var html,
+          _this = this;
+        html = jQuery("<li><img src=\"" + image.url + "\" class=\"imageThumbnail\" title=\"" + image.label + "\"></li>");
+        html.bind('click', function() {
+          return _this.options.imageWidget.setCurrent(image);
+        });
+        return jQuery('.imageThumbnailContainer ul', this.element).append(html);
+      },
+      _showSuggestions: function(suggestions) {
+        var _this = this;
+        jQuery('.activitySpinner', this.element).hide();
+        return _.each(suggestions, function(image) {
+          return _this._showSuggestion(image);
+        });
+      }
+    });
+  })(jQuery);
+
+  (function(jQuery) {
     return jQuery.widget("Liip.hallotoolbarlinebreak", {
       options: {
         editable: null,
@@ -821,7 +1125,7 @@ http://hallojs.org
           remove: this.options.remove,
           success: this.options.success,
           error: this.options.error
-        }).bind('annotateselect', function() {
+        }).bind('annotateselect', function(event, data) {
           return widget.options.editable.setModified();
         }).bind('annotateremove', function() {
           return jQuery.noop();
@@ -882,25 +1186,30 @@ http://hallojs.org
           dialogClass: 'halloimage-dialog'
         },
         dialog: null,
-        buttonCssClass: null
+        buttonCssClass: null,
+        entity: null,
+        vie: null,
+        dbPediaUrl: "http://dev.iks-project.eu/stanbolfull"
       },
       _create: function() {
         var buttonHolder, buttonset, dialogId, id, widget;
         widget = this;
         dialogId = "" + this.options.uuid + "-image-dialog";
         this.options.dialog = jQuery("<div id=\"" + dialogId + "\">                <div class=\"nav\">                    <ul class=\"tabs\">                    </ul>                    <div id=\"" + this.options.uuid + "-tab-activeIndicator\" class=\"tab-activeIndicator\" />                </div>                <div class=\"dialogcontent\">            </div>");
-        if (widget.options.uploadUrl && !widget.options.upload) {
-          widget.options.upload = widget._iframeUpload;
-        }
         if (widget.options.suggestions) {
           this._addGuiTabSuggestions(jQuery(".tabs", this.options.dialog), jQuery(".dialogcontent", this.options.dialog));
         }
         if (widget.options.search) {
           this._addGuiTabSearch(jQuery(".tabs", this.options.dialog), jQuery(".dialogcontent", this.options.dialog));
         }
-        if (widget.options.upload) {
+        if (widget.options.upload || widget.options.uploadUrl) {
           this._addGuiTabUpload(jQuery(".tabs", this.options.dialog), jQuery(".dialogcontent", this.options.dialog));
         }
+        this.current = jQuery('<div class="currentImage"></div>').halloimagecurrent({
+          uuid: this.options.uuid,
+          imageWidget: this
+        });
+        jQuery('.dialogcontent', this.options.dialog).append(this.current);
         buttonset = jQuery("<span class=\"" + widget.widgetName + "\"></span>");
         id = "" + this.options.uuid + "-image";
         buttonHolder = jQuery('<span></span>');
@@ -928,34 +1237,33 @@ http://hallojs.org
         jQuery(this.options.editable.element).delegate("img", "click", function(event) {
           return widget._openDialog();
         });
-        jQuery(this.options.dialog).find(".nav li").click(function() {
-          jQuery("." + widget.widgetName + "-tab").each(function() {
-            return jQuery(this).hide();
-          });
-          id = jQuery(this).attr("id");
-          jQuery("#" + id + "-content").show();
-          return jQuery("#" + widget.options.uuid + "-tab-activeIndicator").css("margin-left", jQuery(this).position().left + (jQuery(this).width() / 2));
-        });
-        jQuery("." + widget.widgetName + "-tab .imageThumbnail").live("click", function(event) {
-          var scope;
-          scope = jQuery(this).closest("." + widget.widgetName + "-tab");
-          jQuery(".imageThumbnail", scope).removeClass("imageThumbnailActive");
-          jQuery(this).addClass("imageThumbnailActive");
-          jQuery(".activeImage", scope).attr("src", jQuery(this).attr("src"));
-          return jQuery(".activeImageBg", scope).attr("src", jQuery(this).attr("src"));
-        });
         buttonset.buttonset();
         this.options.toolbar.append(buttonset);
         this.options.dialog.dialog(this.options.dialogOpts);
+        this._handleTabs();
         return this._addDragnDrop();
       },
       _init: function() {},
+      setCurrent: function(image) {
+        return this.current.halloimagecurrent('setImage', image);
+      },
+      _handleTabs: function() {
+        var widget;
+        widget = this;
+        return jQuery('.nav li', this.options.dialog).bind('click', function() {
+          var id;
+          jQuery("." + widget.widgetName + "-tab").hide();
+          id = jQuery(this).attr('id');
+          jQuery("#" + id + "-content").show();
+          return jQuery("#" + widget.options.uuid + "-tab-activeIndicator").css("margin-left", jQuery(this).position().left + (jQuery(this).width() / 2));
+        });
+      },
       _openDialog: function() {
-        var articleTags, cleanUp, i, repoImagesFound, showResults, tagType, thumbId, tmpArticleTags, vie, widget, xposition, yposition,
+        var cleanUp, widget, xposition, yposition,
           _this = this;
         widget = this;
         cleanUp = function() {
-          return window.setTimeout((function() {
+          return window.setTimeout(function() {
             var thumbnails;
             thumbnails = jQuery(".imageThumbnail");
             return jQuery(thumbnails).each(function() {
@@ -965,17 +1273,7 @@ http://hallojs.org
                 return jQuery("#" + this.id).parent("li").remove();
               }
             });
-          }), 15000);
-        };
-        repoImagesFound = false;
-        showResults = function(response) {
-          jQuery.each(response.assets, function(key, val) {
-            jQuery(".imageThumbnailContainer ul").append("<li><img src=\"" + val.url + "\" class=\"imageThumbnail\"></li>");
-            return repoImagesFound = true;
-          });
-          if (response.assets.length > 0) {
-            return jQuery("#activitySpinner").hide();
-          }
+          }, 15000);
         };
         jQuery("#" + this.options.uuid + "-sugg-activeImage").attr("src", jQuery("#" + this.options.uuid + "-tab-suggestions-content .imageThumbnailActive").first().attr("src"));
         jQuery("#" + this.options.uuid + "-sugg-activeImageBg").attr("src", jQuery("#" + this.options.uuid + "-tab-suggestions-content .imageThumbnailActive").first().attr("src"));
@@ -983,52 +1281,6 @@ http://hallojs.org
         xposition = jQuery(this.options.editable.element).offset().left + jQuery(this.options.editable.element).outerWidth() - 3;
         yposition = jQuery(this.options.toolbar).offset().top - jQuery(document).scrollTop() - 29;
         this.options.dialog.dialog("option", "position", [xposition, yposition]);
-        if (widget.options.loaded === null && widget.options.suggestions) {
-          articleTags = [];
-          jQuery("#activitySpinner").show();
-          tmpArticleTags = jQuery(".inEditMode").parent().find(".articleTags input").val();
-          tmpArticleTags = tmpArticleTags.split(",");
-          for (i in tmpArticleTags) {
-            tagType = typeof tmpArticleTags[i];
-            if ("string" === tagType && tmpArticleTags[i].indexOf("http") !== -1) {
-              articleTags.push(tmpArticleTags[i]);
-            }
-          }
-          jQuery(".imageThumbnailContainer ul").empty();
-          widget.options.suggestions(jQuery(".inEditMode").parent().find(".articleTags input").val(), widget.options.limit, 0, showResults);
-          vie = new VIE();
-          vie.use(new vie.DBPediaService({
-            url: "http://dev.iks-project.eu/stanbolfull",
-            proxyDisabled: true
-          }));
-          thumbId = 1;
-          if (articleTags.length === 0) {
-            jQuery("#activitySpinner").html("No images found.");
-          }
-          jQuery(articleTags).each(function() {
-            return vie.load({
-              entity: this + ""
-            }).using("dbpedia").execute().done(function(entity) {
-              jQuery(entity).each(function() {
-                var img, responseType;
-                if (this.attributes["<http://dbpedia.org/ontology/thumbnail>"]) {
-                  responseType = typeof this.attributes["<http://dbpedia.org/ontology/thumbnail>"];
-                  if (responseType === "string") {
-                    img = this.attributes["<http://dbpedia.org/ontology/thumbnail>"];
-                    img = img.substring(1, img.length - 1);
-                  }
-                  if (responseType === "object") {
-                    img = "";
-                    img = this.attributes["<http://dbpedia.org/ontology/thumbnail>"][0].value;
-                  }
-                  jQuery(".imageThumbnailContainer ul").append("<li><img id=\"si-" + thumbId + "\" src=\"" + img + "\" class=\"imageThumbnail\"></li>");
-                  return thumbId++;
-                }
-              });
-              return jQuery("#activitySpinner").hide();
-            });
-          });
-        }
         cleanUp();
         widget.options.loaded = 1;
         this.options.editable.keepActivated(true);
@@ -1043,121 +1295,63 @@ http://hallojs.org
         return this.options.dialog.dialog("close");
       },
       _addGuiTabSuggestions: function(tabs, element) {
-        var widget;
-        widget = this;
-        tabs.append(jQuery("<li id=\"" + this.options.uuid + "-tab-suggestions\" class=\"" + widget.widgetName + "-tabselector " + widget.widgetName + "-tab-suggestions\"><span>Suggestions</span></li>"));
-        return element.append(jQuery("<div id=\"" + this.options.uuid + "-tab-suggestions-content\" class=\"" + widget.widgetName + "-tab tab-suggestions\">                <div class=\"imageThumbnailContainer fixed\"><div id=\"activitySpinner\">Loading Images...</div><ul><li>                    <img src=\"http://imagesus.homeaway.com/mda01/badf2e69babf2f6a0e4b680fc373c041c705b891\" class=\"imageThumbnail imageThumbnailActive\" />                  </li></ul><br style=\"clear:both\"/>                </div>                <div class=\"activeImageContainer\">                    <div class=\"rotationWrapper\">                        <div class=\"hintArrow\"></div>                        <img src=\"\" id=\"" + this.options.uuid + "-sugg-activeImage\" class=\"activeImage\" />                    </div>                    <img src=\"\" id=\"" + this.options.uuid + "-sugg-activeImageBg\" class=\"activeImage activeImageBg\" />                </div>                <div class=\"metadata\">                    <label for=\"caption-sugg\">Caption</label><input type=\"text\" id=\"caption-sugg\" />                </div>            </div>"));
+        var tab;
+        tabs.append(jQuery("<li id=\"" + this.options.uuid + "-tab-upload\" class=\"" + this.widgetName + "-tabselector " + this.widgetName + "-tab-upload\"><span>Upload</span></li>"));
+        tab = jQuery("<div id=\"" + this.options.uuid + "-tab-upload-content\" class=\"" + this.widgetName + "-tab tab-upload\"></div>");
+        element.append(tab);
+        return tab.halloimagesuggestions({
+          uuid: this.options.uuid,
+          imageWidget: this
+        });
       },
       _addGuiTabSearch: function(tabs, element) {
-        var dialogId, widget;
+        var dialogId, tab, widget;
         widget = this;
         dialogId = "" + this.options.uuid + "-image-dialog";
         tabs.append(jQuery("<li id=\"" + this.options.uuid + "-tab-search\" class=\"" + widget.widgetName + "-tabselector " + widget.widgetName + "-tab-search\"><span>Search</span></li>"));
-        element.append(jQuery("<div id=\"" + this.options.uuid + "-tab-search-content\" class=\"" + widget.widgetName + "-tab tab-search\">                <form type=\"get\" id=\"" + this.options.uuid + "-" + widget.widgetName + "-searchForm\">                    <input type=\"text\" class=\"searchInput\" /><input type=\"submit\" id=\"" + this.options.uuid + "-" + widget.widgetName + "-searchButton\" class=\"button searchButton\" value=\"OK\"/>                </form>                <div class=\"searchResults imageThumbnailContainer\"></div>                <div id=\"" + this.options.uuid + "-search-activeImageContainer\" class=\"search-activeImageContainer activeImageContainer\">                    <div class=\"rotationWrapper\">                        <div class=\"hintArrow\"></div>                        <img src=\"\" id=\"" + this.options.uuid + "-search-activeImageBg\" class=\"activeImage\" />                    </div>                    <img src=\"\" id=\"" + this.options.uuid + "-search-activeImage\" class=\"activeImage activeImageBg\" />                </div>                <div class=\"metadata\" id=\"metadata-search\" style=\"display: none;\">                    <label for=\"caption-search\">Caption</label><input type=\"text\" id=\"caption-search\" />                    <!--<button id=\"" + this.options.uuid + "-" + widget.widgetName + "-addimage\">Add Image</button>-->                </div>            </div>"));
-        return jQuery(".tab-search form", element).submit(function(event) {
-          var showResults, that;
-          event.preventDefault();
-          that = this;
-          showResults = function(response) {
-            var container, firstimage, items;
-            items = [];
-            items.push("<div class=\"pager-prev\" style=\"display:none\"></div>");
-            jQuery.each(response.assets, function(key, val) {
-              return items.push("<img src=\"" + val.url + "\" class=\"imageThumbnail " + widget.widgetName + "-search-imageThumbnail\" /> ");
-            });
-            items.push("<div class=\"pager-next\" style=\"display:none\"></div>");
-            container = jQuery("#" + dialogId + " .tab-search .searchResults");
-            container.html(items.join(""));
-            if (response.offset > 0) {
-              jQuery('.pager-prev', container).show();
-            }
-            if (response.offset < response.total) {
-              jQuery('.pager-next', container).show();
-            }
-            jQuery('.pager-prev', container).click(function(event) {
-              return widget.options.search(null, widget.options.limit, response.offset - widget.options.limit, showResults);
-            });
-            jQuery('.pager-next', container).click(function(event) {
-              return widget.options.search(null, widget.options.limit, response.offset + widget.options.limit, showResults);
-            });
-            jQuery("#" + widget.options.uuid + "-search-activeImageContainer").show();
-            firstimage = jQuery("." + widget.widgetName + "-search-imageThumbnail").first().addClass("imageThumbnailActive");
-            jQuery("#" + widget.options.uuid + "-search-activeImage, #" + widget.options.uuid + "-search-activeImageBg").attr("src", firstimage.attr("src"));
-            return jQuery("#metadata-search").show();
-          };
-          return widget.options.search(null, widget.options.limit, 0, showResults);
-        });
-      },
-      _prepareIframe: function(widget) {
-        var iframe;
-        widget.options.iframeName = "" + widget.options.uuid + "-" + widget.widgetName + "-postframe";
-        iframe = jQuery("<iframe name=\"" + widget.options.iframeName + "\" id=\"" + widget.options.iframeName + "\" class=\"hidden\" src=\"javascript:false;\" style=\"display:none\" />");
-        jQuery("#" + widget.options.uuid + "-" + widget.widgetName + "-iframe").append(iframe);
-        return iframe.get(0).name = widget.options.iframeName;
-      },
-      _iframeUpload: function(data) {
-        var uploadForm, widget;
-        widget = data.widget;
-        widget._prepareIframe(widget);
-        jQuery("#" + widget.options.uuid + "-" + widget.widgetName + "-tags").val(jQuery(".inEditMode").parent().find(".articleTags input").val());
-        uploadForm = jQuery("#" + widget.options.uuid + "-" + widget.widgetName + "-uploadform");
-        uploadForm.attr("action", widget.options.uploadUrl);
-        uploadForm.attr("method", "post");
-        uploadForm.attr("userfile", data.file);
-        uploadForm.attr("enctype", "multipart/form-data");
-        uploadForm.attr("encoding", "multipart/form-data");
-        uploadForm.attr("target", widget.options.iframeName);
-        uploadForm.submit();
-        return jQuery("#" + widget.options.iframeName).load(function() {
-          return data.success(jQuery("#" + widget.options.iframeName)[0].contentWindow.location.href);
+        tab = jQuery("<div id=\"" + this.options.uuid + "-tab-search-content\" class=\"" + widget.widgetName + "-tab tab-search\"></div>");
+        element.append(tab);
+        return tab.halloimagesearch({
+          uuid: this.options.uuid,
+          imageWidget: this,
+          searchCallback: this.options.search,
+          limit: this.options.limit
         });
       },
       _addGuiTabUpload: function(tabs, element) {
-        var iframe, insertImage, widget;
-        widget = this;
-        tabs.append(jQuery("<li id=\"" + this.options.uuid + "-tab-upload\" class=\"" + widget.widgetName + "-tabselector " + widget.widgetName + "-tab-upload\"><span>Upload</span></li>"));
-        element.append(jQuery("<div id=\"" + this.options.uuid + "-tab-upload-content\" class=\"" + widget.widgetName + "-tab tab-upload\">                <form id=\"" + this.options.uuid + "-" + widget.widgetName + "-uploadform\">                    <input id=\"" + this.options.uuid + "-" + widget.widgetName + "-file\" name=\"" + this.options.uuid + "-" + widget.widgetName + "-file\" type=\"file\" class=\"file\" accept=\"image/*\">                    <input id=\"" + this.options.uuid + "-" + widget.widgetName + "-tags\" name=\"tags\" type=\"hidden\" />                    <br />                    <input type=\"submit\" value=\"Upload\" id=\"" + this.options.uuid + "-" + widget.widgetName + "-upload\">                </form>                <div id=\"" + this.options.uuid + "-" + widget.widgetName + "-iframe\"></div>            </div>"));
-        iframe = jQuery("<iframe name=\"postframe\" id=\"postframe\" class=\"hidden\" src=\"about:none\" style=\"display:none\" />");
-        jQuery("#" + widget.options.uuid + "-" + widget.widgetName + "-upload").live("click", function(e) {
-          var userFile;
-          e.preventDefault();
-          userFile = jQuery("#" + widget.options.uuid + "-" + widget.widgetName + "-file").val();
-          widget.options.upload({
-            widget: widget,
-            file: userFile,
-            success: function(imageUrl) {
-              var imageID, list;
-              imageID = "si" + Math.floor(Math.random() * (400 - 300 + 1) + 400) + "ab";
-              if (jQuery(".imageThumbnailContainer ul", widget.options.dialog).length === 0) {
-                list = jQuery('<ul></ul>');
-                jQuery('.imageThumbnailContainer').append(list);
-              }
-              jQuery(".imageThumbnailContainer ul", widget.options.dialog).append("<li><img src=\"" + imageUrl + "\" id=\"" + imageID + "\" class=\"imageThumbnail\"></li>");
-              jQuery("#" + imageID).trigger("click");
-              return jQuery(widget.options.dialog).find(".nav li").first().trigger("click");
-            }
-          });
-          return false;
+        var tab;
+        tabs.append(jQuery("<li id=\"" + this.options.uuid + "-tab-upload\" class=\"" + this.widgetName + "-tabselector " + this.widgetName + "-tab-upload\"><span>Upload</span></li>"));
+        tab = jQuery("<div id=\"" + this.options.uuid + "-tab-upload-content\" class=\"" + this.widgetName + "-tab tab-upload\"></div>");
+        element.append(tab);
+        return tab.halloimageupload({
+          uuid: this.options.uuid,
+          uploadCallback: this.options.upload,
+          uploadUrl: this.options.uploadUrl,
+          imageWidget: this
         });
-        insertImage = function() {
-          var img, triggerModified;
-          try {
-            if (!widget.options.editable.getSelection()) {
-              throw new Error("SelectionNotSet");
-            }
-          } catch (error) {
-            widget.options.editable.restoreSelection(widget.lastSelection);
-          }
-          document.execCommand("insertImage", null, jQuery(this).attr('src'));
-          img = document.getSelection().anchorNode.firstChild;
-          jQuery(img).attr("alt", jQuery(".caption").value);
-          triggerModified = function() {
-            return widget.element.trigger("hallomodified");
-          };
-          window.setTimeout(triggerModified, 100);
-          return widget._closeDialog();
-        };
-        return this.options.dialog.find(".halloimage-activeImage, #" + widget.options.uuid + "-" + widget.widgetName + "-addimage").click(insertImage);
+        /*
+                    insertImage = () ->
+                        #This may need to insert an image that does not have the same URL as the preview image, since it may be a different size
+        
+                        # Check if we have a selection and fall back to @lastSelection otherwise
+                        try
+                            if not widget.options.editable.getSelection()
+                                throw new Error "SelectionNotSet"
+                        catch error
+                            widget.options.editable.restoreSelection(widget.lastSelection)
+        
+                        document.execCommand "insertImage", null, jQuery(this).attr('src')
+                        img = document.getSelection().anchorNode.firstChild
+                        jQuery(img).attr "alt", jQuery(".caption").value
+        
+                        triggerModified = () ->
+                            widget.element.trigger "hallomodified"
+                        window.setTimeout triggerModified, 100
+                        widget._closeDialog()
+        
+                    @options.dialog.find(".halloimage-activeImage, ##{widget.options.uuid}-#{widget.widgetName}-addimage").click insertImage
+        */
+
       },
       _addDragnDrop: function() {
         var dnd, draggables, editable, helper, offset, overlay, overlayMiddleConfig, third, widgetOptions;
