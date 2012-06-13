@@ -265,7 +265,7 @@
         return;
       }
 
-      var label = this._getLabelLang(enhancement.get('rdfs:label'))
+      var label = this._getLabelLang(enhancement.get('rdfs:label'));
       if (!label) {
         return;
       }

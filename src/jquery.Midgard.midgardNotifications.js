@@ -151,8 +151,8 @@
 
         _setPosition: function () {
           if (_config.bindTo) {
-            var width = _item.width() ? _item.width() : 280
-            var height = _item.height() ? _item.height() : 109
+            var width = _item.width() ? _item.width() : 280;
+            var height = _item.height() ? _item.height() : 109;
 
             _bind_target = jQuery(_config.bindTo);
             var trgt_w = _bind_target.outerWidth();

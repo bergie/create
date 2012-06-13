@@ -70,7 +70,7 @@
       if (typeof this.element.annotate === 'function' && this.options.vie.services.stanbol) {
         // Enable Hallo Annotate plugin by default if user has annotate.js
         // loaded and VIE has Stanbol enabled
-        defaults.plugins['halloannotate'] = {
+        defaults.plugins.halloannotate = {
             vie: this.options.vie
         };
       }
