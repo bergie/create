@@ -48,6 +48,7 @@
       notifications: {},
       vie: null,
       stanbolUrl: null,
+      dbPediaUrl: null,
       tags: false
     },
 
@@ -63,6 +64,13 @@
           this.vie.use(new this.vie.StanbolService({
             proxyDisabled: true,
             url: this.options.stanbolUrl
+          }));
+        }
+
+        if (this.options.dbPediaUrl) {
+          this.vie.use(new this.vie.DBPediaService({
+            proxyDisabled: true,
+            url: this.options.dbPediaUrl
           }));
         }
       }
