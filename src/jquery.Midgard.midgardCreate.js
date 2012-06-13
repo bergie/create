@@ -38,8 +38,6 @@
       },
       // Additional editor options.
       editorOptions: {},
-      enableEditor: null,
-      disableEditor: null,
       url: function () {},
       storagePrefix: 'node',
       workflows: {
@@ -250,17 +248,11 @@
       var editableOptions = {
         disabled: true,
         vie: widget.vie,
-        editor: widget.options.editor,
         editorOptions: widget.options.editorOptions
       };
-      if (widget.options.enableEditor) {
-        editableOptions[enableEditor] = widget.options.enableEditor;
-      }
-      if (widget.options.disableEditor) {
-        editableOptions[disableEditor] = widget.options.disableEditor;
-      }
       jQuery('[about]', this.element).each(function () {
-        jQuery(this).midgardEditable(editableOptions).removeClass('ui-state-disabled');
+        jQuery(this).midgardEditable(editableOptions);
+        jQuery(this).removeClass('ui-state-disabled');
       });
       this._setOption('state', 'browse');
       this._trigger('statechange', null, {

@@ -12,7 +12,6 @@
       model: null,
       editorOptions: {},
       // the available widgets by data type
-      // TODO: needs a comprehensive list of types and their appropriate widgets
       widgets: {
         'Text': 'halloWidget',
         'default': 'halloWidget'
@@ -21,77 +20,8 @@
         'default': 'midgardCollectionAdd'
       },
       toolbarState: 'full',
-      // returns the name of the widget to use for the given property
-      widgetName: function (data) {
-        if (this.widgets[data.property]) {
-          // Widget configuration set for specific RDF predicate
-          return this.widgets[data.property];
-        }
-
-        // Load the widget configuration for the data type
-        // TODO: make sure type is already loaded into VIE
-        var propertyType = 'default';
-        var type = this.model.get('@type');
-        if (type) {
-          if (type.attributes && type.attributes.get(data.property)) {
-            propertyType = type.attributes.get(data.property).range[0];
-          }
-        }
-        if (this.widgets[propertyType]) {
-          return this.widgets[propertyType];
-        }
-        return this.widgets['default'];
-      },
-      enableEditor: function (data) {
-        var widgetName = this.widgetName(data);
-        data.disabled = false;
-        if (typeof jQuery(data.element)[widgetName] !== 'function') {
-          throw new Error(widgetName + ' widget is not available');
-        }
-        jQuery(data.element)[widgetName](data);
-        jQuery(data.element).data('createWidgetName', widgetName);
-        return jQuery(data.element);
-      },
-      disableEditor: function (data) {
-        var widgetName = jQuery(data.element).data('createWidgetName');
-        data.disabled = true;
-        if (widgetName) {
-          // only if there has been an editing widget registered
-          jQuery(data.element)[widgetName](data);
-          jQuery(data.element).removeClass('ui-state-disabled');
-        }
-      },
-      collectionWidgetName: function (data) {
-        // TODO: Actual selection mechanism
-        return this.collectionWidgets['default'];
-      },
-      enableCollection: function (data) {
-        var widgetName = this.collectionWidgetName(data);
-        data.disabled = false;
-        if (typeof jQuery(data.element)[widgetName] !== 'function') {
-          throw new Error(widgetName + ' widget is not available');
-        }
-        jQuery(data.element)[widgetName](data);
-        jQuery(data.element).data('createCollectionWidgetName', widgetName);
-        return jQuery(data.element);
-      },
-      disableCollection: function (data) {
-        var widgetName = jQuery(data.element).data('createCollectionWidgetName');
-        data.disabled = true;
-        if (widgetName) {
-          // only if there has been an editing widget registered
-          jQuery(data.element)[widgetName](data);
-          jQuery(data.element).removeClass('ui-state-disabled');
-        }
-      },
-      addButton: null,
-      enable: function () {},
-      enableproperty: function () {},
-      disable: function () {},
-      activated: function () {},
-      deactivated: function () {},
-      changed: function () {},
       vie: null,
+      disabled: false
     },
 
     _create: function () {
@@ -127,7 +57,7 @@
 
       _.forEach(this.vie.service('rdfa').views, function (view) {
         if (view instanceof widget.vie.view.Collection && widget.options.model === view.owner) {
-          var collection = widget.options.enableCollection({
+          var collection = widget.enableCollection({
             model: widget.options.model,
             collection: view.collection,
             view: view,
@@ -143,7 +73,7 @@
     disable: function () {
       var widget = this;
       jQuery.each(this.options.editables, function (index, editable) {
-        widget.options.disableEditor({
+        widget.disableEditor({
           widget: widget,
           editable: editable,
           entity: widget.options.model,
@@ -152,7 +82,7 @@
       });
       this.options.editables = [];
       jQuery.each(this.options.collections, function (index, collectionWidget) {
-        widget.options.disableCollection({
+        widget.disableCollection({
           widget: widget,
           model: widget.options.model,
           element: collectionWidget,
@@ -179,7 +109,7 @@
         return true;
       }
 
-      var editable = this.options.enableEditor({
+      var editable = this.enableEditor({
         widget: this,
         element: element,
         entity: this.options.model,
@@ -227,6 +157,76 @@
       });
 
       this.options.editables.push(editable);
+    },
+
+    // returns the name of the widget to use for the given property
+    _widgetName: function (data) {
+      if (this.options.widgets[data.property]) {
+        // Widget configuration set for specific RDF predicate
+        return this.options.widgets[data.property];
+      }
+
+      // Load the widget configuration for the data type
+      // TODO: make sure type is already loaded into VIE
+      var propertyType = 'default';
+      var type = this.options.model.get('@type');
+      if (type) {
+        if (type.attributes && type.attributes.get(data.property)) {
+          propertyType = type.attributes.get(data.property).range[0];
+        }
+      }
+      if (this.options.widgets[propertyType]) {
+        return this.options.widgets[propertyType];
+      }
+      return this.options.widgets['default'];
+    },
+
+    enableEditor: function (data) {
+      var widgetName = this._widgetName(data);
+      data.disabled = false;
+      if (typeof jQuery(data.element)[widgetName] !== 'function') {
+        throw new Error(widgetName + ' widget is not available');
+      }
+      jQuery(data.element)[widgetName](data);
+      jQuery(data.element).data('createWidgetName', widgetName);
+      return jQuery(data.element);
+    },
+
+    disableEditor: function (data) {
+      return;
+      var widgetName = jQuery(data.element).data('createWidgetName');
+      data.disabled = true;
+      if (widgetName) {
+        // only if there has been an editing widget registered
+        jQuery(data.element)[widgetName](data);
+        jQuery(data.element).removeClass('ui-state-disabled');
+      }
+    },
+
+    collectionWidgetName: function (data) {
+      // TODO: Actual selection mechanism
+      return this.options.collectionWidgets['default'];
+    },
+
+    enableCollection: function (data) {
+      var widgetName = this.collectionWidgetName(data);
+      data.disabled = false;
+      if (typeof jQuery(data.element)[widgetName] !== 'function') {
+        throw new Error(widgetName + ' widget is not available');
+      }
+      jQuery(data.element)[widgetName](data);
+      jQuery(data.element).data('createCollectionWidgetName', widgetName);
+      return jQuery(data.element);
+    },
+
+    disableCollection: function (data) {
+      var widgetName = jQuery(data.element).data('createCollectionWidgetName');
+      data.disabled = true;
+      if (widgetName) {
+        // only if there has been an editing widget registered
+        jQuery(data.element)[widgetName](data);
+        jQuery(data.element).removeClass('ui-state-disabled');
+      }
     }
   });
 })(jQuery);
