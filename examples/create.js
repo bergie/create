@@ -65,8 +65,10 @@
     },
 
     disable: function () {
-      this.addButton.remove();
-      delete this.addButton;
+      if (this.addButton) {
+        this.addButton.remove();
+        delete this.addButton;
+      }
     }
   });
 })(jQuery);
