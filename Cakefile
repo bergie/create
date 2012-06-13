@@ -21,6 +21,7 @@ mergeDirs = (k) ->
     fs.mkdirSync "merged"
   series [
     (sh "cp src/*.js merged/")
+    (sh "cp src/collectionWidgets/*.js merged/")
     (sh "cp src/editingWidgets/*.js merged/")
   ], k
 

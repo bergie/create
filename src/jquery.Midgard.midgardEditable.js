@@ -8,6 +8,7 @@
   jQuery.widget('Midgard.midgardEditable', {
     options: {
       editables: [],
+      collections: [],
       model: null,
       editorOptions: {},
       // the available widgets by data type
@@ -15,6 +16,9 @@
       widgets: {
         'Text': 'halloWidget',
         'default': 'halloWidget'
+      },
+      collectionWidgets: {
+        'default': 'midgardCollectionAdd'
       },
       toolbarState: 'full',
       // returns the name of the widget to use for the given property
@@ -57,6 +61,29 @@
           jQuery(data.element).removeClass('ui-state-disabled');
         }
       },
+      collectionWidgetName: function (data) {
+        // TODO: Actual selection mechanism
+        return this.collectionWidgets['default'];
+      },
+      enableCollection: function (data) {
+        var widgetName = this.collectionWidgetName(data);
+        data.disabled = false;
+        if (typeof jQuery(data.element)[widgetName] !== 'function') {
+          throw new Error(widgetName + ' widget is not available');
+        }
+        jQuery(data.element)[widgetName](data);
+        jQuery(data.element).data('createCollectionWidgetName', widgetName);
+        return jQuery(data.element);
+      },
+      disableCollection: function (data) {
+        var widgetName = jQuery(data.element).data('createCollectionWidgetName');
+        data.disabled = true;
+        if (widgetName) {
+          // only if there has been an editing widget registered
+          jQuery(data.element)[widgetName](data);
+          jQuery(data.element).removeClass('ui-state-disabled');
+        }
+      },
       addButton: null,
       enable: function () {},
       enableproperty: function () {},
@@ -65,7 +92,6 @@
       deactivated: function () {},
       changed: function () {},
       vie: null,
-      enableCollectionAdd: true
     },
 
     _create: function () {
@@ -98,12 +124,18 @@
         instance: this.options.model,
         entityElement: this.element
       });
-      if (!this.options.enableCollectionAdd) {
-        return;
-      }
+
       _.forEach(this.vie.service('rdfa').views, function (view) {
         if (view instanceof widget.vie.view.Collection && widget.options.model === view.owner) {
-          widget._enableCollection(view);
+          var collection = widget.options.enableCollection({
+            model: widget.options.model,
+            collection: view.collection,
+            view: view,
+            element: view.el,
+            vie: widget.vie,
+            editableOptions: widget.options
+          });
+          widget.options.collections.push(collection);
         }
       });
     },
@@ -119,11 +151,16 @@
         });
       });
       this.options.editables = [];
-
-      if (this.options.addButton) {
-        this.options.addButton.remove();
-        delete this.options.addButton;
-      }
+      jQuery.each(this.options.collections, function (index, collectionWidget) {
+        widget.options.disableCollection({
+          widget: widget,
+          model: widget.options.model,
+          element: collectionWidget,
+          vie: widget.vie,
+          editableOptions: widget.options
+        });
+      });
+      this.options.collections = [];
 
       this._trigger('disable', null, {
         instance: this.options.model,
@@ -190,53 +227,6 @@
       });
 
       this.options.editables.push(editable);
-    },
-
-    _enableCollection: function (collectionView) {
-      var widget = this;
-
-      if (!collectionView.owner || collectionView.owner.getSubject() !== widget.options.model.getSubject()) {
-        return;
-      }
-
-      if (widget.options.addButton) {
-        return;
-      }
-
-      if (collectionView.template.length === 0) {
-        // Collection view has no template and so can't add
-        return;
-      }
-
-      collectionView.collection.url = widget.options.model.url();
-
-      collectionView.bind('add', function (itemView) {
-        //itemView.el.effect('slide');
-        jQuery(itemView.el).midgardEditable({
-          disabled: widget.options.disabled,
-          model: itemView.model,
-          vie: widget.vie,
-          widgets: widget.options.widgets
-        });
-      });
-
-      collectionView.collection.bind('add', function (model) {
-        model.primaryCollection = collectionView.collection;
-        widget.vie.entities.add(model);
-        model.collection = collectionView.collection;
-      });
-
-      collectionView.bind('remove', function (itemView) {
-        //itemView.el.hide('drop');
-      });
-
-      widget.options.addButton = jQuery('<button class="btn"><i class="icon-plus"></i> Add</button>').button();
-      widget.options.addButton.addClass('midgard-create-add');
-      widget.options.addButton.click(function () {
-        collectionView.collection.add({});
-      });
-
-      jQuery(collectionView.el).after(widget.options.addButton);
     }
   });
 })(jQuery);
