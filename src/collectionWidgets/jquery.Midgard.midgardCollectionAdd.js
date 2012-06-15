@@ -20,7 +20,9 @@
 
     _create: function () {
       var widget = this;
-      widget.options.collection.url = widget.options.model.url();
+      if (!widget.options.collection.localStorage) {
+        widget.options.collection.url = widget.options.model.url();
+      }
 
       widget.options.view.collection.bind('add', function (model) {
         model.primaryCollection = widget.options.collection;
