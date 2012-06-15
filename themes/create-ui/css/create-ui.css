@@ -605,15 +605,15 @@ div.halloEditIndicator {
 .hallolink-dialog,
 .create-ui-tags {
   margin-top: 60px;
-  background-color: #111111; 
-  color: #ffffff;
-  background: url("../img/create-ui-bg.png") repeat scroll 0 0 transparent;
-  background: rgba(0, 0, 0, .7);
+  background-color: #ffffff;
+  color: #000000;
   font-family: "Futura","Helvetica",Arial;
   text-decoration: none;
   padding: 4px;
   border-radius: 6px;
   position: relative;
+  border: 2px solid #111111;
+  border-color: rgba(0, 0, 0, .8);
 }
 
 .create-ui-tags {
@@ -625,21 +625,24 @@ div.halloEditIndicator {
 }
 
 .create-ui-tags .tagsinput {
-  line-height: 1.2em;
+  line-height: 2em;
   width: 100% !important;
 }
 
 .create-ui-tags .tag {
-  color: #000000;
-  background-color: #ffffff;
+  color: #ffffff;
+  background-color: #111111;
+  background-color: rgba(0, 0, 0, .8);
   border-radius: 6px;
   padding: 2px;
+  padding-left: 4px;
+  padding-right: 4px;
   margin: 2px;
   font-weight: bold;
 }
 
 .create-ui-tags .tag a {
-  color: #000000;
+  color: #ffffff;
 }
 
 .create-ui-tags input {
