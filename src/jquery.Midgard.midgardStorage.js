@@ -202,7 +202,7 @@
 
         // Optionally handle entities referenced in this model first
         _.each(model.attributes, function (value, property) {
-          if (!value.isCollection) {
+          if (!value || !value.isCollection) {
             return;
           }
 
