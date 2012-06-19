@@ -20,7 +20,9 @@
 
     _create: function () {
       var widget = this;
-      widget.options.collection.url = widget.options.model.url();
+      if (!widget.options.collection.localStorage) {
+        widget.options.collection.url = widget.options.model.url();
+      }
 
       widget.options.view.collection.bind('add', function (model) {
         model.primaryCollection = widget.options.collection;
@@ -596,7 +598,6 @@
     },
 
     disableEditor: function (data) {
-      return;
       var widgetName = jQuery(data.element).data('createWidgetName');
       data.disabled = true;
       if (widgetName) {
