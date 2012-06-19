@@ -193,7 +193,6 @@
     },
 
     disableEditor: function (data) {
-      return;
       var widgetName = jQuery(data.element).data('createWidgetName');
       data.disabled = true;
       if (widgetName) {
