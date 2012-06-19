@@ -943,3 +943,19 @@ div.halloEditIndicator {
 .inlineImage-middle {
     float: none;
 }
+
+[contenteditable] .halloTmp {
+    opacity: 0.3
+}
+
+[contenteditable] .halloTmpLine{
+    background-color: #ffffff;
+    width: 98%;
+    height: 2px;
+    margin: 0 auto 10px auto;
+    border-top: 2px solid #67cc08;
+    border-bottom: 2px solid #67cc08;
+    opacity: 1;
+    padding: 1px;
+}
+
