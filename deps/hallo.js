@@ -750,6 +750,34 @@ http://hallojs.org
         this.element.hide();
         return this._prepareDnD();
       },
+      _init: function() {
+        var editable, widget;
+        editable = jQuery(this.options.editable.element);
+        widget = this;
+        jQuery('img', editable).each(function(index, elem) {
+          console.log(elem);
+          elem.contentEditable = false;
+          return widget._initDraggable(elem, editable);
+        });
+        return jQuery('p', editable).each(function(index, elem) {
+          if (jQuery(elem).data('jquery_droppable_initialized')) {
+            return;
+          }
+          jQuery(elem).droppable({
+            tolerance: 'pointer',
+            drop: function(event, ui) {
+              return widget._handleDropEvent(event, ui);
+            },
+            over: function(event, ui) {
+              return widget._handleOverEvent(event, ui);
+            },
+            out: function(event, ui) {
+              return widget._handleLeaveEvent(event, ui);
+            }
+          });
+          return jQuery(elem).data('jquery_droppable_initialized', true);
+        });
+      },
       _prepareDnD: function() {
         var editable, overlayMiddleConfig, widget;
         widget = this;
@@ -1034,30 +1062,8 @@ http://hallojs.org
       _initImage: function(editable) {
         var widget;
         widget = this;
-        jQuery('.rotationWrapper img', this.options.dialog).each(function(index, elem) {
+        return jQuery('.rotationWrapper img', this.options.dialog).each(function(index, elem) {
           return widget._initDraggable(elem, editable);
-        });
-        jQuery('img', editable).each(function(index, elem) {
-          elem.contentEditable = false;
-          return widget._initDraggable(elem, editable);
-        });
-        return jQuery('p', editable).each(function(index, elem) {
-          if (jQuery(elem).data('jquery_droppable_initialized')) {
-            return;
-          }
-          jQuery(elem).droppable({
-            tolerance: 'pointer',
-            drop: function(event, ui) {
-              return widget._handleDropEvent(event, ui);
-            },
-            over: function(event, ui) {
-              return widget._handleOverEvent(event, ui);
-            },
-            out: function(event, ui) {
-              return widget._handleLeaveEvent(event, ui);
-            }
-          });
-          return jQuery(elem).data('jquery_droppable_initialized', true);
         });
       },
       _enableDragging: function() {
