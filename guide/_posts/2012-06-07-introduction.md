@@ -3,8 +3,6 @@ layout: document
 title: Introduction
 name: intro
 ---
-## Background
-
 Create.js was originally written in 2010 as the next-generation content [editing interface of Midgard CMS](http://bergie.iki.fi/blog/introducing_the_midgard_create_user_interface/). [Henri Bergius](http://bergie.iki.fi) presented it in the Aloha Editor developer conference in Vienna last year, and the TYPO3 developers expressed interest in reusing the codebase.
 
 Because of this we started extracting the various parts of the Create UI into their own, reusable components. The first one was [VIE](http://viejs.org/), which provides the underlaying management of editable objects. In basic use scenario, it loads content annotated with RDFa from the web page, populates it into [Backbone.js](http://backbonejs.org/) Models and Collections, and then creates Backbone Views for the original RDFa-annotated parts of DOM.
