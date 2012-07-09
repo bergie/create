@@ -7,7 +7,6 @@
   jQuery.widget('Midgard.midgardToolbar', {
     options: {
       display: 'full',
-      statechange: function () {}
     },
 
     _create: function () {
