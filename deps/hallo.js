@@ -417,7 +417,7 @@ http://hallojs.org
           this.setContents('');
         }
         jQuery(this.element).addClass('inEditMode');
-        if (!this.options.floating) {
+        if (this.options.parentElement === 'body' && !this.options.floating) {
           el = jQuery(this.element);
           widthToAdd = parseFloat(el.css('padding-left'));
           widthToAdd += parseFloat(el.css('padding-right'));
@@ -755,7 +755,6 @@ http://hallojs.org
         editable = jQuery(this.options.editable.element);
         widget = this;
         jQuery('img', editable).each(function(index, elem) {
-          console.log(elem);
           elem.contentEditable = false;
           return widget._initDraggable(elem, editable);
         });
