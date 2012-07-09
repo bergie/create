@@ -47,6 +47,14 @@ body {
   text-align: justify;
 }
 
+.slogan .download {
+  text-align: center;
+}
+
+.slogan .download .btn {
+  margin: 1em;
+}
+
 .features {
   margin-top: 2em;
 }
