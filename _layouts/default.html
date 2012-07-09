@@ -40,6 +40,7 @@
   <body xmlns:doap="http://usefulinc.com/ns/doap#" xmlns:foaf="http://xmlns.com/foaf/0.1/">
     <a href="{{ site.github }}"><img style="position: absolute; top: 0; right: 0; border: 0;" src="/img/fork-me.png" alt="Fork me on GitHub"></a>
     <div class="container" about="{{ page.url }}">
+      {% include notices.html %}
       {{ content }}
       {% include footer.html %}
     </div>
