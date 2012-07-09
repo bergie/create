@@ -120,3 +120,14 @@ pre code {
 .guide .nav li:last-child {
   margin-bottom: 0px;
 }
+
+hr {
+  height: 32px;
+  background-image: url('/img/favicon.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  margin: 0px;
+  margin-bottom: 2em;
+  border-top: none;
+  border-bottom: none;
+}

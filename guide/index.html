@@ -24,8 +24,17 @@ title: "Create.js Integration Guide"
       <h1>{{ document.title }}</h1>
       <div>
         {{ document.content }}
+
+        {% if document.source %}
+        <div>
+          <a href="{{ document.source }}" class="btn btn-large">See source code</a>
+        </div>
+        {% endif %}
       </div>
     </section>
+    {% unless forloop.last %}
+      <hr />
+    {% endunless %}
     {% endfor %}
   </div>
 
