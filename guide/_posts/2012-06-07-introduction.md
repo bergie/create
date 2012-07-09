@@ -20,14 +20,16 @@ The Create.js interface was then rebuilt on top of this new VIE library by writi
 
 ## Create.js widgets
 
-* **Editable**: makes an RDFa entities (as identified by `about`) editable with some editing widget (now plain contentEditable, [Aloha](http://aloha-editor.org), and [Hallo](http://hallojs.org) supported, more to come). Provides the events like "modified" of those widgets in a uniform way. Editable also deals with Collections, allowing user to add/remove items from them
-* **Storage**: provides localStorage save/restore capability, and keeps track of what entities ought to be saved to the back-end
-* **Workflows**: retrieves workflows that user can active for a given  ntity from the back-end and handles running them. These could be simpl  things like publish/unpublish and delete, or more complex workflows
-* **Notifications**: notification bubbles/dialogs that can be used for telling user what has happened ("X has been saved successfully"), or query them for what they want to do ("You have X local modifications for this page. Restore/Ignore")
-* **Tags**: content tagging widget
-* **Toolbar**: holder widget for a toolbar overlay where widgets like
+![Create.js structure](/img/createjs-structure.png)
+
+* [Editable](#editable): makes an RDFa entities (as identified by `about`) editable with some editing widget (now plain contentEditable, [Aloha](http://aloha-editor.org), and [Hallo](http://hallojs.org) supported, more to come). Provides the events like "modified" of those widgets in a uniform way. Editable also deals with Collections, allowing user to add/remove items from them
+* [Storage](#storage): provides localStorage save/restore capability, and keeps track of what entities ought to be saved to the back-end
+* [Workflows](#workflows): retrieves workflows that user can active for a given  ntity from the back-end and handles running them. These could be simpl  things like publish/unpublish and delete, or more complex workflows
+* [Notifications](#notifications): notification bubbles/dialogs that can be used for telling user what has happened ("X has been saved successfully"), or query them for what they want to do ("You have X local modifications for this page. Restore/Ignore")
+* [Tags](#tags): content tagging widget
+* [Toolbar](#toolbar): holder widget for a toolbar overlay where widgets like
 Editable, Storage, and Workflows can place buttons
-* **Create**: ties all of these together to the default UX
+* [Create](#create): ties all of these together to the default UX
 
 Some CMSs use the full Create UX, and some use just parts to provide the UX they want to have. Examples of custom UXs include [Symfony CMF](http://blog.iks-project.eu/semantic-enhanced-cmf-editor-now-available/) and [OpenCms](http://iks.alkacon.com/en/).
 

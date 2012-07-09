@@ -102,6 +102,12 @@ pre code {
   border: none;
 }
 
+.guide section img {
+  background-color: #ffffff;
+  margin: 1em;
+  border-radius: 6px;
+}
+
 .guide h1 {
   margin-bottom: 1em;
 }
