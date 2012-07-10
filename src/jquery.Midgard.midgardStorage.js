@@ -251,6 +251,10 @@
             jQuery('body').data('midgardCreate').showNotification({
               body: notification_msg
             });
+
+            widget._trigger('error', null, {
+              instance: model
+            });
           }
         });
       });

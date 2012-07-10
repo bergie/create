@@ -239,7 +239,7 @@
         jQuery('#midgardcreate-save a').html('Saving <i class="icon-upload"></i>');
       });
 
-      this.element.bind('midgardstoragesaved', function () {
+      this.element.bind('midgardstoragesaved midgardstorageerror', function () {
         jQuery('#midgardcreate-save a').html('Save <i class="icon-ok"></i>');
       });
     },
@@ -1752,6 +1752,10 @@
             jQuery('body').data('midgardCreate').showNotification({
               body: notification_msg
             });
+
+            widget._trigger('error', null, {
+              instance: model
+            });
           }
         });
       });
@@ -2196,7 +2200,6 @@
   jQuery.widget('Midgard.midgardToolbar', {
     options: {
       display: 'full',
-      statechange: function () {}
     },
 
     _create: function () {

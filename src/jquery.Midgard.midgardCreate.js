@@ -97,7 +97,7 @@
         jQuery('#midgardcreate-save a').html('Saving <i class="icon-upload"></i>');
       });
 
-      this.element.bind('midgardstoragesaved', function () {
+      this.element.bind('midgardstoragesaved midgardstorageerror', function () {
         jQuery('#midgardcreate-save a').html('Save <i class="icon-ok"></i>');
       });
     },
