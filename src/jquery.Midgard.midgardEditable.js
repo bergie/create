@@ -50,6 +50,7 @@
       this.vie.service('rdfa').findPredicateElements(this.options.model.id, jQuery('[property]', this.element), false).each(function () {
         return widget._enableProperty(jQuery(this));
       });
+
       this._trigger('enable', null, {
         instance: this.options.model,
         entityElement: this.element

@@ -78,12 +78,11 @@
       if (this.options.toolbarState === 'full') {
         // Use fixed toolbar in the Create tools area
         defaults.parentElement = jQuery('.create-ui-toolbar-dynamictoolarea .create-ui-tool-freearea');
-        defaults.showAlways = true;
-        defaults.fixed = true;
+        defaults.toolbar = 'halloToolbarFixed';
       } else {
         // Tools area minimized, use floating toolbar
         defaults.showAlways = false;
-        defaults.fixed = false;
+        defaults.toolbar = 'halloToolbarContextual';
       }
 
       var editorOptions = {};

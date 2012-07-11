@@ -203,7 +203,6 @@
       if (widget.options.disableEditor) {
         editableOptions[disableEditor] = widget.options.disableEditor;
       }
-
       jQuery('[about]', this.element).each(function () {
         var element = this;
         if (widget.options.highlight) {

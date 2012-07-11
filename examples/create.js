@@ -345,7 +345,6 @@
       if (widget.options.disableEditor) {
         editableOptions[disableEditor] = widget.options.disableEditor;
       }
-
       jQuery('[about]', this.element).each(function () {
         var element = this;
         if (widget.options.highlight) {
@@ -455,6 +454,7 @@
       this.vie.service('rdfa').findPredicateElements(this.options.model.id, jQuery('[property]', this.element), false).each(function () {
         return widget._enableProperty(jQuery(this));
       });
+
       this._trigger('enable', null, {
         instance: this.options.model,
         entityElement: this.element
@@ -827,12 +827,11 @@
       if (this.options.toolbarState === 'full') {
         // Use fixed toolbar in the Create tools area
         defaults.parentElement = jQuery('.create-ui-toolbar-dynamictoolarea .create-ui-tool-freearea');
-        defaults.showAlways = true;
-        defaults.fixed = true;
+        defaults.toolbar = 'halloToolbarFixed';
       } else {
         // Tools area minimized, use floating toolbar
         defaults.showAlways = false;
-        defaults.fixed = false;
+        defaults.toolbar = 'halloToolbarContextual';
       }
 
       var editorOptions = {};
