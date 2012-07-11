@@ -1639,6 +1639,7 @@
 
       widget.element.bind('midgardcreatestatechange', function (event, options) {
         if (options.state === 'browse' || restorables.length === 0) {
+          restorables = [];
           return;
         }
         
