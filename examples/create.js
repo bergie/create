@@ -349,6 +349,10 @@
         var element = this;
         if (widget.options.highlight) {
           var highlightEditable = function (event, options) {
+              if (!jQuery(options.element).is(':visible')) {
+                // Hidden element, don't highlight
+                return;
+              }
               if (options.entityElement.get(0) !== element) {
                 // Propagated event from another entity, ignore
                 return;
