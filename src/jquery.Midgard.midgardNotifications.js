@@ -148,106 +148,112 @@
 
           _parent.append(_item);
         },
+        
+       _calculatePositionForGravity: function (item, gravity, target, itemDimensions) {
+          item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_' + gravity);
+          switch (gravity) {
+          case 'TL':
+            return {
+              left: target.left,
+              top: target.top + target.height + 'px'
+            };
+          case 'TR':
+            return {
+              left: target.left + target.width - itemDimensions.width + 'px',
+              top: target.top + target.height + 'px'
+            };
+          case 'BL':
+            return {
+              left: target.left + 'px',
+              top: target.top - itemDimensions.height + 'px'
+            };
+          case 'BR':
+            return {
+              left: target.left + target.width - itemDimensions.width + 'px',
+              top: target.top - itemDimensions.height + 'px'
+            };
+          case 'LT':
+            return {
+              left: target.left + target.width + 'px',
+              top: target.top + 'px'
+            };
+          case 'LB':
+            return {
+              left: target.left + target.width + 'px',
+              top: target.top + target.height - itemDimensions.height + 'px'
+            };
+          case 'RT':
+            return {
+              left: target.left - itemDimensions.width + 'px',
+              top: target.top + 'px'
+            };
+          case 'RB':
+            return {
+              left: target.left - itemDimensions.width + 'px',
+              top: target.top + target.height - itemDimensions.height + 'px'
+            };
+          case 'T':
+            return {
+              left: target.left + target.width / 2 - itemDimensions.width / 2 + 'px',
+              top: target.top + target.height + 'px'
+            };
+          case 'R':
+            return {
+              left: target.left - itemDimensions.width + 'px',
+              top: target.top + target.height / 2 - itemDimensions.height / 2 + 'px'
+            };
+          case 'B':
+            return {
+              left: target.left + target.width / 2 - itemDimensions.width / 2 + 'px',
+              top: target.top - itemDimensions.height + 'px'
+            };
+          case 'L':
+            return {
+              left: target.left + target.width + 'px',
+              top: target.top + target.height / 2 - itemDimensions.height / 2 + 'px'
+            };
+          }
+        },
+        
+        _isFixed: function (element) {
+          if (element === document) {
+            return false;
+          }
+          if (element.css('position') === 'fixed') {
+            return true;
+          }
+          return this._isFixed(element.offsetParent());
+        },
 
         _setPosition: function () {
           if (_config.bindTo) {
-            var width = _item.width() ? _item.width() : 280;
-            var height = _item.height() ? _item.height() : 109;
-
+            itemDimensions = {
+              width: _item.width() ? _item.width() : 280,
+              height: _item.height() ? _item.height() : 109
+            };
+            
             _bind_target = jQuery(_config.bindTo);
-            var trgt_w = _bind_target.outerWidth();
-            var trgt_h = _bind_target.outerHeight();
-            var trgt_l = _bind_target.offset().left;
-            var trgt_t = _bind_target.offset().top;
-
-            switch (_config.gravity) {
-            case 'TL':
-              properties = {
-                'left': trgt_l,
-                'top': trgt_t + trgt_h + 'px'
-              };
-              _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_TL');
-              break;
-            case 'TR':
-              properties = {
-                'left': trgt_l + trgt_w - width + 'px',
-                'top': trgt_t + trgt_h + 'px'
-              };
-              _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_TR');
-              break;
-            case 'BL':
-              properties = {
-                'left': trgt_l + 'px',
-                'top': trgt_t - height + 'px'
-              };
-              _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_BL');
-              break;
-            case 'BR':
-              properties = {
-                'left': trgt_l + trgt_w - width + 'px',
-                'top': trgt_t - height + 'px'
-              };
-              _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_BR');
-              break;
-            case 'LT':
-              properties = {
-                'left': trgt_l + trgt_w + 'px',
-                'top': trgt_t + 'px'
-              };
-              _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_LT');
-              break;
-            case 'LB':
-              properties = {
-                'left': trgt_l + trgt_w + 'px',
-                'top': trgt_t + trgt_h - height + 'px'
-              };
-              _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_LB');
-              break;
-            case 'RT':
-              properties = {
-                'left': trgt_l - width + 'px',
-                'top': trgt_t + 'px'
-              };
-              _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_RT');
-              break;
-            case 'RB':
-              properties = {
-                'left': trgt_l - width + 'px',
-                'top': trgt_t + trgt_h - height + 'px'
-              };
-              _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_RB');
-              break;
-            case 'T':
-              properties = {
-                'left': trgt_l + trgt_w / 2 - width / 2 + 'px',
-                'top': trgt_t + trgt_h + 'px'
-              };
-              _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_T');
-              break;
-            case 'R':
-              properties = {
-                'left': trgt_l - width + 'px',
-                'top': trgt_t + trgt_h / 2 - height / 2 + 'px'
-              };
-              _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_R');
-              break;
-            case 'B':
-              properties = {
-                'left': trgt_l + trgt_w / 2 - width / 2 + 'px',
-                'top': trgt_t - height + 'px'
-              };
-              _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_B');
-              break;
-            case 'L':
-              properties = {
-                'left': trgt_l + trgt_w + 'px',
-                'top': trgt_t + trgt_h / 2 - height / 2 + 'px'
-              };
-              _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_L');
-              break;
+            var properties = {};
+            
+            var targetDimensions = {
+              width: _bind_target.outerWidth(),
+              height: _bind_target.outerHeight()
+            };
+            
+            if (this._isFixed(_bind_target)) {
+              properties.position = 'fixed';
+              targetDimensions.left = _bind_target.offset().left;
+              targetDimensions.top = _bind_target.position().top;
+            } else {
+              properties.position = 'absolute';
+              targetDimensions.left = _bind_target.offset().left;
+              targetDimensions.top = _bind_target.offset().top;
             }
+            
+            var pos = this._calculatePositionForGravity(_item, _config.gravity, targetDimensions, itemDimensions);
+            properties.top = pos.top;
+            properties.left = pos.left;
 
-            properties.position = 'absolute';
             _item.css(properties);
 
             return;
