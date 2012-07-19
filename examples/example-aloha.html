@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta charset="utf-8" />
         <title>Midgard Create example with Aloha Editor</title>
         <script src="../deps/jquery-1.7.1.min.js"></script>
         <script src="../deps/jquery-ui-1.8.18.custom.min.js"></script>
@@ -56,8 +57,12 @@
             jQuery(document).ready(function() {
                 jQuery('body').midgardCreate({
                     editorWidgets: {
-                      'default': 'alohaWidget',
-                      'Text': 'alohaWidget'
+                      default: 'aloha',
+                    },
+                    editorOptions: {
+                      aloha: {
+                        widget: 'alohaWidget'
+                      }
                     }
                 });
             });
@@ -66,6 +71,7 @@
         <link rel="stylesheet" href="./font-awesome/css/font-awesome.css"
     />
         <link rel="stylesheet" href="../themes/create-ui/css/create-ui.css" />
+        <link rel="stylesheet" href="../themes/midgard-notifications/midgardnotif.css" />
         <link rel="stylesheet" href="demo.css" />
     </head>
     <body>
