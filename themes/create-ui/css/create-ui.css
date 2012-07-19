@@ -384,6 +384,12 @@ body > .hallotoolbar {
     z-index: 1000;
 }
 
+.dropdown-menu h3 {
+  font-weight: lighter;
+  margin: 10px 0;
+  font-size: 0.9em;
+}
+
 .dropdown-menu .menu-item {
     margin: 0px;
     padding: 6px;
@@ -488,6 +494,49 @@ body > .hallotoolbar {
     top: auto;
 }
 /* DROPDOWN END */
+
+/* TAGS START */
+.create-ui-tags {
+  width: 100%;
+}
+
+.create-ui-tags a {
+  display: inline;
+  font-weight: bold;
+  padding: 0 5px;
+}
+
+.create-ui-tags .tagsinput {
+  line-height: 2em;
+  width: 100% !important;
+}
+
+.create-ui-tags .tag {
+  color: #ffffff;
+  background-color: #82827E;
+  /*background-color: rgba(0, 0, 0, .8);*/
+  border-radius: 6px;
+  padding: 2px;
+  padding-left: 4px;
+  padding-right: 4px;
+  margin: 2px;
+  font-size: 0.8em;
+  display: inline-block;
+}
+
+.create-ui-tags .tag a {
+  color: #ffffff;
+}
+
+.create-ui-tags input {
+  width: 100%;
+  background-color: #393939;
+  color: #ffffff !important;
+  border: 1px solid #ffffff;
+  padding: 2px;
+  margin: 2px;
+}
+/* TAGS END */
 
 /* EDITOR */
 [contenteditable="true"]:focus {
@@ -603,7 +652,7 @@ div.halloEditIndicator {
 
 .halloimage-dialog,
 .hallolink-dialog,
-.create-ui-tags {
+{
   margin-top: 60px;
   background-color: #ffffff;
   color: #000000;
@@ -614,44 +663,6 @@ div.halloEditIndicator {
   position: relative;
   border: 2px solid #111111;
   border-color: rgba(0, 0, 0, .8);
-}
-
-.create-ui-tags {
-  width: 200px;
-}
-
-.create-ui-tags h3 {
-  margin: 0px;
-}
-
-.create-ui-tags .tagsinput {
-  line-height: 2em;
-  width: 100% !important;
-}
-
-.create-ui-tags .tag {
-  color: #ffffff;
-  background-color: #111111;
-  background-color: rgba(0, 0, 0, .8);
-  border-radius: 6px;
-  padding: 2px;
-  padding-left: 4px;
-  padding-right: 4px;
-  margin: 2px;
-  font-weight: bold;
-}
-
-.create-ui-tags .tag a {
-  color: #ffffff;
-}
-
-.create-ui-tags input {
-  width: 140px;
-  background-color: #474747;
-  color: #ffffff !important;
-  border: 1px solid #ffffff;
-  padding: 2px;
-  margin: 2px;
 }
 
 .halloimage-dialog .ui-dialog-title,
