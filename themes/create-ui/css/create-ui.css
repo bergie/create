@@ -428,11 +428,11 @@ body > .hallotoolbar {
 }
 
 .create-ui-statustools .ui-state-disabled .create-ui-btn {
-	background-color: transparent;
-	background-image: none;
-	border-color: #626262;
-	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1) inset, 0 1px 2px rgba(0, 0, 0, 0.05);
-	color: #797979;
+	background-color: transparent;
+	background-image: none;
+	border-color: #626262;
+	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1) inset, 0 1px 2px rgba(0, 0, 0, 0.05);
+	color: #797979;
 }
 
 .dropdown-menu li {
