@@ -122,7 +122,7 @@
 
     showNotification: function (options) {
       if (this.element.midgardNotifications) {
-        jQuery(this.element).data('midgardNotifications').create(options);
+        return jQuery(this.element).data('midgardNotifications').create(options);
       }
     },
 
