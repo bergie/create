@@ -15,6 +15,7 @@ http://hallojs.org
       toolbar: null,
       bound: false,
       originalContent: "",
+      previousContent: "",
       uuid: "",
       selection: null,
       _keepActivated: false,
@@ -118,33 +119,26 @@ http://hallojs.org
       activate: function() {
         return this.element.focus();
       },
+      containsSelection: function() {
+        var range;
+        range = this.getSelection();
+        return this.element.has(range.startContainer).length > 0;
+      },
       getSelection: function() {
-        var range, userSelection;
-        if (jQuery.browser.msie) {
-          range = document.selection.createRange();
+        var range, sel;
+        sel = rangy.getSelection();
+        range = null;
+        if (sel.rangeCount > 0) {
+          range = sel.getRangeAt(0);
         } else {
-          if (window.getSelection) {
-            userSelection = window.getSelection();
-          } else if (document.selection) {
-            userSelection = document.selection.createRange();
-          } else {
-            throw "Your browser does not support selection handling";
-          }
-          if (userSelection.rangeCount > 0) {
-            range = userSelection.getRangeAt(0);
-          } else {
-            range = userSelection;
-          }
+          range = rangy.createRange();
         }
         return range;
       },
       restoreSelection: function(range) {
-        if (jQuery.browser.msie) {
-          return range.select();
-        } else {
-          window.getSelection().removeAllRanges();
-          return window.getSelection().addRange(range);
-        }
+        var sel;
+        sel = rangy.getSelection();
+        return sel.setSingleRange(range);
       },
       replaceSelection: function(cb) {
         var newTextNode, r, range, sel, t;
@@ -181,10 +175,13 @@ http://hallojs.org
         return this.element.html(contents);
       },
       isModified: function() {
-        return this.originalContent !== this.getContents();
+        if (!this.previousContent) {
+          this.previousContent = this.originalContent;
+        }
+        return this.previousContent !== this.getContents();
       },
       setUnmodified: function() {
-        return this.originalContent = this.getContents();
+        return this.previousContent = this.getContents();
       },
       setModified: function() {
         jQuery(this.element).addClass('isModified');
@@ -441,7 +438,7 @@ http://hallojs.org
         if (this.options.lists.unordered) {
           buttonize("Unordered", "UL");
         }
-        buttonset.buttonset();
+        buttonset.hallobuttonset();
         return toolbar.append(buttonset);
       }
     });
@@ -1661,7 +1658,7 @@ http://hallojs.org
             buttonize(format);
           }
         }
-        buttonset.buttonset();
+        buttonset.hallobuttonset();
         return toolbar.append(buttonset);
       }
     });
@@ -1695,7 +1692,7 @@ http://hallojs.org
         };
         buttonize("undo", "Undo");
         buttonize("redo", "Redo");
-        buttonset.buttonset();
+        buttonset.hallobuttonset();
         return toolbar.append(buttonset);
       },
       _init: function() {}
@@ -1919,7 +1916,7 @@ http://hallojs.org
         buttonize("Left");
         buttonize("Center");
         buttonize("Right");
-        buttonset.buttonset();
+        buttonset.hallobuttonset();
         return toolbar.append(buttonset);
       },
       _init: function() {}
@@ -1927,8 +1924,9 @@ http://hallojs.org
   })(jQuery);
 
   (function(jQuery) {
-    return jQuery.widget('IKS.hallobutton', {
+    jQuery.widget('IKS.hallobutton', {
       button: null,
+      isChecked: false,
       options: {
         uuid: '',
         label: null,
@@ -1939,25 +1937,30 @@ http://hallojs.org
         cssClass: null
       },
       _create: function() {
-        var id, _base, _ref;
+        var hoverclass, id, _base, _ref,
+          _this = this;
         if ((_ref = (_base = this.options).icon) == null) {
           _base.icon = "icon-" + (this.options.label.toLowerCase());
         }
         id = "" + this.options.uuid + "-" + this.options.label;
-        this.element.append(this._createButton(id, this.options.command));
-        this.element.append(this._createLabel(id, this.options.command, this.options.label, this.options.icon));
-        if (this.options.cssClass) {
-          this.element.find('label').addClass(this.options.cssClass);
-        }
-        this.button = this.element.find('input');
-        this.button.button();
+        this.button = this._createButton(id, this.options.command, this.options.label, this.options.icon);
+        this.element.append(this.button);
         if (this.options.cssClass) {
           this.button.addClass(this.options.cssClass);
         }
         if (this.options.editable.options.touchScreen) {
           this.button.addClass('btn-large');
         }
-        return this.button.data('hallo-command', this.options.command);
+        this.button.data('hallo-command', this.options.command);
+        hoverclass = 'ui-state-hover';
+        this.button.bind('mouseenter', function(event) {
+          if (_this.isEnabled()) {
+            return _this.button.addClass(hoverclass);
+          }
+        });
+        return this.button.bind('mouseleave', function(event) {
+          return _this.button.removeClass(hoverclass);
+        });
       },
       _init: function() {
         var editableElement, queryState,
@@ -1966,15 +1969,6 @@ http://hallojs.org
           this.button = this._prepareButton();
         }
         this.element.append(this.button);
-        if (this.options.command) {
-          this.button.bind('change', function(event) {
-            return _this.options.editable.execute(_this.options.command);
-          });
-        }
-        if (!this.options.queryState) {
-          return;
-        }
-        editableElement = this.options.editable.element;
         queryState = function(event) {
           if (!_this.options.command) {
             return;
@@ -1985,6 +1979,18 @@ http://hallojs.org
 
           }
         };
+        if (this.options.command) {
+          this.button.bind('click', function(event) {
+            _this.options.editable.execute(_this.options.command);
+            queryState;
+
+            return false;
+          });
+        }
+        if (!this.options.queryState) {
+          return;
+        }
+        editableElement = this.options.editable.element;
         editableElement.bind('keyup paste change mouseup hallomodified', queryState);
         editableElement.bind('halloenabled', function() {
           return editableElement.bind('keyup paste change mouseup hallomodified', queryState);
@@ -1994,23 +2000,45 @@ http://hallojs.org
         });
       },
       enable: function() {
-        return this.button.button('enable');
+        return this.button.removeAttr('disabled');
       },
       disable: function() {
-        return this.button.button('disable');
+        return this.button.attr('disabled', 'true');
+      },
+      isEnabled: function() {
+        return this.button.attr('disabled') !== 'true';
       },
       refresh: function() {
-        return this.button.button('refresh');
+        if (this.isChecked) {
+          return this.button.addClass('ui-state-active');
+        } else {
+          return this.button.removeClass('ui-state-active');
+        }
       },
       checked: function(checked) {
-        this.button.attr('checked', checked);
+        this.isChecked = checked;
         return this.refresh();
       },
-      _createButton: function(id) {
-        return jQuery("<input id=\"" + id + "\" type=\"checkbox\" />");
+      _createButton: function(id, command, label, icon) {
+        return jQuery("<button for=\"" + id + "\" class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only " + command + "_button\" title=\"" + label + "\"><span class=\"ui-button-text\"><i class=\"" + icon + "\"></i></span></button>");
+      }
+    });
+    return jQuery.widget('IKS.hallobuttonset', {
+      buttons: null,
+      _create: function() {
+        return this.element.addClass('ui-buttonset');
       },
-      _createLabel: function(id, command, label, icon) {
-        return jQuery("<label for=\"" + id + "\" class=\"" + command + "_button\" title=\"" + label + "\"><i class=\"" + icon + "\"></i></label>");
+      _init: function() {
+        return this.refresh();
+      },
+      refresh: function() {
+        var rtl;
+        rtl = this.element.css('direction') === 'rtl';
+        this.buttons = this.element.find('.ui-button');
+        this.buttons.hallobutton('refresh');
+        this.buttons.removeClass('ui-corner-all ui-corner-left ui-corner-right');
+        this.buttons.filter(':first').addClass(rtl ? 'ui-corner-right' : 'ui-corner-left');
+        return this.buttons.filter(':last').addClass(rtl ? 'ui-corner-left' : 'ui-corner-right');
       }
     });
   })(jQuery);
@@ -2106,14 +2134,15 @@ http://hallojs.org
         });
       },
       _getPosition: function(event, selection) {
-        var position;
+        var eventType, position;
         if (!event) {
           return;
         }
-        if (event.originalEvent instanceof KeyboardEvent) {
+        eventType = event.type;
+        if (eventType === "keydown" || eventType === "keyup" || eventType === "keypress") {
           return this._getCaretPosition(selection);
         }
-        if (event.originalEvent instanceof MouseEvent) {
+        if (eventType === "click" || eventType === "mousedown" || eventType === "mouseup") {
           return position = {
             top: event.pageY,
             left: event.pageX
@@ -2123,7 +2152,7 @@ http://hallojs.org
       _getCaretPosition: function(range) {
         var newRange, position, tmpSpan;
         tmpSpan = jQuery("<span/>");
-        newRange = document.createRange();
+        newRange = rangy.createRange();
         newRange.setStart(range.endContainer, range.endOffset);
         newRange.insertNode(tmpSpan.get(0));
         position = {
@@ -2216,7 +2245,7 @@ http://hallojs.org
       _getCaretPosition: function(range) {
         var newRange, position, tmpSpan;
         tmpSpan = jQuery("<span/>");
-        newRange = document.createRange();
+        newRange = rangy.createRange();
         newRange.setStart(range.endContainer, range.endOffset);
         newRange.insertNode(tmpSpan.get(0));
         position = {
