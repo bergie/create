@@ -956,7 +956,7 @@
 
       var base = {
         constructor: function (options) {
-          _config = $.extend(_defaults, options || {});
+          _config = _.extend(_defaults, options || {});
 
           _classes = {
             container: _config.class_prefix + '-container',
@@ -1286,7 +1286,7 @@
 
       var base = {
         constructor: function (options) {
-          _config = $.extend(_defaults, options || {});
+          _config = _.extend(_defaults, options || {});
         },
         setStoryline: function (items) {
           var default_structure = {
@@ -1521,7 +1521,7 @@
 
     destroy: function () {
       this.container.remove();
-      $.Widget.prototype.destroy.call(this);
+      jQuery.Widget.prototype.destroy.call(this);
     },
 
     _init: function () {},
