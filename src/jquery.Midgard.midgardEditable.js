@@ -10,11 +10,15 @@
       editables: [],
       collections: [],
       model: null,
-      editorOptions: {},
+      editors: {
+        hallo: {
+          widget: 'halloWidget',
+          options: {}
+        }
+      },
       // the available widgets by data type
       widgets: {
-        'Text': 'halloWidget',
-        'default': 'halloWidget'
+        default: 'hallo'
       },
       collectionWidgets: {
         'default': 'midgardCollectionAdd'
@@ -115,8 +119,6 @@
         element: element,
         entity: this.options.model,
         property: propertyName,
-        editorOptions: this.options.editorOptions,
-        toolbarState: this.options.toolbarState,
         vie: this.vie,
         modified: function (content) {
           var changedProperties = {};
@@ -161,7 +163,7 @@
     },
 
     // returns the name of the widget to use for the given property
-    _widgetName: function (data) {
+    _editorName: function (data) {
       if (this.options.widgets[data.property]) {
         // Widget configuration set for specific RDF predicate
         return this.options.widgets[data.property];
@@ -182,20 +184,35 @@
       return this.options.widgets['default'];
     },
 
+    _editorWidget: function (editor) {
+      return this.options.editors[editor].widget;
+    },
+
+    _editorOptions: function (editor) {
+      return this.options.editors[editor].options;
+    },
+
     enableEditor: function (data) {
-      var widgetName = this._widgetName(data);
+      var editorName = this._editorName(data);
+      var editorWidget = this._editorWidget(editorName);
+
+      data.editorOptions = this._editorOptions(editorName);
       data.disabled = false;
-      if (typeof jQuery(data.element)[widgetName] !== 'function') {
+
+      if (typeof jQuery(data.element)[editorWidget] !== 'function') {
         throw new Error(widgetName + ' widget is not available');
       }
-      jQuery(data.element)[widgetName](data);
-      jQuery(data.element).data('createWidgetName', widgetName);
+
+      jQuery(data.element)[editorWidget](data);
+      jQuery(data.element).data('createWidgetName', editorWidget);
       return jQuery(data.element);
     },
 
     disableEditor: function (data) {
       var widgetName = jQuery(data.element).data('createWidgetName');
+
       data.disabled = true;
+
       if (widgetName) {
         // only if there has been an editing widget registered
         jQuery(data.element)[widgetName](data);

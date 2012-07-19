@@ -33,11 +33,14 @@
       highlightColor: '#67cc08',
       // Widgets to use for editing various content types.
       editorWidgets: {
-        'Text': 'halloWidget',
-        'default': 'halloWidget'
+        default: 'hallo' 
       },
       // Additional editor options.
-      editorOptions: {},
+      editorOptions: {
+        hallo: {
+          widget: 'halloWidget'
+        }
+      },
       url: function () {},
       storagePrefix: 'node',
       workflows: {
@@ -72,7 +75,12 @@
           }));
         }
       }
-      this._checkSession();
+
+      var widget = this;
+      window.setTimeout(function () {
+        widget._checkSession();
+      }, 10);
+
       this._enableToolbar();
       this._saveButton();
       this._editButton();
@@ -116,6 +124,27 @@
       if (this.element.midgardNotifications) {
         jQuery(this.element).data('midgardNotifications').create(options);
       }
+    },
+
+    configureEditor: function (name, widget, options) {
+      this.options.editorOptions[name] = {
+        widget: widget,
+        options: options
+      };
+    },
+
+    setEditorForContentType: function (type, editor) {
+      if (this.options.editorOptions[editor] === undefined) {
+        throw new Error("No editor " + editor + " configured");
+      }
+      this.options.editorWidgets[type] = editor;
+    },
+
+    setEditorForProperty: function (property, editor) {
+      if (this.options.editorOptions[editor] === undefined) {
+        throw new Error("No editor " + editor + " configured");
+      }
+      this.options.editorWidgets[property] = editor;
     },
 
     _checkSession: function () {
@@ -195,7 +224,7 @@
         disabled: false,
         vie: widget.vie,
         widgets: widget.options.editorWidgets,
-        editorOptions: widget.options.editorOptions
+        editors: widget.options.editorOptions
       };
       if (widget.options.enableEditor) {
         editableOptions[enableEditor] = widget.options.enableEditor;

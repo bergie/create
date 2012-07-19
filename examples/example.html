@@ -29,6 +29,14 @@
           stanbolUrl: 'http://dev.iks-project.eu:8081',
           tags: true
         });
+
+        // Set a simpler editor for title fields
+        jQuery('body').midgardCreate('configureEditor', 'title', 'halloWidget', {
+          plugins: {
+            halloformat: {}
+          }
+        });
+        jQuery('body').midgardCreate('setEditorForProperty', 'dcterms:title', 'title');
       });
       // Fake Backbone.sync since there is no server to communicate with
       Backbone.sync = function(method, model, options) {

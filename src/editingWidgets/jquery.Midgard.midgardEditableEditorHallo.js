@@ -10,6 +10,7 @@
   // [Hallo](http://hallojs.org) rich text editor.
   jQuery.widget('Create.halloWidget', jQuery.Create.editWidget, {
     options: {
+      editorOptions: {},
       disabled: true,
       toolbarState: 'full',
       vie: null,
@@ -84,14 +85,7 @@
         defaults.showAlways = false;
         defaults.toolbar = 'halloToolbarContextual';
       }
-
-      var editorOptions = {};
-      if (this.options.editorOptions[this.options.property]) {
-        editorOptions = this.options.editorOptions[this.options.property];
-      } else if (this.options.editorOptions['default']) {
-        editorOptions = this.options.editorOptions['default'];
-      }
-      return _.extend(defaults, editorOptions);
+      return _.extend(defaults, this.options.editorOptions);
     }
   });
 })(jQuery);
