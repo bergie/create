@@ -164,7 +164,7 @@
 
     // returns the name of the widget to use for the given property
     _editorName: function (data) {
-      if (this.options.widgets[data.property]) {
+      if (this.options.widgets[data.property] !== undefined) {
         // Widget configuration set for specific RDF predicate
         return this.options.widgets[data.property];
       }
@@ -178,7 +178,7 @@
           propertyType = type.attributes.get(data.property).range[0];
         }
       }
-      if (this.options.widgets[propertyType]) {
+      if (this.options.widgets[propertyType] !== undefined) {
         return this.options.widgets[propertyType];
       }
       return this.options.widgets['default'];
@@ -194,6 +194,10 @@
 
     enableEditor: function (data) {
       var editorName = this._editorName(data);
+      if (editorName === null) {
+        return;
+      }
+
       var editorWidget = this._editorWidget(editorName);
 
       data.editorOptions = this._editorOptions(editorName);
