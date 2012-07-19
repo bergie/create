@@ -2098,9 +2098,9 @@
     },
 
     _prepareEditor: function (button) {
-      var contentArea = jQuery('<div class="create-ui-tags"></div>');
-      var articleTags = jQuery('<div class="articleTags"><h3>Article tags</h3><input type="text" class="tags" value="" /></div>');
-      var suggestedTags = jQuery('<div class="suggestedTags"><h3>Suggested tags</h3><input type="text" class="tags" value="" /></div>');
+      var contentArea = jQuery('<div class="dropdown-menu"></div>');
+      var articleTags = jQuery('<div class="create-ui-tags articleTags"><h3>Article tags</h3><input type="text" class="tags" value="" /></div>');
+      var suggestedTags = jQuery('<div class="create-ui-tags suggestedTags"><h3>Suggested tags</h3><input type="text" class="tags" value="" /></div>');
 
       // Tags plugin requires IDs to exist
       jQuery('input', articleTags).attr('id', 'articleTags-' + this.entity.cid);
@@ -2113,7 +2113,6 @@
       var offset = button.position();
       contentArea.css('position', 'absolute');
       contentArea.css('left', offset.left);
-      contentArea.css('top', offset.top);
 
       return contentArea;
     },
