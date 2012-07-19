@@ -195,6 +195,7 @@ a.create-ui-toggle {
 .create-ui-btn-small {
     border: none;
     background-color: transparent;
+	border: 1px solid transparent;
     color: #ffffff;
     cursor: pointer;
     display: inline-block;
@@ -203,7 +204,6 @@ a.create-ui-toggle {
     margin-bottom: 0;
     padding: 4px 4px;
     text-align: center;
-    /*text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);*/
     vertical-align: middle;
     margin-left: 2px;
     margin-top: 0px;
@@ -232,12 +232,12 @@ body > .hallotoolbar {
 }
 
 .create-ui-btn-small:hover, .create-ui-toolbar-wrapper .create-ui-toolbar-dynamictoolarea .ui-state-active {
-    background-color: #ffffff;
-    border-radius: 6px;
-    background-position: 0 -30px;
-    color: #393939;
-    text-decoration: none;
-    border-color: #ffffff #ffffff #ffffff;
+	background-color: #313131;
+	background-position: 0 -30px;
+	border: 1px solid #989898;
+	border-radius: 4px 4px 4px 4px;
+	color: #BFBFBF;
+	text-decoration: none;
 }
 .create-ui-toolbar-wrapper .ui-state-disabled, .create-ui-toolbar-wrapper .ui-state-disabled:hover {
     color: #393939; 
