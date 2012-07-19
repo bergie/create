@@ -26,12 +26,17 @@ http://hallojs.org
         parentElement: 'body',
         buttonCssClass: null,
         placeholder: '',
-        forceStructured: true
+        forceStructured: true,
+        checkTouch: true,
+        touchScreen: null
       },
       _create: function() {
         var options, plugin, _ref,
           _this = this;
         this.id = this._generateUUID();
+        if (this.options.checkTouch && this.options.touchScreen === null) {
+          this.checkTouch();
+        }
         _ref = this.options.plugins;
         for (plugin in _ref) {
           options = _ref[plugin];
@@ -66,6 +71,7 @@ http://hallojs.org
         this.element.unbind("keyup", this._keys);
         this.element.unbind("keyup mouseup", this._checkSelection);
         this.bound = false;
+        jQuery(this.element).removeClass('isModified');
         this.element.parents('a').andSelf().each(function(idx, elem) {
           var element;
           element = jQuery(elem);
@@ -181,6 +187,7 @@ http://hallojs.org
         return this.originalContent = this.getContents();
       },
       setModified: function() {
+        jQuery(this.element).addClass('isModified');
         return this._trigger('modified', null, {
           editable: this,
           content: this.getContents()
@@ -344,6 +351,9 @@ http://hallojs.org
             }
           }
         }
+      },
+      checkTouch: function() {
+        return this.options.touchScreen = !!('createTouch' in document);
       }
     });
   })(jQuery);
@@ -1443,6 +1453,7 @@ http://hallojs.org
       },
       populateToolbar: function(toolbar) {
         var buttonHolder, buttonset, dialogId, id, widget;
+        this.options.toolbar = toolbar;
         widget = this;
         dialogId = "" + this.options.uuid + "-image-dialog";
         this.options.dialog = jQuery("<div id=\"" + dialogId + "\">                <div class=\"nav\">                    <ul class=\"tabs\">                    </ul>                    <div id=\"" + this.options.uuid + "-tab-activeIndicator\" class=\"tab-activeIndicator\" />                </div>                <div class=\"dialogcontent\">            </div>");
@@ -1942,6 +1953,9 @@ http://hallojs.org
         this.button.button();
         if (this.options.cssClass) {
           this.button.addClass(this.options.cssClass);
+        }
+        if (this.options.editable.options.touchScreen) {
+          this.button.addClass('btn-large');
         }
         return this.button.data('hallo-command', this.options.command);
       },
