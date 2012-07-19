@@ -1554,6 +1554,7 @@
     options: {
       // Whether to use localstorage
       localStorage: false,
+      removeLocalstorageOnIgnore: true,
       // VIE instance to use for storage handling
       vie: null,
       // URL callback for Backbone.sync
@@ -1697,7 +1698,7 @@
               name: 'restore',
               label: 'Restore',
               cb: function() {
-                _.each(restorables, function(instance) {
+                _.each(restorables, function (instance) {
                   widget._readLocal(instance);
                 });
                 restorables = [];
@@ -1708,7 +1709,11 @@
               name: 'ignore',
               label: 'Ignore',
               cb: function(event, notification) {
-                // TODO: Clear from localStorage?
+                if (widget.options.removeLocalstorageOnIgnore) {
+                  _.each(restorables, function (instance) {
+                    widget._removeLocal(instance);
+                  });
+                }
                 notification.close();
                 restorables = [];
               },
