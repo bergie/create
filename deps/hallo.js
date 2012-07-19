@@ -399,7 +399,7 @@ http://hallojs.org
       setIndicatorPosition: function(indicator) {
         var offset;
         indicator.css('position', 'absolute');
-        offset = this.element.offset();
+        offset = this.element.position();
         indicator.css('top', offset.top + 2);
         return indicator.css('left', offset.left + 2);
       }
