@@ -1690,6 +1690,10 @@
 
     _saveRemote: function (options) {
       var widget = this;
+      if (widget.changedModels.length === 0) {
+        return;
+      }
+
       widget._trigger('save', null, {
         models: widget.changedModels
       });
