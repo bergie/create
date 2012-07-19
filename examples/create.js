@@ -1681,6 +1681,11 @@
       widget.element.bind('midgardeditableenable', function (event, options) {
         jQuery('#midgardcreate-save').button({disabled: true});
         jQuery('#midgardcreate-save').show();
+
+        if (!options.instance._originalAttributes) {
+          options.instance._originalAttributes = _.clone(options.instance.attributes);
+        }
+
         if (!options.instance.isNew() && widget._checkLocal(options.instance)) {
           // We have locally-stored modifications, user needs to be asked
           restorables.push(options.instance);
@@ -1794,10 +1799,9 @@
 
         model.save(null, {
           success: function () {
-            if (model.originalAttributes) {
-              // From now on we're going with the values we have on server
-              delete model.originalAttributes;
-            }
+            // From now on we're going with the values we have on server
+            model._originalAttributes = _.clone(model.attributes);
+
             widget._removeLocal(model);
             widget.changedModels.splice(index, 1);
             needed--;
@@ -1897,8 +1901,8 @@
       if (!local) {
         return;
       }
-      if (!model.originalAttributes) {
-        model.originalAttributes = _.clone(model.attributes);
+      if (!model._originalAttributes) {
+        model._originalAttributes = _.clone(model.attributes);
       }
       var parsed = JSON.parse(local);
       var entity = this.vie.entities.addOrUpdate(parsed, {
@@ -1940,9 +1944,8 @@
 
       // Restore original object properties
       if (jQuery.isEmptyObject(model.changedAttributes())) {
-        if (model.originalAttributes) {
-          model.set(model.originalAttributes);
-          delete model.originalAttributes;
+        if (model._originalAttributes) {
+          model.set(model._originalAttributes);
         }
         return;
       }
