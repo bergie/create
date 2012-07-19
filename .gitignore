@@ -1,3 +1,4 @@
 node_modules/
 merged/
 npm-debug.log
+.DS_Store
