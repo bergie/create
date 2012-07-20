@@ -2,3 +2,7 @@ _site/
 design/
 examples/
 node_modules/
+
+# tmp files
+*.swp
+*.swo
