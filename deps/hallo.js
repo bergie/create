@@ -1486,12 +1486,13 @@ http://hallojs.org
         });
         buttonset.append(buttonHolder);
         this.button = buttonHolder;
-        this.button.bind("change", function(event) {
+        this.button.bind("click", function(event) {
           if (widget.options.dialog.dialog("isOpen")) {
-            return widget._closeDialog();
+            widget._closeDialog();
           } else {
-            return widget._openDialog();
+            widget._openDialog();
           }
+          return false;
         });
         this.options.editable.element.bind("hallodeactivated", function(event) {
           return widget._closeDialog();
@@ -1847,7 +1848,7 @@ http://hallojs.org
           });
           buttonset.append(buttonHolder);
           button = buttonHolder;
-          button.bind("change", function(event) {
+          button.bind("click", function(event) {
             widget.lastSelection = widget.options.editable.getSelection();
             urlInput = jQuery('input[name=url]', dialog);
             if (widget.lastSelection.startContainer.parentNode.href === void 0) {
@@ -1858,11 +1859,12 @@ http://hallojs.org
             }
             widget.options.editable.keepActivated(true);
             dialog.dialog('open');
-            return dialog.bind('dialogclose', function() {
+            dialog.bind('dialogclose', function() {
               jQuery('label', buttonHolder).removeClass('ui-state-active');
               widget.options.editable.element.focus();
               return widget.options.editable.keepActivated(false);
             });
+            return false;
           });
           return _this.element.bind("keyup paste change mouseup", function(event) {
             var nodeName, start;
