@@ -552,6 +552,19 @@ div.halloEditIndicator {
   background-color: #67cc08;
   opacity: 0.8;
 }
+
+.halloblock button.blockselector, .halloblock button.blockselector:focus{
+  display:block;
+  width: 100%;
+  margin:0px;
+  padding: 0px;
+  background: transparent;
+  border: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  color: #ffffff;
+}
 /* EDITOR END */
 
 /* ANNOTATIONS */
