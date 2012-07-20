@@ -151,13 +151,15 @@
         }
       });
 
-      this._trigger('enableproperty', null, {
-        editable: editable,
-        property: propertyName,
-        instance: this.options.model,
-        element: element,
-        entityElement: this.element
-      });
+      if (editable) {
+        this._trigger('enableproperty', null, {
+          editable: editable,
+          property: propertyName,
+          instance: this.options.model,
+          element: element,
+          entityElement: this.element
+        });
+      }
 
       this.options.editables.push(editable);
     },
