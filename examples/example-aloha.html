@@ -9,6 +9,7 @@
         <script src="../deps/underscore-min.js"></script>
         <script src="../deps/backbone-min.js"></script>
         <script src="../deps/vie-min.js"></script>
+        <script src="http://requirejs.org/docs/release/2.0.4/minified/require.js"></script>
 
         <!-- Here you can define your prefered configuration of Aloha Editor -->
         <script>
@@ -38,8 +39,10 @@
         }
         </script>
         <!-- Include Aloha Editor and load desired plugins -->
-        <script src="http://aloha-editor.org/builds/hotfix/latest/src/lib/aloha.js"
-            data-aloha-plugins="common/format,
+        <script src="http://cdn.aloha-editor.org/latest/lib/aloha.js"
+            data-aloha-plugins="common/ui,
+                                common/commands,
+                                common/format,
                                 common/table,
                                 common/list,
                                 common/link,
@@ -47,10 +50,7 @@
                                 common/undo,
                                 common/contenthandler,
                                 common/paste,
-                                common/commands,
-                                common/abbr,
-                                extra/browser,
-                                extra/linkbrowser"></script>
+                                common/abbr"></script>
 
         <script src="./create.js"></script>
         <script>
@@ -67,7 +67,7 @@
                 });
             });
         </script>
-        <link rel="stylesheet" href="http://aloha-editor.org/builds/hotfix/latest/src/css/aloha.css" />
+        <link rel="stylesheet" href="http://cdn.aloha-editor.org/latest/css/aloha.css" />
         <link rel="stylesheet" href="./font-awesome/css/font-awesome.css"
     />
         <link rel="stylesheet" href="../themes/create-ui/css/create-ui.css" />
