@@ -793,12 +793,12 @@
         options.deactivated();
       });
 
-      Aloha.bind('aloha-smart-content-changed', function () {
-        if (!editable.isModified()) {
+      Aloha.bind('aloha-smart-content-changed', function (event, data) {
+        if (!data.editable.isModified()) {
           return true;
         }
-        options.modified(editable.getContents());
-        editable.setUnmodified();
+        options.modified(data.editable.getContents());
+        data.editable.setUnmodified();
       });
     }
   });

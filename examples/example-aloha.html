@@ -3,9 +3,8 @@
     <head>
         <meta charset="utf-8" />
         <title>Midgard Create example with Aloha Editor</title>
-
-		<script src="../deps/jquery-1.7.1.min.js"></script>
-		<script src="../deps/jquery-ui-1.8.18.custom.min.js"></script>
+        <script src="../deps/jquery-1.7.1.min.js"></script>
+        <script src="../deps/jquery-ui-1.8.18.custom.min.js"></script>
         <script src="http://requirejs.org/docs/release/2.0.4/minified/require.js"></script>
 
         <!-- Here you can define your prefered configuration of Aloha Editor -->
@@ -79,31 +78,28 @@
             </article>
 
         </div>
-
-
-
-		<script src="../deps/modernizr.custom.80485.js"></script>
-		<script src="../deps/underscore-min.js"></script>
-		<script src="../deps/backbone-min.js"></script>
-		<script src="../deps/vie-min.js"></script>
-
-
+        <script src="../deps/modernizr.custom.80485.js"></script>
+        <script src="../deps/underscore-min.js"></script>
+        <script src="../deps/backbone-min.js"></script>
+        <script src="../deps/vie-min.js"></script>
         <script src="./create.js"></script>
         <script>
             jQuery(document).ready(function() {
-                jQuery('body').midgardCreate({
-                    editorWidgets: {
-                      default: 'aloha',
-                    },
-                    editorOptions: {
-                      aloha: {
-                        widget: 'alohaWidget'
-                      }
-                    }
-                });
+              jQuery('body').midgardCreate({
+                url: function () {
+                  return 'javascript:false;';
+                },
+                // Use Aloha Editor everywhere
+                editorWidgets: {
+                  default: 'aloha',
+                },
+                editorOptions: {
+                  aloha: {
+                    widget: 'alohaWidget'
+                  }
+                }
+              });
             });
         </script>
-
-
     </body>
 </html> 
