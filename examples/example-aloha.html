@@ -3,12 +3,9 @@
     <head>
         <meta charset="utf-8" />
         <title>Midgard Create example with Aloha Editor</title>
-        <script src="../deps/jquery-1.7.1.min.js"></script>
-        <script src="../deps/jquery-ui-1.8.18.custom.min.js"></script>
-        <script src="../deps/modernizr.custom.80485.js"></script>
-        <script src="../deps/underscore-min.js"></script>
-        <script src="../deps/backbone-min.js"></script>
-        <script src="../deps/vie-min.js"></script>
+
+		<script src="../deps/jquery-1.7.1.min.js"></script>
+		<script src="../deps/jquery-ui-1.8.18.custom.min.js"></script>
         <script src="http://requirejs.org/docs/release/2.0.4/minified/require.js"></script>
 
         <!-- Here you can define your prefered configuration of Aloha Editor -->
@@ -39,7 +36,7 @@
         }
         </script>
         <!-- Include Aloha Editor and load desired plugins -->
-        <script src="http://cdn.aloha-editor.org/latest/lib/aloha.js"
+       <script src="http://cdn.aloha-editor.org/latest/lib/aloha.js"
             data-aloha-plugins="common/ui,
                                 common/commands,
                                 common/format,
@@ -52,24 +49,8 @@
                                 common/paste,
                                 common/abbr"></script>
 
-        <script src="./create.js"></script>
-        <script>
-            jQuery(document).ready(function() {
-                jQuery('body').midgardCreate({
-                    editorWidgets: {
-                      default: 'aloha',
-                    },
-                    editorOptions: {
-                      aloha: {
-                        widget: 'alohaWidget'
-                      }
-                    }
-                });
-            });
-        </script>
         <link rel="stylesheet" href="http://cdn.aloha-editor.org/latest/css/aloha.css" />
-        <link rel="stylesheet" href="./font-awesome/css/font-awesome.css"
-    />
+        <link rel="stylesheet" href="./font-awesome/css/font-awesome.css" />
         <link rel="stylesheet" href="../themes/create-ui/css/create-ui.css" />
         <link rel="stylesheet" href="../themes/midgard-notifications/midgardnotif.css" />
         <link rel="stylesheet" href="demo.css" />
@@ -93,10 +74,36 @@
             <article typeof="http://rdfs.org/sioc/ns#Post" about="http://example.net/blog/second_news_item">
                 <h1 property="dcterms:title">Another item</h1>
                 <div property="sioc:content">
-                    <p>Hello, world!</p>
+                    <p>Aloha, world!</p>
                 </div>
             </article>
 
         </div>
+
+
+
+		<script src="../deps/modernizr.custom.80485.js"></script>
+		<script src="../deps/underscore-min.js"></script>
+		<script src="../deps/backbone-min.js"></script>
+		<script src="../deps/vie-min.js"></script>
+
+
+        <script src="./create.js"></script>
+        <script>
+            jQuery(document).ready(function() {
+                jQuery('body').midgardCreate({
+                    editorWidgets: {
+                      default: 'aloha',
+                    },
+                    editorOptions: {
+                      aloha: {
+                        widget: 'alohaWidget'
+                      }
+                    }
+                });
+            });
+        </script>
+
+
     </body>
 </html> 

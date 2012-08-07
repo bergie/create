@@ -782,7 +782,7 @@
     },
     _initialize: function () {
       var options = this.options;
-      var editable = new Aloha.Editable(Aloha.jQuery(options.element.get(0)));
+      var editable = new Aloha.jQuery(options.element.get(0)).aloha();
       editable.vieEntity = options.entity;
 
       // Subscribe to activation and deactivation events
