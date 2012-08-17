@@ -31,7 +31,7 @@ Please refer to the [Create.js Integration Guide](http://createjs.org/guide/).
 
 ## Dependencies
 
-* [Hallo](http://bergie.github.com/hallo/) - distraction-free content editor (optionally, [Aloha Editor](http://aloha-editor.org/))
+* [Hallo](http://bergie.github.com/hallo/) - distraction-free content editor (optionally, [Aloha Editor](http://aloha-editor.org/) or [Redactor](http://redactorjs.com/))
 * [VIE](https://github.com/bergie/vie) - editable RDFa library
 * [Backbone.js](http://documentcloud.github.com/backbone/) - client-side management of models, views, and collections
 * [jQuery UI](http://jqueryui.com/) - widget and effect library
@@ -64,7 +64,13 @@ You can also generate a minified version (requires uglifyjs):
 
 * [Etch](http://etchjs.com/)
 
-## Using Aloha Editor
+## Editor alternatives
+
+The default rich text editor shipping with Create is [Hallo](http://hallojs.org/), an MIT-licensed editing widget.
+
+You can also use other editor options under their own licensing schemes, or integrate something else.
+
+### Using Aloha Editor
 
 By default, Create uses the [Hallo Editor](http://bergie.github.com/hallo/). To use Create with [Aloha Editor](http://aloha-editor.org/) you need to:
 
@@ -75,6 +81,10 @@ By default, Create uses the [Hallo Editor](http://bergie.github.com/hallo/). To 
 Using Aloha Editor with Create is covered by Aloha's FOSS License Exception:
 
 > Aloha Editor’s Free and Open Source Software ("FOSS") License Exception allows developers of FOSS applications to include Aloha Editor with their FOSS applications. Aloha Editor is typically licensed pursuant to version 3 of the General Afero Public License ("AGPLv3"), but this exception permits distribution of Aloha Editor with a developer’s FOSS applications licensed under the terms of another FOSS license listed below [MIT license is included], even though such other FOSS license may be incompatible with the AGPLv3.
+
+## Using Redactor
+
+You need to acquire a [Redactor license](http://redactorjs.com/license/) and include the editor JavaScript and CSS files into your pages separately. Then you can set Create to use Redactor for particular areas by using the `redactorWidget` editor option.
 
 ### Running Unit Tests
 
