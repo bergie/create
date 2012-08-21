@@ -259,6 +259,9 @@
 
         if (widget.options.tags) {
           jQuery(this).bind('midgardeditableenable', function (event, options) {
+            if (event.target !== element) {
+              return;
+            }
             jQuery(this).midgardTags({
               vie: widget.vie,
               entityElement: options.entityElement,

@@ -22,7 +22,6 @@
       this.vie = this.options.vie;
       this.entity = this.options.entity;
       this.element = this.options.element;
-
       jQuery(this.options.entityElement).bind('midgardeditableactivated', function (event, data) {
         if (data.instance !== widget.options.entity) {
           return;
