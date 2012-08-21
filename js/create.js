@@ -114,13 +114,19 @@
     },
 
     _init: function () {
-      if (this.options.state === 'edit') {
+      this.setState(this.options.state);
+
+      // jQuery(this.element).data('midgardNotifications').showTutorial();
+    },
+
+    setState: function (state) {
+      this._setOption('state', state);
+      if (state === 'edit') {
         this._enableEdit();
       } else {
         this._disableEdit();
       }
-
-      // jQuery(this.element).data('midgardNotifications').showTutorial();            
+      this._setEditButtonState(state);
     },
 
     showNotification: function (options) {
@@ -162,7 +168,7 @@
 
       var stateID = this.options.storagePrefix + 'Midgard.create.state';
       if (sessionStorage.getItem(stateID)) {
-        this._setOption('state', sessionStorage.getItem(stateID));
+        this.setState(sessionStorage.getItem(stateID));
       }
 
       this.element.bind('midgardcreatestatechange', function (event, options) {
@@ -183,25 +189,29 @@
 
     _editButton: function () {
       var widget = this;
+      jQuery('.create-ui-toolbar-statustoolarea .create-ui-statustools', this.element).append(jQuery('<li id="midgardcreate-edit"></li>'));
+      jQuery('#midgardcreate-edit', this.element).bind('click', function () {
+        if (widget.options.state === 'edit') {
+          widget.setState('browse');
+          return;
+        }
+        widget.setState('edit');
+      });
+    },
+
+    _setEditButtonState: function (state) {
       var buttonContents = {
         edit: '<a class="create-ui-btn">Cancel <i class="icon-remove"></i></a>',
         browse: '<a class="create-ui-btn">Edit <i class="icon-edit"></i></a>'
       };
-
-      jQuery('.create-ui-toolbar-statustoolarea .create-ui-statustools', this.element).append(jQuery('<li id="midgardcreate-edit">' + buttonContents[widget.options.state] + '</li>'));
       var editButton = jQuery('#midgardcreate-edit', this.element);
-      if (this.options.state === 'edit') {
+      if (!editButton) {
+        return;
+      }
+      if (state === 'edit') {
         editButton.addClass('selected');
       }
-      editButton.bind('click', function () {
-        if (widget.options.state === 'edit') {
-          widget._disableEdit();
-          editButton.html(buttonContents[widget.options.state]);
-          return;
-        }
-        widget._enableEdit();
-        editButton.html(buttonContents[widget.options.state]);
-      });
+      editButton.html(buttonContents[state]);
     },
 
     _enableToolbar: function () {
