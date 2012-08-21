@@ -29,6 +29,7 @@
     padding-bottom: 15px;
     color: #ffffff;
     background: url("../img/create-ui-bg.png") repeat scroll 0 0 transparent;
+    background: rgba(0, 0, 0, .7);
     font-family: "Futura","Helvetica",Arial;
     text-decoration: none;
     font-weight: normal;
@@ -194,6 +195,7 @@ a.create-ui-toggle {
 .create-ui-btn-small {
     border: none;
     background-color: transparent;
+	border: 1px solid transparent;
     color: #ffffff;
     cursor: pointer;
     display: inline-block;
@@ -202,18 +204,12 @@ a.create-ui-toggle {
     margin-bottom: 0;
     padding: 4px 4px;
     text-align: center;
-    /*text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);*/
     vertical-align: middle;
     margin-left: 2px;
     margin-top: 0px;
     margin-bottom: 0px;
     opacity: 0.9;
     filter: alpha(opacity=90); 
-}
-
-button.create-ui-btn-small {
-    width: 18px;
-    height: 20px;
 }
 
 input[type="checkbox"].create-ui-btn-small {
@@ -224,8 +220,10 @@ body > .hallotoolbar {
    background-color: #111111; 
    color: #ffffff;
    background: url("../img/create-ui-bg.png") repeat scroll 0 0 transparent;
+   background: rgba(0, 0, 0, .7);
    font-family: "Futura","Helvetica",Arial;
    text-decoration: none;
+   border-radius: 4px;
 }
 
 .create-ui-toolbar-wrapper .ui-buttonset {
@@ -234,12 +232,12 @@ body > .hallotoolbar {
 }
 
 .create-ui-btn-small:hover, .create-ui-toolbar-wrapper .create-ui-toolbar-dynamictoolarea .ui-state-active {
-    background-color: #ffffff;
-    border-radius: 6px;
-    background-position: 0 -30px;
-    color: #393939;
-    text-decoration: none;
-    border-color: #ffffff #ffffff #ffffff;
+	background-color: #313131;
+	background-position: 0 -30px;
+	border: 1px solid #989898;
+	border-radius: 4px 4px 4px 4px;
+	color: #BFBFBF;
+	text-decoration: none;
 }
 .create-ui-toolbar-wrapper .ui-state-disabled, .create-ui-toolbar-wrapper .ui-state-disabled:hover {
     color: #393939; 
@@ -368,6 +366,7 @@ body > .hallotoolbar {
 .dropdown-menu {
     background-clip: padding-box;
     background: url("../img/create-ui-bg.png") repeat scroll 0 0 transparent;
+    background: rgba(0, 0, 0, .7);
     border-color: rgba(0, 0, 0, 0.2);
     border-radius: 5px 5px 5px 5px;
     border-style: solid;
@@ -383,6 +382,12 @@ body > .hallotoolbar {
     position: absolute;
     top: 100%;
     z-index: 1000;
+}
+
+.dropdown-menu h3 {
+  font-weight: lighter;
+  margin: 10px 0;
+  font-size: 0.9em;
 }
 
 .dropdown-menu .menu-item {
@@ -429,11 +434,11 @@ body > .hallotoolbar {
 }
 
 .create-ui-statustools .ui-state-disabled .create-ui-btn {
-    background-color: transparent;
-    color: #393939;
-    background-image: none;
-    border-color: #393939 #393939 #393939;
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1) inset, 0 1px 2px rgba(0, 0, 0, 0.05);
+	background-color: transparent;
+	background-image: none;
+	border-color: #626262;
+	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1) inset, 0 1px 2px rgba(0, 0, 0, 0.05);
+	color: #797979;
 }
 
 .dropdown-menu li {
@@ -490,11 +495,75 @@ body > .hallotoolbar {
 }
 /* DROPDOWN END */
 
+/* TAGS START */
+.create-ui-tags {
+  width: 100%;
+}
+
+.create-ui-tags a {
+  display: inline;
+  font-weight: bold;
+  padding: 0 5px;
+}
+
+.create-ui-tags .tagsinput {
+  line-height: 2em;
+  width: 100% !important;
+}
+
+.create-ui-tags .tag {
+  color: #ffffff;
+  background-color: #82827E;
+  /*background-color: rgba(0, 0, 0, .8);*/
+  border-radius: 6px;
+  padding: 2px;
+  padding-left: 4px;
+  padding-right: 4px;
+  margin: 2px;
+  font-size: 0.8em;
+  display: inline-block;
+}
+
+.create-ui-tags .tag a {
+  color: #ffffff;
+}
+
+.create-ui-tags input {
+  width: 100%;
+  background-color: #393939;
+  color: #ffffff !important;
+  border: 1px solid #ffffff;
+  padding: 2px;
+  margin: 2px;
+}
+/* TAGS END */
+
 /* EDITOR */
 [contenteditable="true"]:focus {
   outline-style: auto;
   outline-width: 3px;
   outline-color: #eeeeec;
+}
+
+div.halloEditIndicator {
+  padding: 4px;
+  border-radius: 6px;
+  color: #000000;
+  background-color: #67cc08;
+  opacity: 0.8;
+}
+
+.halloblock button.blockselector, .halloblock button.blockselector:focus{
+  display:block;
+  width: 100%;
+  margin:0px;
+  padding: 0px;
+  background: transparent;
+  border: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  color: #ffffff;
 }
 /* EDITOR END */
 
@@ -523,6 +592,7 @@ body > .hallotoolbar {
    background-color: #111111; 
    color: #ffffff;
    background: url("../img/create-ui-bg.png") repeat scroll 0 0 transparent;
+   background: rgba(0, 0, 0, .7);
    font-family: "Futura","Helvetica",Arial;
    text-decoration: none;
    padding: 4px;
@@ -555,6 +625,7 @@ body > .hallotoolbar {
    background-color: #111111; 
    color: #ffffff;
    background: url("../img/create-ui-bg.png") repeat scroll 0 0 transparent;
+   background: rgba(0, 0, 0, .7);
    font-family: "Futura","Helvetica",Arial;
    text-decoration: none;
    padding: 4px;
@@ -592,22 +663,43 @@ body > .hallotoolbar {
 /* Image Dialog */
 /****************/
 
-.halloimage-dialog {
-   margin-top: 60px;
-   background-color: #111111; 
-   color: #ffffff;
-   background: url("../img/create-ui-bg.png") repeat scroll 0 0 transparent;
-   font-family: "Futura","Helvetica",Arial;
-   text-decoration: none;
-   padding: 4px;
-   border-radius: 6px;
+.halloimage-dialog,
+.hallolink-dialog,
+{
+  margin-top: 60px;
+  background-color: #ffffff;
+  color: #000000;
+  font-family: "Futura","Helvetica",Arial;
+  text-decoration: none;
+  padding: 4px;
+  border-radius: 6px;
+  position: relative;
+  border: 2px solid #111111;
+  border-color: rgba(0, 0, 0, .8);
 }
 
-.halloimage-dialog .ui-dialog-content {
+.halloimage-dialog .ui-dialog-title,
+.hallolink-dialog .ui-dialog-title {
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+
+.halloimage-dialog a.ui-dialog-titlebar-close,
+.hallolink-dialog a.ui-dialog-titlebar-close {
+  position: absolute;
+  right: 2px;
+  top: 0px;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.halloimage-dialog .ui-dialog-content,
+.hallolink-dialog .ui-dialog-content {
     padding: 0;
 }
 
-.halloimage-dialog button {
+.halloimage-dialog button,
+.hallolink-dialog button {
     cursor: pointer;
 }
 
@@ -875,3 +967,19 @@ body > .hallotoolbar {
 .inlineImage-middle {
     float: none;
 }
+
+[contenteditable] .halloTmp {
+    opacity: 0.3
+}
+
+[contenteditable] .halloTmpLine{
+    background-color: #ffffff;
+    width: 98%;
+    height: 2px;
+    margin: 0 auto 10px auto;
+    border-top: 2px solid #67cc08;
+    border-bottom: 2px solid #67cc08;
+    opacity: 1;
+    padding: 1px;
+}
+

@@ -26,7 +26,7 @@
 	display: block;
 	position: relative;
 	margin: 0 0 12px 0;
-	z-index: 999;
+	z-index: 9998;
 }
 
 .midgardNotifications-item-binded .midgardNotifications-item-inner {

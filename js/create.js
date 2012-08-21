@@ -1,4 +1,4 @@
-//     Create 1.0.0alpha1 - On-site web editing interface
+//     Create.js 1.0.0alpha2 - On-site web editing interface
 //     (c) 2011-2012 Henri Bergius, IKS Consortium
 //     Create may be freely distributed under the MIT license.
 //     For all details and documentation:
@@ -33,13 +33,17 @@
       highlightColor: '#67cc08',
       // Widgets to use for editing various content types.
       editorWidgets: {
-        'Text': 'halloWidget',
-        'default': 'halloWidget'
+        default: 'hallo' 
       },
       // Additional editor options.
-      editorOptions: {},
-      enableEditor: null,
-      disableEditor: null,
+      editorOptions: {
+        hallo: {
+          widget: 'halloWidget'
+        }
+      },
+      collectionWidgets: {
+        default: 'midgardCollectionAdd'
+      },
       url: function () {},
       storagePrefix: 'node',
       workflows: {
@@ -47,7 +51,9 @@
       },
       notifications: {},
       vie: null,
-      stanbolUrl: null
+      stanbolUrl: null,
+      dbPediaUrl: null,
+      tags: false
     },
 
     _create: function () {
@@ -64,15 +70,24 @@
             url: this.options.stanbolUrl
           }));
         }
+
+        if (this.options.dbPediaUrl) {
+          this.vie.use(new this.vie.DBPediaService({
+            proxyDisabled: true,
+            url: this.options.dbPediaUrl
+          }));
+        }
       }
-      this._checkSession();
+
+      var widget = this;
+      window.setTimeout(function () {
+        widget._checkSession();
+      }, 10);
+
       this._enableToolbar();
       this._saveButton();
       this._editButton();
-      this.element.midgardStorage({
-        vie: this.vie,
-        url: this.options.url
-      });
+      this._prepareStorage();
 
       if (this.element.midgardWorkflows) {
         this.element.midgardWorkflows(this.options.workflows);
@@ -81,6 +96,21 @@
       if (this.element.midgardNotifications) {
         this.element.midgardNotifications(this.options.notifications);
       }
+    },
+
+    _prepareStorage: function () {
+      this.element.midgardStorage({
+        vie: this.vie,
+        url: this.options.url
+      });
+
+      this.element.bind('midgardstoragesave', function () {
+        jQuery('#midgardcreate-save a').html('Saving <i class="icon-upload"></i>');
+      });
+
+      this.element.bind('midgardstoragesaved midgardstorageerror', function () {
+        jQuery('#midgardcreate-save a').html('Save <i class="icon-ok"></i>');
+      });
     },
 
     _init: function () {
@@ -95,8 +125,29 @@
 
     showNotification: function (options) {
       if (this.element.midgardNotifications) {
-        jQuery(this.element).data('midgardNotifications').create(options);
+        return jQuery(this.element).data('midgardNotifications').create(options);
       }
+    },
+
+    configureEditor: function (name, widget, options) {
+      this.options.editorOptions[name] = {
+        widget: widget,
+        options: options
+      };
+    },
+
+    setEditorForContentType: function (type, editor) {
+      if (this.options.editorOptions[editor] === undefined && editor !== null) {
+        throw new Error("No editor " + editor + " configured");
+      }
+      this.options.editorWidgets[type] = editor;
+    },
+
+    setEditorForProperty: function (property, editor) {
+      if (this.options.editorOptions[editor] === undefined && editor !== null) {
+        throw new Error("No editor " + editor + " configured");
+      }
+      this.options.editorWidgets[property] = editor;
     },
 
     _checkSession: function () {
@@ -176,7 +227,8 @@
         disabled: false,
         vie: widget.vie,
         widgets: widget.options.editorWidgets,
-        editorOptions: widget.options.editorOptions
+        editors: widget.options.editorOptions,
+        collectionWidgets: widget.options.collectionWidgets
       };
       if (widget.options.enableEditor) {
         editableOptions[enableEditor] = widget.options.enableEditor;
@@ -184,11 +236,14 @@
       if (widget.options.disableEditor) {
         editableOptions[disableEditor] = widget.options.disableEditor;
       }
-
       jQuery('[about]', this.element).each(function () {
         var element = this;
         if (widget.options.highlight) {
           var highlightEditable = function (event, options) {
+              if (!jQuery(options.element).is(':visible')) {
+                // Hidden element, don't highlight
+                return;
+              }
               if (options.entityElement.get(0) !== element) {
                 // Propagated event from another entity, ignore
                 return;
@@ -206,8 +261,22 @@
           jQuery(this).unbind('midgardeditableenableproperty', highlightEditable);
         });
 
+        if (widget.options.tags) {
+          jQuery(this).bind('midgardeditableenable', function (event, options) {
+            if (event.target !== element) {
+              return;
+            }
+            jQuery(this).midgardTags({
+              vie: widget.vie,
+              entityElement: options.entityElement,
+              entity: options.instance
+            });
+          });
+        }
+
         jQuery(this).midgardEditable(editableOptions);
       });
+
       this._trigger('statechange', null, {
         state: 'edit'
       });
@@ -218,17 +287,11 @@
       var editableOptions = {
         disabled: true,
         vie: widget.vie,
-        editor: widget.options.editor,
         editorOptions: widget.options.editorOptions
       };
-      if (widget.options.enableEditor) {
-        editableOptions[enableEditor] = widget.options.enableEditor;
-      }
-      if (widget.options.disableEditor) {
-        editableOptions[disableEditor] = widget.options.disableEditor;
-      }
       jQuery('[about]', this.element).each(function () {
-        jQuery(this).midgardEditable(editableOptions).removeClass('ui-state-disabled');
+        jQuery(this).midgardEditable(editableOptions);
+        jQuery(this).removeClass('ui-state-disabled');
       });
       this._setOption('state', 'browse');
       this._trigger('statechange', null, {
@@ -237,7 +300,149 @@
     }
   });
 })(jQuery);
-//     Create - On-site web editing interface
+//     Create.js - On-site web editing interface
+//     (c) 2011-2012 Henri Bergius, IKS Consortium
+//     Create may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://createjs.org/
+(function (jQuery, undefined) {
+  // # Widget for adding items to a collection
+  jQuery.widget('Midgard.midgardCollectionAdd', {
+    addButton: null,
+
+    options: {
+      editingWidgets: null,
+      collection: null,
+      model: null,
+      view: null,
+      disabled: false,
+      vie: null,
+      editableOptions: null
+    },
+
+    _create: function () {
+      var widget = this;
+      if (!widget.options.collection.localStorage) {
+        widget.options.collection.url = widget.options.model.url();
+      }
+
+      widget.options.view.collection.bind('add', function (model) {
+        model.primaryCollection = widget.options.collection;
+        widget.options.vie.entities.add(model);
+        model.collection = widget.options.collection;
+      });
+
+      widget._bindCollectionView(widget.options.view);
+    },
+
+    _bindCollectionView: function (view) {
+      var widget = this;
+      view.bind('add', function (itemView) {
+        //itemView.el.effect('slide');
+        widget._makeEditable(itemView);
+      });
+    },
+
+    _makeEditable: function (itemView) {
+      this.options.editableOptions.disabled = this.options.disabled;
+      this.options.editableOptions.model = itemView.model;
+      jQuery(itemView.el).midgardEditable(this.options.editableOptions);
+    },
+
+    _init: function () {
+      if (this.options.disabled) {
+        this.disable();
+        return;
+      }
+      this.enable();
+    },
+
+    enable: function () {
+      var widget = this;
+      widget.addButton = jQuery('<button class="btn"><i class="icon-plus"></i> Add</button>').button();
+      widget.addButton.addClass('midgard-create-add');
+      widget.addButton.click(function () {
+        widget.options.collection.add({});
+      });
+
+      jQuery(widget.options.view.el).after(widget.addButton);
+    },
+
+    disable: function () {
+      if (this.addButton) {
+        this.addButton.remove();
+        delete this.addButton;
+      }
+    }
+  });
+})(jQuery);
+//     Create.js - On-site web editing interface
+//     (c) 2011-2012 Henri Bergius, IKS Consortium
+//     Create may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://createjs.org/
+(function (jQuery, undefined) {
+  // # Widget for adding items anywhere inside a collection
+  jQuery.widget('Midgard.midgardCollectionAddBetween', jQuery.Midgard.midgardCollectionAdd, {
+    addButtons: [],
+
+    _bindCollectionView: function (view) {
+      var widget = this;
+      view.bind('add', function (itemView) {
+        //itemView.el.effect('slide');
+        widget._makeEditable(itemView);
+        widget._refreshButtons();
+      });
+      view.bind('remove', function () {
+        widget._refreshButtons();
+      });
+    },
+
+    _refreshButtons: function () {
+      var widget = this;
+      window.setTimeout(function () {
+        widget.disable();
+        widget.enable();
+      }, 1);
+    },
+
+    prepareButton: function (index) {
+      var widget = this;
+      var addButton = jQuery('<button class="btn"><i class="icon-plus"></i></button>').button();
+      addButton.addClass('midgard-create-add');
+      addButton.click(function () {
+        widget.options.collection.add({}, {
+          at: index
+        });
+      });
+      return addButton;
+    },
+
+    enable: function () {
+      var widget = this;
+
+      var firstAddButton = widget.prepareButton(0);
+      jQuery(widget.options.view.el).before(firstAddButton);
+      widget.addButtons.push(firstAddButton);
+
+      jQuery.each(widget.options.view.entityViews, function (cid, view) {
+        var index = widget.options.collection.indexOf(view.model);
+        var addButton = widget.prepareButton(index + 1);
+        jQuery(view.el).after(addButton);
+        widget.addButtons.push(addButton);
+      });
+    },
+
+    disable: function () {
+      var widget = this;
+      jQuery.each(widget.addButtons, function (idx, button) {
+        button.remove();
+      });
+      widget.addButtons = [];
+    }
+  });
+})(jQuery);
+//     Create.js - On-site web editing interface
 //     (c) 2011-2012 Henri Bergius, IKS Consortium
 //     Create may be freely distributed under the MIT license.
 //     For all details and documentation:
@@ -247,58 +452,24 @@
   jQuery.widget('Midgard.midgardEditable', {
     options: {
       editables: [],
+      collections: [],
       model: null,
-      editorOptions: {},
+      editors: {
+        hallo: {
+          widget: 'halloWidget',
+          options: {}
+        }
+      },
       // the available widgets by data type
-      // TODO: needs a comprehensive list of types and their appropriate widgets
       widgets: {
-        'Text': 'halloWidget',
-        'default': 'halloWidget'
+        default: 'hallo'
+      },
+      collectionWidgets: {
+        'default': 'midgardCollectionAdd'
       },
       toolbarState: 'full',
-      // returns the name of the widget to use for the given property
-      widgetName: function (data) {
-        // TODO: make sure type is already loaded into VIE
-        var propertyType = 'default';
-        var type = this.model.get('@type');
-        if (type) {
-          if (type.attributes && type.attributes.get(data.property)) {
-            propertyType = type.attributes.get(data.property).range[0];
-          }
-        }
-        if (this.widgets[propertyType]) {
-          return this.widgets[propertyType];
-        }
-        return this.widgets['default'];
-      },
-      enableEditor: function (data) {
-        var widgetName = this.widgetName(data);
-        data.disabled = false;
-        if (typeof jQuery(data.element)[widgetName] !== 'function') {
-          throw new Error(widgetName + ' widget is not available');
-        }
-        jQuery(data.element)[widgetName](data);
-        jQuery(data.element).data('createWidgetName', widgetName);
-        return jQuery(data.element);
-      },
-      disableEditor: function (data) {
-        var widgetName = jQuery(data.element).data('createWidgetName');
-        data.disabled = true;
-        if (widgetName) {
-          // only if there has been an editing widget registered
-          jQuery(data.element)[widgetName](data);
-          jQuery(data.element).removeClass('ui-state-disabled');
-        }
-      },
-      addButton: null,
-      enable: function () {},
-      enableproperty: function () {},
-      disable: function () {},
-      activated: function () {},
-      deactivated: function () {},
-      changed: function () {},
       vie: null,
-      enableCollectionAdd: true
+      disabled: false
     },
 
     _create: function () {
@@ -327,16 +498,24 @@
       this.vie.service('rdfa').findPredicateElements(this.options.model.id, jQuery('[property]', this.element), false).each(function () {
         return widget._enableProperty(jQuery(this));
       });
+
       this._trigger('enable', null, {
         instance: this.options.model,
         entityElement: this.element
       });
-      if (!this.options.enableCollectionAdd) {
-        return;
-      }
+
       _.forEach(this.vie.service('rdfa').views, function (view) {
-        if (view instanceof widget.vie.view.Collection) {
-          widget._enableCollection(view);
+        if (view instanceof widget.vie.view.Collection && widget.options.model === view.owner) {
+          var collection = widget.enableCollection({
+            model: widget.options.model,
+            collection: view.collection,
+            property: jQuery(view.el).attr('rel'),
+            view: view,
+            element: view.el,
+            vie: widget.vie,
+            editableOptions: widget.options
+          });
+          widget.options.collections.push(collection);
         }
       });
     },
@@ -344,7 +523,7 @@
     disable: function () {
       var widget = this;
       jQuery.each(this.options.editables, function (index, editable) {
-        widget.options.disableEditor({
+        widget.disableEditor({
           widget: widget,
           editable: editable,
           entity: widget.options.model,
@@ -352,11 +531,16 @@
         });
       });
       this.options.editables = [];
-
-      if (this.options.addButton) {
-        this.options.addButton.remove();
-        delete this.options.addButton;
-      }
+      jQuery.each(this.options.collections, function (index, collectionWidget) {
+        widget.disableCollection({
+          widget: widget,
+          model: widget.options.model,
+          element: collectionWidget,
+          vie: widget.vie,
+          editableOptions: widget.options
+        });
+      });
+      this.options.collections = [];
 
       this._trigger('disable', null, {
         instance: this.options.model,
@@ -375,13 +559,11 @@
         return true;
       }
 
-      var editable = this.options.enableEditor({
+      var editable = this.enableEditor({
         widget: this,
         element: element,
         entity: this.options.model,
         property: propertyName,
-        editorOptions: this.options.editorOptions,
-        toolbarState: this.options.toolbarState,
         vie: this.vie,
         modified: function (content) {
           var changedProperties = {};
@@ -414,66 +596,128 @@
         }
       });
 
-      this._trigger('enableproperty', null, {
-        editable: editable,
-        property: propertyName,
-        instance: this.options.model,
-        element: element,
-        entityElement: this.element
-      });
+      if (editable) {
+        this._trigger('enableproperty', null, {
+          editable: editable,
+          property: propertyName,
+          instance: this.options.model,
+          element: element,
+          entityElement: this.element
+        });
+      }
 
       this.options.editables.push(editable);
     },
 
-    _enableCollection: function (collectionView) {
-      var widget = this;
+    // returns the name of the widget to use for the given property
+    _editorName: function (data) {
+      if (this.options.widgets[data.property] !== undefined) {
+        // Widget configuration set for specific RDF predicate
+        return this.options.widgets[data.property];
+      }
 
-      if (!collectionView.owner || collectionView.owner.getSubject() !== widget.options.model.getSubject()) {
+      // Load the widget configuration for the data type
+      // TODO: make sure type is already loaded into VIE
+      var propertyType = 'default';
+      var type = this.options.model.get('@type');
+      if (type) {
+        if (type.attributes && type.attributes.get(data.property)) {
+          propertyType = type.attributes.get(data.property).range[0];
+        }
+      }
+      if (this.options.widgets[propertyType] !== undefined) {
+        return this.options.widgets[propertyType];
+      }
+      return this.options.widgets['default'];
+    },
+
+    _editorWidget: function (editor) {
+      return this.options.editors[editor].widget;
+    },
+
+    _editorOptions: function (editor) {
+      return this.options.editors[editor].options;
+    },
+
+    enableEditor: function (data) {
+      var editorName = this._editorName(data);
+      if (editorName === null) {
         return;
       }
 
-      if (widget.options.addButton) {
-        return;
+      var editorWidget = this._editorWidget(editorName);
+
+      data.editorOptions = this._editorOptions(editorName);
+      data.disabled = false;
+
+      if (typeof jQuery(data.element)[editorWidget] !== 'function') {
+        throw new Error(widgetName + ' widget is not available');
       }
 
-      if (collectionView.template.length === 0) {
-        // Collection view has no template and so can't add
-        return;
+      jQuery(data.element)[editorWidget](data);
+      jQuery(data.element).data('createWidgetName', editorWidget);
+      return jQuery(data.element);
+    },
+
+    disableEditor: function (data) {
+      var widgetName = jQuery(data.element).data('createWidgetName');
+
+      data.disabled = true;
+
+      if (widgetName) {
+        // only if there has been an editing widget registered
+        jQuery(data.element)[widgetName](data);
+        jQuery(data.element).removeClass('ui-state-disabled');
+      }
+    },
+
+    collectionWidgetName: function (data) {
+      if (this.options.collectionWidgets[data.property] !== undefined) {
+        // Widget configuration set for specific RDF predicate
+        return this.options.collectionWidgets[data.property];
       }
 
-      collectionView.collection.url = widget.options.model.url();
+      var propertyType = 'default';
+      var type = this.options.model.get('@type');
+      if (type) {
+        if (type.attributes && type.attributes.get(data.property)) {
+          propertyType = type.attributes.get(data.property).range[0];
+        }
+      }
+      if (this.options.collectionWidgets[propertyType] !== undefined) {
+        return this.options.collectionWidgets[propertyType];
+      }
+    },
 
-      collectionView.bind('add', function (itemView) {
-        //itemView.el.effect('slide');
-        jQuery(itemView.el).midgardEditable({
-          disabled: widget.options.disabled,
-          model: itemView.model,
-          vie: widget.vie,
-          widgets: widget.options.widgets
-        });
-      });
+    enableCollection: function (data) {
+      var widgetName = this.collectionWidgetName(data);
+      if (widgetName === null) {
+        return;
+      }
+      data.disabled = false;
+      if (typeof jQuery(data.element)[widgetName] !== 'function') {
+        throw new Error(widgetName + ' widget is not available');
+      }
+      jQuery(data.element)[widgetName](data);
+      jQuery(data.element).data('createCollectionWidgetName', widgetName);
+      return jQuery(data.element);
+    },
 
-      collectionView.collection.bind('add', function (model) {
-        model.primaryCollection = collectionView.collection;
-        widget.vie.entities.add(model);
-        model.collection = collectionView.collection;
-      });
-
-      collectionView.bind('remove', function (itemView) {
-        //itemView.el.hide('drop');
-      });
-
-      widget.options.addButton = jQuery('<button class="btn"><i class="icon-plus"></i> Add</button>').button();
-      widget.options.addButton.addClass('midgard-create-add');
-      widget.options.addButton.click(function () {
-        collectionView.collection.add({});
-      });
-
-      jQuery(collectionView.el).after(widget.options.addButton);
+    disableCollection: function (data) {
+      var widgetName = jQuery(data.element).data('createCollectionWidgetName');
+      if (widgetName === null) {
+        return;
+      }
+      data.disabled = true;
+      if (widgetName) {
+        // only if there has been an editing widget registered
+        jQuery(data.element)[widgetName](data);
+        jQuery(data.element).removeClass('ui-state-disabled');
+      }
     }
   });
 })(jQuery);
-//     Create - On-site web editing interface
+//     Create.js - On-site web editing interface
 //     (c) 2012 Tobias Herrmann, IKS Consortium
 //     Create may be freely distributed under the MIT license.
 //     For all details and documentation:
@@ -538,7 +782,7 @@
     }
   });
 })(jQuery);
-//     Create - On-site web editing interface
+//     Create.js - On-site web editing interface
 //     (c) 2012 Tobias Herrmann, IKS Consortium
 //     (c) 2011 Rene Kapusta, Evo42
 //     Create may be freely distributed under the MIT license.
@@ -558,35 +802,53 @@
       this.options.disabled = false;
     },
     disable: function () {
-      try {
-        options.editable.destroy();
-      } catch (err) {}
+      Aloha.jQuery(this.options.element.get(0)).mahalo();
       this.options.disabled = true;
     },
     _initialize: function () {
       var options = this.options;
-      var editable = new Aloha.Editable(Aloha.jQuery(options.element.get(0)));
+      var editable;
+      var currentElement = Aloha.jQuery(options.element.get(0)).aloha();
+      _.each(Aloha.editables, function (aloha) {
+        // Find the actual editable instance so we can hook to the events
+        // correctly
+        if (aloha.obj.get(0) === currentElement.get(0)) {
+          editable = aloha;
+        }
+      });
+      if (!editable) {
+        return;
+      }
       editable.vieEntity = options.entity;
 
       // Subscribe to activation and deactivation events
-      Aloha.bind('aloha-editable-activated', function () {
+      Aloha.bind('aloha-editable-activated', function (event, data) {
+        if (data.editable !== editable) {
+          return;
+        }
         options.activated();
       });
-      Aloha.bind('aloha-editable-deactivated', function () {
+      Aloha.bind('aloha-editable-deactivated', function (event, data) {
+        if (data.editable !== editable) {
+          return;
+        }
         options.deactivated();
       });
 
-      Aloha.bind('aloha-smart-content-changed', function () {
-        if (!editable.isModified()) {
+      Aloha.bind('aloha-smart-content-changed', function (event, data) {
+        if (data.editable !== editable) {
+          return;
+        }
+        if (!data.editable.isModified()) {
           return true;
         }
-        options.modified(editable.getContents());
-        editable.setUnmodified();
+        options.modified(data.editable.getContents());
+        data.editable.setUnmodified();
       });
     }
   });
 })(jQuery);
-//     Create - On-site web editing interface
+//     Create.js - On-site web editing interface
 //     (c) 2012 Tobias Herrmann, IKS Consortium
 //     Create may be freely distributed under the MIT license.
 //     For all details and documentation:
@@ -598,9 +860,11 @@
   // [Hallo](http://hallojs.org) rich text editor.
   jQuery.widget('Create.halloWidget', jQuery.Create.editWidget, {
     options: {
+      editorOptions: {},
       disabled: true,
       toolbarState: 'full',
-      vie: null
+      vie: null,
+      entity: null
     },
     enable: function () {
       jQuery(this.element).hallo({
@@ -644,14 +908,20 @@
           halloformat: {},
           halloblock: {},
           hallolists: {},
+          hallolink: {},
+          halloimage: {
+            entity: this.options.entity
+          },
+          halloindicator: {}
         },
         buttonCssClass: 'create-ui-btn-small',
         placeholder: '[' + this.options.property + ']'
       };
+
       if (typeof this.element.annotate === 'function' && this.options.vie.services.stanbol) {
         // Enable Hallo Annotate plugin by default if user has annotate.js
         // loaded and VIE has Stanbol enabled
-        defaults.plugins['halloannotate'] = {
+        defaults.plugins.halloannotate = {
             vie: this.options.vie
         };
       }
@@ -659,25 +929,72 @@
       if (this.options.toolbarState === 'full') {
         // Use fixed toolbar in the Create tools area
         defaults.parentElement = jQuery('.create-ui-toolbar-dynamictoolarea .create-ui-tool-freearea');
-        defaults.showAlways = true;
-        defaults.fixed = true;
+        defaults.toolbar = 'halloToolbarFixed';
       } else {
         // Tools area minimized, use floating toolbar
         defaults.showAlways = false;
-        defaults.fixed = false;
+        defaults.toolbar = 'halloToolbarContextual';
       }
-
-      var editorOptions = {};
-      if (this.options.editorOptions[this.options.property]) {
-        editorOptions = this.options.editorOptions[this.options.property];
-      } else if (this.options.editorOptions['default']) {
-        editorOptions = this.options.editorOptions['default'];
-      }
-      return _.extend(defaults, editorOptions);
+      return _.extend(defaults, this.options.editorOptions);
     }
   });
 })(jQuery);
-//     Create - On-site web editing interface
+//     Create.js - On-site web editing interface
+//     (c) 2012 Henri Bergius, IKS Consortium
+//     Create may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://createjs.org/
+(function (jQuery, undefined) {
+  // # Redactor editing widget
+  //
+  // This widget allows editing textual content areas with the
+  // [Redactor](http://redactorjs.com/) rich text editor.
+  jQuery.widget('Create.redactorWidget', jQuery.Create.editWidget, {
+    editor: null,
+
+    options: {
+      editorOptions: {},
+      disabled: true
+    },
+
+    enable: function () {
+      jQuery(this.element).redactor(this.getRedactorOptions());
+      this.options.disabled = false;
+    },
+
+    disable: function () {
+      jQuery(this.element).destroyEditor();
+      this.options.disabled = true;
+    },
+
+    _initialize: function () {
+      var self = this;
+      jQuery(this.element).bind('focus', function (event) {
+        self.options.activated(); 
+      });
+      /*
+      jQuery(this.element).bind('blur', function (event) {
+        self.options.deactivated(); 
+      });
+      */
+    },
+
+    getRedactorOptions: function () {
+      var self = this;
+      var overrides = {
+        keyupCallback: function (obj, event) {
+          self.options.modified(jQuery(self.element).getCode());
+        },
+        execCommandCallback: function (obj, command) {
+          self.options.modified(jQuery(self.element).getCode());
+        }
+      };
+
+      return _.extend(self.options.editorOptions, overrides);
+    }
+  });
+})(jQuery);
+//     Create.js - On-site web editing interface
 //     (c) 2012 Jerry Jalava, IKS Consortium
 //     Create may be freely distributed under the MIT license.
 //     For all details and documentation:
@@ -741,7 +1058,7 @@
 
       var base = {
         constructor: function (options) {
-          _config = $.extend(_defaults, options || {});
+          _config = _.extend(_defaults, options || {});
 
           _classes = {
             container: _config.class_prefix + '-container',
@@ -800,6 +1117,9 @@
                 }
 
               });
+              if (opts.className) {
+                action.addClass(opts.className);
+              }
               actions_holder.append(action);
             });
           }
@@ -824,102 +1144,112 @@
 
           _parent.append(_item);
         },
+        
+       _calculatePositionForGravity: function (item, gravity, target, itemDimensions) {
+          item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_' + gravity);
+          switch (gravity) {
+          case 'TL':
+            return {
+              left: target.left,
+              top: target.top + target.height + 'px'
+            };
+          case 'TR':
+            return {
+              left: target.left + target.width - itemDimensions.width + 'px',
+              top: target.top + target.height + 'px'
+            };
+          case 'BL':
+            return {
+              left: target.left + 'px',
+              top: target.top - itemDimensions.height + 'px'
+            };
+          case 'BR':
+            return {
+              left: target.left + target.width - itemDimensions.width + 'px',
+              top: target.top - itemDimensions.height + 'px'
+            };
+          case 'LT':
+            return {
+              left: target.left + target.width + 'px',
+              top: target.top + 'px'
+            };
+          case 'LB':
+            return {
+              left: target.left + target.width + 'px',
+              top: target.top + target.height - itemDimensions.height + 'px'
+            };
+          case 'RT':
+            return {
+              left: target.left - itemDimensions.width + 'px',
+              top: target.top + 'px'
+            };
+          case 'RB':
+            return {
+              left: target.left - itemDimensions.width + 'px',
+              top: target.top + target.height - itemDimensions.height + 'px'
+            };
+          case 'T':
+            return {
+              left: target.left + target.width / 2 - itemDimensions.width / 2 + 'px',
+              top: target.top + target.height + 'px'
+            };
+          case 'R':
+            return {
+              left: target.left - itemDimensions.width + 'px',
+              top: target.top + target.height / 2 - itemDimensions.height / 2 + 'px'
+            };
+          case 'B':
+            return {
+              left: target.left + target.width / 2 - itemDimensions.width / 2 + 'px',
+              top: target.top - itemDimensions.height + 'px'
+            };
+          case 'L':
+            return {
+              left: target.left + target.width + 'px',
+              top: target.top + target.height / 2 - itemDimensions.height / 2 + 'px'
+            };
+          }
+        },
+        
+        _isFixed: function (element) {
+          if (element === document) {
+            return false;
+          }
+          if (element.css('position') === 'fixed') {
+            return true;
+          }
+          return this._isFixed(element.offsetParent());
+        },
+
         _setPosition: function () {
           if (_config.bindTo) {
+            itemDimensions = {
+              width: _item.width() ? _item.width() : 280,
+              height: _item.height() ? _item.height() : 109
+            };
+            
             _bind_target = jQuery(_config.bindTo);
-            var trgt_w = _bind_target.outerWidth();
-            var trgt_h = _bind_target.outerHeight();
-            var trgt_l = _bind_target.offset().left;
-            var trgt_t = _bind_target.offset().top;
-
-            switch (_config.gravity) {
-            case 'TL':
-              properties = {
-                'left': trgt_l,
-                'top': trgt_t + trgt_h + 'px'
-              };
-              _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_TL');
-              break;
-            case 'TR':
-              properties = {
-                'left': trgt_l + trgt_w - _item.width() + 'px',
-                'top': trgt_t + trgt_h + 'px'
-              };
-              _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_TR');
-              break;
-            case 'BL':
-              properties = {
-                'left': trgt_l + 'px',
-                'top': trgt_t - _item.height() + 'px'
-              };
-              _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_BL');
-              break;
-            case 'BR':
-              properties = {
-                'left': trgt_l + trgt_w - _item.width() + 'px',
-                'top': trgt_t - _item.height() + 'px'
-              };
-              _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_BR');
-              break;
-            case 'LT':
-              properties = {
-                'left': trgt_l + trgt_w + 'px',
-                'top': trgt_t + 'px'
-              };
-              _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_LT');
-              break;
-            case 'LB':
-              properties = {
-                'left': trgt_l + trgt_w + 'px',
-                'top': trgt_t + trgt_h - _item.height() + 'px'
-              };
-              _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_LB');
-              break;
-            case 'RT':
-              properties = {
-                'left': trgt_l - _item.width() + 'px',
-                'top': trgt_t + 'px'
-              };
-              _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_RT');
-              break;
-            case 'RB':
-              properties = {
-                'left': trgt_l - _item.width() + 'px',
-                'top': trgt_t + trgt_h - _item.height() + 'px'
-              };
-              _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_RB');
-              break;
-            case 'T':
-              properties = {
-                'left': trgt_l + trgt_w / 2 - _item.width() / 2 + 'px',
-                'top': trgt_t + trgt_h + 'px'
-              };
-              _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_T');
-              break;
-            case 'R':
-              properties = {
-                'left': trgt_l - _item.width() + 'px',
-                'top': trgt_t + trgt_h / 2 - _item.height() / 2 + 'px'
-              };
-              _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_R');
-              break;
-            case 'B':
-              properties = {
-                'left': trgt_l + trgt_w / 2 - _item.width() / 2 + 'px',
-                'top': trgt_t - _item.height() + 'px'
-              };
-              _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_B');
-              break;
-            case 'L':
-              properties = {
-                'left': trgt_l + trgt_w + 'px',
-                'top': trgt_t + trgt_h / 2 - _item.height() / 2 + 'px'
-              };
-              _item.find('.' + _classes.item.arrow).addClass(_classes.item.arrow + '_L');
-              break;
+            var properties = {};
+            
+            var targetDimensions = {
+              width: _bind_target.outerWidth(),
+              height: _bind_target.outerHeight()
+            };
+            
+            if (this._isFixed(_bind_target)) {
+              properties.position = 'fixed';
+              targetDimensions.left = _bind_target.offset().left;
+              targetDimensions.top = _bind_target.position().top;
+            } else {
+              properties.position = 'absolute';
+              targetDimensions.left = _bind_target.offset().left;
+              targetDimensions.top = _bind_target.offset().top;
             }
+            
+            var pos = this._calculatePositionForGravity(_item, _config.gravity, targetDimensions, itemDimensions);
+            properties.top = pos.top;
+            properties.left = pos.left;
 
-            properties.position = 'absolute';
             _item.css(properties);
 
             return;
@@ -969,6 +1299,7 @@
           }
 
           if (_config.bindTo) {
+            var _bind_target = jQuery(_config.bindTo);
             w_t = jQuery(window).scrollTop();
             w_b = jQuery(window).scrollTop() + jQuery(window).height();
             b_t = parseFloat(_item.offset().top, 10);
@@ -1057,7 +1388,7 @@
 
       var base = {
         constructor: function (options) {
-          _config = $.extend(_defaults, options || {});
+          _config = _.extend(_defaults, options || {});
         },
         setStoryline: function (items) {
           var default_structure = {
@@ -1292,7 +1623,7 @@
 
     destroy: function () {
       this.container.remove();
-      $.Widget.prototype.destroy.call(this);
+      jQuery.Widget.prototype.destroy.call(this);
     },
 
     _init: function () {},
@@ -1323,19 +1654,31 @@
   });
 
 })(jQuery);
-//     Create - On-site web editing interface
+//     Create.js - On-site web editing interface
 //     (c) 2011-2012 Henri Bergius, IKS Consortium
 //     Create may be freely distributed under the MIT license.
 //     For all details and documentation:
 //     http://createjs.org/
 (function (jQuery, undefined) {
   jQuery.widget('Midgard.midgardStorage', {
+    changedModels: [],
+    saveEnabled: true,
     options: {
+      // Whether to use localstorage
       localStorage: false,
+      removeLocalstorageOnIgnore: true,
+      // VIE instance to use for storage handling
       vie: null,
-      changedModels: [],
-      loaded: function () {},
-      url: ''
+      // URL callback for Backbone.sync
+      url: '',
+      // Whether to enable automatic saving
+      autoSave: false,
+      // How often to autosave in milliseconds
+      autoSaveInterval: 5000,
+      // Whether to save entities that are referenced by entities
+      // we're saving to the server.
+      saveReferencedNew: false,
+      saveReferencedChanged: false
     },
 
     _create: function () {
@@ -1365,14 +1708,68 @@
       });
 
       widget._bindEditables();
+      if (widget.options.autoSave) {
+        widget._autoSave();
+      }
+    },
+
+    _autoSave: function () {
+      var widget = this;
+      widget.saveEnabled = true;
+
+      var doAutoSave = function () {
+        if (!widget.saveEnabled) {
+          return;
+        }
+
+        if (widget.changedModels.length === 0) {
+          return;
+        }
+
+        widget._saveRemote({
+          success: function () {
+            jQuery('#midgardcreate-save').button({
+              disabled: true
+            });
+          },
+          error: function () {}
+        });
+      };
+
+      var timeout = window.setInterval(doAutoSave, widget.options.autoSaveInterval);
+
+      this.element.bind('startPreventSave', function () {
+        if (timeout) {
+          window.clearInterval(timeout);
+          timeout = null;
+        }
+        widget.disableSave();
+      });
+      this.element.bind('stopPreventSave', function () {
+        if (!timeout) {
+          timeout = window.setInterval(doAutoSave, widget.options.autoSaveInterval);
+        }
+        widget.enableSave();
+      });
+
+    },
+
+    enableSave: function () {
+      this.saveEnabled = true;
+    },
+
+    disableSave: function () {
+      this.saveEnabled = false;
     },
 
     _bindEditables: function () {
       var widget = this;
+      var restorables = [];
+      var restorer;
 
       widget.element.bind('midgardeditablechanged', function (event, options) {
-        if (_.indexOf(widget.options.changedModels, options.instance) === -1) {
-          widget.options.changedModels.push(options.instance);
+        if (_.indexOf(widget.changedModels, options.instance) === -1) {
+          widget.changedModels.push(options.instance);
         }
         widget._saveLocal(options.instance);
         jQuery('#midgardcreate-save').button({disabled: false});
@@ -1386,19 +1783,72 @@
       widget.element.bind('midgardeditableenable', function (event, options) {
         jQuery('#midgardcreate-save').button({disabled: true});
         jQuery('#midgardcreate-save').show();
-        if (!options.instance.isNew()) {
-          widget._readLocal(options.instance);
+
+        if (!options.instance._originalAttributes) {
+          options.instance._originalAttributes = _.clone(options.instance.attributes);
         }
-        _.each(options.instance.attributes, function (attributeValue, property) {
+
+        if (!options.instance.isNew() && widget._checkLocal(options.instance)) {
+          // We have locally-stored modifications, user needs to be asked
+          restorables.push(options.instance);
+        }
+
+        /*_.each(options.instance.attributes, function (attributeValue, property) {
           if (attributeValue instanceof widget.vie.Collection) {
-            //widget._readLocalReferences(options.instance, property, attributeValue);
+            widget._readLocalReferences(options.instance, property, attributeValue);
           }
+        });*/
+      });
+
+      widget.element.bind('midgardcreatestatechange', function (event, options) {
+        if (options.state === 'browse' || restorables.length === 0) {
+          restorables = [];
+          if (restorer) {
+            restorer.close();
+          }
+          return;
+        }
+        
+        restorer = jQuery('body').data('midgardCreate').showNotification({
+          bindTo: '#midgardcreate-edit a',
+          gravity: 'TR',
+          body: restorables.length + " items on this page have local modifications",
+          timeout: 0,
+          actions: [
+            {
+              name: 'restore',
+              label: 'Restore',
+              cb: function() {
+                _.each(restorables, function (instance) {
+                  widget._readLocal(instance);
+                });
+                restorables = [];
+                restorer = null;
+              },
+              className: 'create-ui-btn'
+            },
+            {
+              name: 'ignore',
+              label: 'Ignore',
+              cb: function(event, notification) {
+                if (widget.options.removeLocalstorageOnIgnore) {
+                  _.each(restorables, function (instance) {
+                    widget._removeLocal(instance);
+                  });
+                }
+                notification.close();
+                restorables = [];
+                restorer = null;
+              },
+              className: 'create-ui-btn'
+            }
+          ]
         });
       });
 
       widget.element.bind('midgardstorageloaded', function (event, options) {
-        if (_.indexOf(widget.options.changedModels, options.instance) === -1) {
-          widget.options.changedModels.push(options.instance);
+        if (_.indexOf(widget.changedModels, options.instance) === -1) {
+          widget.changedModels.push(options.instance);
         }
         jQuery('#midgardcreate-save').button({
           disabled: false
@@ -1408,26 +1858,54 @@
 
     _saveRemote: function (options) {
       var widget = this;
+      if (widget.changedModels.length === 0) {
+        return;
+      }
+
       widget._trigger('save', null, {
-        models: widget.options.changedModels
+        models: widget.changedModels
       });
-      var needed = widget.options.changedModels.length;
+
+      var needed = widget.changedModels.length;
       if (needed > 1) {
         notification_msg = needed + ' objects saved successfully';
       } else {
-        subject = widget.options.changedModels[0].getSubjectUri();
+        subject = widget.changedModels[0].getSubjectUri();
         notification_msg = 'Object with subject ' + subject + ' saved successfully';
       }
 
-      _.forEach(widget.options.changedModels, function (model, index) {
+      widget.disableSave();
+      _.forEach(widget.changedModels, function (model, index) {
+
+        // Optionally handle entities referenced in this model first
+        _.each(model.attributes, function (value, property) {
+          if (!value || !value.isCollection) {
+            return;
+          }
+
+          value.each(function (referencedModel) {
+            if (widget.changedModels.indexOf(referencedModel) !== -1) {
+              // The referenced model is already in the save queue
+              return;
+            }
+
+            if (referencedModel.isNew() && widget.options.saveReferencedNew) {
+              return referencedModel.save();
+            }
+
+            if (referencedModel.hasChanged() && widget.options.saveReferencedChanged) {
+              return referencedModel.save();
+            }
+          });
+        });
+
         model.save(null, {
           success: function () {
-            if (model.originalAttributes) {
-              // From now on we're going with the values we have on server
-              delete model.originalAttributes;
-            }
+            // From now on we're going with the values we have on server
+            model._originalAttributes = _.clone(model.attributes);
+
             widget._removeLocal(model);
-            widget.options.changedModels.splice(index, 1);
+            widget.changedModels.splice(index, 1);
             needed--;
             if (needed <= 0) {
               // All models were happily saved
@@ -1436,6 +1914,7 @@
               jQuery('body').data('midgardCreate').showNotification({
                 body: notification_msg
               });
+              widget.enableSave();
             }
           },
           error: function (m, err) {
@@ -1447,6 +1926,10 @@
             options.error();
             jQuery('body').data('midgardCreate').showNotification({
               body: notification_msg
+            });
+
+            widget._trigger('error', null, {
+              instance: model
             });
           }
         });
@@ -1498,6 +1981,19 @@
       localStorage.setItem(identifier, JSON.stringify([json]));
     },
 
+    _checkLocal: function (model) {
+      if (!this.options.localStorage) {
+        return false;
+      }
+
+      var local = localStorage.getItem(model.getSubjectUri());
+      if (!local) {
+        return false;
+      }
+
+      return true;
+    },
+
     _readLocal: function (model) {
       if (!this.options.localStorage) {
         return;
@@ -1507,8 +2003,8 @@
       if (!local) {
         return;
       }
-      if (!model.originalAttributes) {
-        model.originalAttributes = _.clone(model.attributes);
+      if (!model._originalAttributes) {
+        model._originalAttributes = _.clone(model.attributes);
       }
       var parsed = JSON.parse(local);
       var entity = this.vie.entities.addOrUpdate(parsed, {
@@ -1535,6 +2031,7 @@
 
     _restoreLocal: function (model) {
       var widget = this;
+
       // Remove unsaved collection members
       if (!model) { return; }
       _.each(model.attributes, function (attributeValue, property) {
@@ -1549,12 +2046,12 @@
 
       // Restore original object properties
       if (jQuery.isEmptyObject(model.changedAttributes())) {
-        if (model.originalAttributes) {
-          model.set(model.originalAttributes);
-          delete model.originalAttributes;
+        if (model._originalAttributes) {
+          model.set(model._originalAttributes);
         }
         return;
       }
+
       model.set(model.previousAttributes());
     },
 
@@ -1567,164 +2064,306 @@
     }
   });
 })(jQuery);
-//     Create - On-site web editing interface
+//     Create.js - On-site web editing interface
 //     (c) 2012 IKS Consortium
 //     Create may be freely distributed under the MIT license.
 //     For all details and documentation:
 //     http://createjs.org/
 (function (jQuery, undefined) {
   jQuery.widget('Midgard.midgardTags', {
+    enhanced: false,
+
     options: {
       vie: null,
       entity: null,
       element: null,
-      entityElement: null
+      entityElement: null,
+      parentElement: '.create-ui-tool-metadataarea',
+      predicate: 'skos:related'
     },
 
     _init: function () {
+      var widget = this;
 
       this.vie = this.options.vie;
       this.entity = this.options.entity;
       this.element = this.options.element;
+      jQuery(this.options.entityElement).bind('midgardeditableactivated', function (event, data) {
+        if (data.instance !== widget.options.entity) {
+          return;
+        }
+        widget._renderWidget();
+        widget.loadTags();
+      });
 
+      jQuery(this.options.entityElement).bind('midgardeditablechanged', function (event, data) {
+        if (data.instance !== widget.options.entity) {
+          return;
+        }
+        widget.enhanced = false;
+      });
+
+      this._listenAnnotate(this.options.entityElement);
+    },
+
+    // Convert to reference URI as needed
+    _normalizeSubject: function(subject) {
+      if (this.entity.isReference(subject)) {
+        return subject;
+      }
+        
+      if (subject.substr(0, 7) !== 'http://') {
+        subject = 'urn:tag:' + subject;
+      }
+
+      subject = this.entity.toReference(subject);
+      return subject;
+    },
+
+    _tagLabel: function (subject) {
+      subject = this.entity.fromReference(subject);
+
+      if (subject.substr(0, 8) === 'urn:tag:') {
+        subject = subject.substr(8, subject.length - 1);
+      }
+
+      if (subject.substring(0, 7) == 'http://') {
+        subject = subject.substr(subject.lastIndexOf('/') + 1, subject.length - 1);
+        subject = subject.replace(/_/g, ' ');
+      }
+      return subject;
+    },
+
+    // Centralized method for adding new tags to an entity
+    // regardless of whether they come from this widget
+    // or Annotate.js
+    addTag: function (subject, label, type) {
+      if (label === undefined) {
+        label = this._tagLabel(subject);
+      }
+
+      subject = this._normalizeSubject(subject);
+
+      if (type && !this.entity.isReference(type)) {
+        type = this.entity.toReference(type);
+      }
+
+      var tagEntity = this.vie.entities.addOrUpdate({
+        '@subject': subject,
+        'rdfs:label': label,
+        '@type': type
+      });
+
+      var tags = this.options.entity.get(this.options.predicate);
+      if (!tags) {
+        tags = new this.vie.Collection();
+        tags.vie = this.options.vie;
+        this.options.entity.set(this.options.predicate, tags);
+      } else if (!tags.isCollection) {
+        tags = new this.vie.Collection(_.map(tags, function(tag) {
+          if (tag.isEntity) {
+            return tag;
+          }
+          return {
+            '@subject': tag
+          };
+        }));
+        tags.vie = this.options.vie;
+        this.options.entity.set(this.options.predicate, tags);
+      }
+
+      tags.addOrUpdate(tagEntity);
+
+      this.options.entityElement.trigger('midgardeditablechanged', {
+        instance: this.options.entity
+      });
+    },
+
+    removeTag: function (subject) {
+      var tags = this.options.entity.get(this.options.predicate);
+      if (!tags) {
+        return;
+      }
+
+      subject = this._normalizeSubject(subject);
+      var tag = tags.get(subject);
+      if (!tag) {
+        return;
+      }
+
+      tags.remove(subject);
+      this.options.entityElement.trigger('midgardeditablechanged', {
+        instance: this.options.entity
+      });
+    },
+
+    // Listen for accepted annotations from Annotate.js if that 
+    // is in use
+    // and register them as tags
+    _listenAnnotate: function (entityElement) {
+      var widget = this;
+      entityElement.bind('annotateselect', function (event, data) {
+        widget.addTag(data.linkedEntity.uri, data.linkedEntity.label, data.linkedEntity.type[0]);
+      });
+
+      entityElement.bind('annotateremove', function (event, data) {
+        widget.removeTag(data.linkedEntity.uri);
+      });
+    },
+
+    _prepareEditor: function (button) {
+      var contentArea = jQuery('<div class="dropdown-menu"></div>');
+      var articleTags = jQuery('<div class="create-ui-tags articleTags"><h3>Article tags</h3><input type="text" class="tags" value="" /></div>');
+      var suggestedTags = jQuery('<div class="create-ui-tags suggestedTags"><h3>Suggested tags</h3><input type="text" class="tags" value="" /></div>');
+
+      // Tags plugin requires IDs to exist
+      jQuery('input', articleTags).attr('id', 'articleTags-' + this.entity.cid);
+      jQuery('input', suggestedTags).attr('id', 'suggestedTags-' + this.entity.cid);
+
+      contentArea.append(articleTags);
+      contentArea.append(suggestedTags);
+      contentArea.hide();
+
+      var offset = button.position();
+      contentArea.css('position', 'absolute');
+      contentArea.css('left', offset.left);
+
+      return contentArea;
+    },
+
+    _renderWidget: function () {
+      var widget = this;
       var subject = this.entity.getSubject();
 
-      // insert settings pane
-      var id = subject.replace(/[^A-Za-z]/g, '-');
-      this.pane = jQuery('<div class="hiddenfieldsContainer"><div class="hiddenfieldsToggle"></div><div class="hiddenfields"><div class="hiddenfieldsCloseButton"></div><h2>Article settings</h2><div id="articleTagsWrapper"><form><div class="articleTags"><h3>Article tags</h3><input type="text" id="' + id + '-articleTags" class="tags" value="" /></div><div class="articleSuggestedTags"><h3>Suggested tags</h3><input type="text" id="' + id + '-suggestedTags" class="tags" value="" /></div></form></div></div><div class="hiddenfieldsCloseCorner"></div></div>');
-      this.pane = this.pane.insertBefore(this.element);
-      this.articleTags = this.pane.find('.articleTags input');
-      this.suggestedTags = this.pane.find('.articleSuggestedTags input');
+      var button = jQuery('<button class="create-ui-btn"><i class="icon-tags"></i> Tags</a>').button();
 
-      // bind toggle events for settings pane
-      this.pane.find('.hiddenfieldsToggle').click(function (event) {
-        var context = jQuery(this).closest('.hiddenfieldsContainer');
-        jQuery('.hiddenfields', context).show();
-        jQuery('.hiddenfieldsToggle', context).hide();
-        jQuery('.hiddenfieldsCloseCorner', context).show();
-        jQuery('.hiddenfieldsCloseButton', context).show();
-      });
+      var parentElement = jQuery(this.options.parentElement);
+      parentElement.empty();
+      parentElement.append(button);
+      parentElement.show();
 
-      var that = this;
-      this.pane.find('.hiddenfieldsCloseCorner, .hiddenfieldsCloseButton').click(function (event) {
-        that.closeTags();
-      });
+      var contentArea = this._prepareEditor(button);
+      button.after(contentArea);
 
-      jQuery(document).click(function (e) {
-        if (jQuery(e.target).closest('.hiddenfieldsContainer').size() === 0 && jQuery('.hiddenfieldsCloseCorner:visible').length > 0) {
-          that.closeTags();
-        }
-      });
-
-      this.articleTags.tagsInput({
+      this.articleTags = jQuery('.articleTags input', contentArea).tagsInput({
         width: 'auto',
         height: 'auto',
         onAddTag: function (tag) {
-
-          var entity = that.entity;
-
-          // convert to reference url
-          if (!entity.isReference(tag)) {
-            tag = 'urn:tag:' + tag;
-          }
-
-          // add tag to entity
-          entity.attributes['<http://purl.org/dc/elements/1.1/subject>'].vie = that.vie;
-          entity.attributes['<http://purl.org/dc/elements/1.1/subject>'].addOrUpdate({
-            '@subject': tag
-          });
+          widget.addTag(tag);
         },
         onRemoveTag: function (tag) {
-
-          // remove tag from entity
-          that.entity.attributes['<http://purl.org/dc/elements/1.1/subject>'].remove(tag);
-        },
-        label: this.tagLabel
+          widget.removeTag(tag);
+        }
       });
 
-      this.suggestedTags.tagsInput({
+      var selectSuggested = function () {
+        var tag = jQuery.trim(jQuery(this).text());
+        widget.articleTags.addTag(tag);
+        widget.suggestedTags.removeTag(tag);
+      };
+
+      this.suggestedTags = jQuery('.suggestedTags input', contentArea).tagsInput({
         width: 'auto',
         height: 'auto',
         interactive: false,
-        label: this.tagLabel,
+        onAddTag: function (tag) {
+          jQuery('.suggestedTags .tag span', contentArea).unbind('click', selectSuggested);
+          jQuery('.suggestedTags .tag span', contentArea).bind('click', selectSuggested);
+        },
+        onRemoveTag: function (tag) {
+          jQuery('.suggestedTags .tag span', contentArea).unbind('click', selectSuggested);
+          jQuery('.suggestedTags .tag span', contentArea).bind('click', selectSuggested);
+        },
         remove: false
       });
 
-      // add suggested tag on click to tags
-      jQuery('#' + id + '-suggestedTags_tagsinput .tag span').live('click', function () {
-
-        var tag = jQuery(this).text();
-        that.articleTags.addTag(jQuery(this).data('value'));
-        that.suggestedTags.removeTag($.trim(tag));
-
-        return false;
+      button.bind('click', function() {
+        contentArea.toggle();
       });
-
-      this.loadTags();
-    },
-
-    closeTags: function () {
-      var context = jQuery('.hiddenfieldsContainer');
-      jQuery('.hiddenfields', context).hide();
-      jQuery('.hiddenfieldsToggle', context).show();
-      jQuery('.hiddenfieldsCloseCorner', context).hide();
-      jQuery('.hiddenfieldsCloseButton', context).hide();
-
-      // save on close
-      this.options.deactivated();
     },
 
     loadTags: function () {
+      var widget = this;
 
-      var that = this;
+      // Populate existing tags from entity
+      var tags = this.entity.get(this.options.predicate);
+      if (tags) {
+        if (_.isString(tags)) {
+          widget.articleTags.addTag(widget._tagLabel(tags));
+        } else if (tags.isCollection) {
+          tags.each(function (tag) {
+            widget.articleTags.addTag(tag.get('rdfs:label'));
+          });
+        } else {
+          _.each(tags, function (tag) {
+            widget.articleTags.addTag(widget._tagLabel(tag));
+          });
+        }
+      }
 
-      // load article tags
-      var tags = this.entity.attributes['<http://purl.org/dc/elements/1.1/subject>'].models;
-      jQuery(tags).each(function () {
-        that.articleTags.addTag(this.id);
+      if (this.vie.services.stanbol) {
+        widget.enhance();
+      } else {
+        jQuery('.suggestedTags', widget.element).hide();
+      }
+    },
+
+    _getLabelLang: function (labels) {
+      if (!_.isArray(labels)) {
+        return null;
+      }
+
+      var langLabel;
+
+      _.each(labels, function (label) {
+        if (label['@language'] === 'en') {
+          langLabel = label['@value'];
+        }
       });
 
+      return langLabel;
+    },
+
+    _addEnhancement: function (enhancement) {
+      if (!enhancement.isEntity) {
+        return;
+      }
+
+      var label = this._getLabelLang(enhancement.get('rdfs:label'));
+      if (!label) {
+        return;
+      }
+
+      var tags = this.options.entity.get(this.options.predicate);
+      if (tags && tags.isCollection && tags.indexOf(enhancement) !== -1) {
+        return;
+      }
+
+      this.suggestedTags.addTag(label);
+    },
+
+    enhance: function () {
+      if (this.enhanced) {
+        return;
+      }
+      this.enhanced = true;
+
+      var widget = this;
+
       // load suggested tags
-      that.vie.analyze({
-        element: this.options.entityElement
+      this.vie.analyze({
+        element: jQuery('[property]', this.options.entityElement)
       }).using(['stanbol']).execute().success(function (enhancements) {
-        return jQuery(enhancements).each(function (i, e) {
-
-          if (typeof e.attributes == 'undefined') {
-
-            if (e['<http://www.w3.org/2000/01/rdf-schema#label>']) {
-              that.suggestedTags.addTag(e['@subject']);
-            }
-
-          } else {
-
-            // Backward compability
-            if (e.attributes['<rdfschema:label>']) {
-              that.suggestedTags.addTag(e.id);
-            }
-          }
+        _.each(enhancements, function (enhancement) {
+          widget._addEnhancement(enhancement);
         });
       }).fail(function (xhr) {
         // console.log(xhr);
       });
-    },
-
-    tagLabel: function (value) {
-
-      if (value.substring(0, 9) == '<urn:tag:') {
-        value = value.substring(9, value.length - 1);
-      }
-
-      if (value.substring(0, 8) == '<http://') {
-        value = value.substring(value.lastIndexOf('/') + 1, value.length - 1);
-        value = value.replace(/_/g, ' ');
-      }
-
-      return value;
     }
   });
 })(jQuery);
-//     Create - On-site web editing interface
+//     Create.js - On-site web editing interface
 //     (c) 2011-2012 Henri Bergius, IKS Consortium
 //     Create may be freely distributed under the MIT license.
 //     For all details and documentation:
@@ -1733,7 +2372,6 @@
   jQuery.widget('Midgard.midgardToolbar', {
     options: {
       display: 'full',
-      statechange: function () {}
     },
 
     _create: function () {
@@ -1759,6 +2397,7 @@
       jQuery(this.element).bind('midgardcreatestatechange', function (event, options) {
         if (options.state == 'browse') {
           widget._clearWorkflows();
+          widget._clearMetadata();
         }
       });
 
@@ -1804,15 +2443,19 @@
     },
 
     _getFull: function () {
-      return jQuery('<div class="create-ui-toolbar-wrapper"><div class="create-ui-toolbar-toolarea"><div class="create-ui-toolbar-dynamictoolarea"><ul class="create-ui-dynamictools create-ui-toolset-1"><li class="create-ui-tool-workflowarea"></li><li class="create-ui-tool-freearea"></li></ul></div><div class="create-ui-toolbar-statustoolarea"><ul class="create-ui-statustools"></ul></div></div></div>');
+      return jQuery('<div class="create-ui-toolbar-wrapper"><div class="create-ui-toolbar-toolarea"><div class="create-ui-toolbar-dynamictoolarea"><ul class="create-ui-dynamictools create-ui-toolset-1"><li class="create-ui-tool-metadataarea"></li><li class="create-ui-tool-workflowarea"></li><li class="create-ui-tool-freearea"></li></ul></div><div class="create-ui-toolbar-statustoolarea"><ul class="create-ui-statustools"></ul></div></div></div>');
     },
 
     _clearWorkflows: function () {
       jQuery('.create-ui-tool-workflowarea', this.element).empty();
+    },
+
+    _clearMetadata: function () {
+      jQuery('.create-ui-tool-metadataarea', this.element).empty();
     }
   });
 })(jQuery);
-//     Create - On-site web editing interface
+//     Create.js - On-site web editing interface
 //     (c) 2012 Jerry Jalava, IKS Consortium
 //     Create may be freely distributed under the MIT license.
 //     For all details and documentation:

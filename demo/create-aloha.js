@@ -6,8 +6,16 @@ jQuery(document).ready(function() {
     },
     // Use Aloha for all text editing
     editorWidgets: {
-      'default': 'alohaWidget',
-      'Text': 'alohaWidget'
+      'default': 'aloha'
+    },
+    editorOptions: {
+      aloha: {
+        widget: 'alohaWidget'
+      }
+    },
+    collectionWidgets: {
+      'default': null,
+      'feature': 'midgardCollectionAdd'
     },
     stanbolUrl: 'http://dev.iks-project.eu:8081' 
   });

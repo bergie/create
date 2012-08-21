@@ -4,7 +4,11 @@ jQuery(document).ready(function() {
     url: function() {
       return 'javascript:false;';
     },
-    stanbolUrl: 'http://dev.iks-project.eu:8081' 
+    stanbolUrl: 'http://dev.iks-project.eu:8081',
+    collectionWidgets: {
+      'default': null,
+      'feature': 'midgardCollectionAdd'
+    }
   });
   
   // Fake Backbone.sync since there is no server to communicate with
