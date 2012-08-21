@@ -114,13 +114,18 @@
     },
 
     _init: function () {
-      if (this.options.state === 'edit') {
+      this.setState(this.options.state);
+
+      // jQuery(this.element).data('midgardNotifications').showTutorial();
+    },
+
+    setState: function (state) {
+      this._setOption('state', state);
+      if (state === 'edit') {
         this._enableEdit();
       } else {
         this._disableEdit();
       }
-
-      // jQuery(this.element).data('midgardNotifications').showTutorial();            
     },
 
     showNotification: function (options) {
@@ -162,7 +167,7 @@
 
       var stateID = this.options.storagePrefix + 'Midgard.create.state';
       if (sessionStorage.getItem(stateID)) {
-        this._setOption('state', sessionStorage.getItem(stateID));
+        this.setState(sessionStorage.getItem(stateID));
       }
 
       this.element.bind('midgardcreatestatechange', function (event, options) {
