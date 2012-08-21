@@ -18,7 +18,7 @@
       this.options.disabled = false;
     },
     disable: function () {
-      Aloha.jQuery(options.element.get(0)).mahalo();
+      Aloha.jQuery(this.options.element.get(0)).mahalo();
       this.options.disabled = true;
     },
     _initialize: function () {
