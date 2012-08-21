@@ -65,6 +65,7 @@
           var collection = widget.enableCollection({
             model: widget.options.model,
             collection: view.collection,
+            property: jQuery(view.el).attr('rel'),
             view: view,
             element: view.el,
             vie: widget.vie,
@@ -227,12 +228,28 @@
     },
 
     collectionWidgetName: function (data) {
-      // TODO: Actual selection mechanism
-      return this.options.collectionWidgets['default'];
+      if (this.options.collectionWidgets[data.property] !== undefined) {
+        // Widget configuration set for specific RDF predicate
+        return this.options.collectionWidgets[data.property];
+      }
+
+      var propertyType = 'default';
+      var type = this.options.model.get('@type');
+      if (type) {
+        if (type.attributes && type.attributes.get(data.property)) {
+          propertyType = type.attributes.get(data.property).range[0];
+        }
+      }
+      if (this.options.collectionWidgets[propertyType] !== undefined) {
+        return this.options.collectionWidgets[propertyType];
+      }
     },
 
     enableCollection: function (data) {
       var widgetName = this.collectionWidgetName(data);
+      if (widgetName === null) {
+        return;
+      }
       data.disabled = false;
       if (typeof jQuery(data.element)[widgetName] !== 'function') {
         throw new Error(widgetName + ' widget is not available');
@@ -244,6 +261,9 @@
 
     disableCollection: function (data) {
       var widgetName = jQuery(data.element).data('createCollectionWidgetName');
+      if (widgetName === null) {
+        return;
+      }
       data.disabled = true;
       if (widgetName) {
         // only if there has been an editing widget registered

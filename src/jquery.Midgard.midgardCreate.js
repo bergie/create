@@ -41,6 +41,9 @@
           widget: 'halloWidget'
         }
       },
+      collectionWidgets: {
+        default: 'midgardCollectionAdd'
+      },
       url: function () {},
       storagePrefix: 'node',
       workflows: {
@@ -224,7 +227,8 @@
         disabled: false,
         vie: widget.vie,
         widgets: widget.options.editorWidgets,
-        editors: widget.options.editorOptions
+        editors: widget.options.editorOptions,
+        collectionWidgets: widget.options.collectionWidgets
       };
       if (widget.options.enableEditor) {
         editableOptions[enableEditor] = widget.options.enableEditor;
