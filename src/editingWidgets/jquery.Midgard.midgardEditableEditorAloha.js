@@ -18,9 +18,7 @@
       this.options.disabled = false;
     },
     disable: function () {
-      try {
-        options.editable.destroy();
-      } catch (err) {}
+      Aloha.jQuery(options.element.get(0)).mahalo();
       this.options.disabled = true;
     },
     _initialize: function () {
