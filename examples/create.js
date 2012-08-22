@@ -1935,7 +1935,8 @@
 
             options.error();
             jQuery('body').data('midgardCreate').showNotification({
-              body: notification_msg
+              body: notification_msg,
+              timeout: 0
             });
 
             widget._trigger('error', null, {
