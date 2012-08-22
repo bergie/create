@@ -1,6 +1,6 @@
 ---
 layout: front
-title: A new kind of web editing interface
+title: Make anything editable
 github: https://github.com/bergie/create
 bodyclass: front
 ---
