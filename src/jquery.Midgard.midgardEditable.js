@@ -220,7 +220,7 @@
       data.disabled = false;
 
       if (typeof jQuery(data.element)[editorWidget] !== 'function') {
-        throw new Error(widgetName + ' widget is not available');
+        throw new Error(editorWidget + ' widget is not available');
       }
 
       jQuery(data.element)[editorWidget](data);

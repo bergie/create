@@ -674,7 +674,7 @@
       data.disabled = false;
 
       if (typeof jQuery(data.element)[editorWidget] !== 'function') {
-        throw new Error(widgetName + ' widget is not available');
+        throw new Error(editorWidget + ' widget is not available');
       }
 
       jQuery(data.element)[editorWidget](data);
@@ -1701,7 +1701,9 @@
       // Whether to save entities that are referenced by entities
       // we're saving to the server.
       saveReferencedNew: false,
-      saveReferencedChanged: false
+      saveReferencedChanged: false,
+      // Namespace used for events from midgardEditable-derived widget
+      editableNs: 'midgardeditable'
     },
 
     _create: function () {
@@ -1790,7 +1792,7 @@
       var restorables = [];
       var restorer;
 
-      widget.element.bind('midgardeditablechanged', function (event, options) {
+      widget.element.bind(widget.options.editableNs + 'changed', function (event, options) {
         if (_.indexOf(widget.changedModels, options.instance) === -1) {
           widget.changedModels.push(options.instance);
         }
@@ -1798,12 +1800,12 @@
         jQuery('#midgardcreate-save').button({disabled: false});
       });
 
-      widget.element.bind('midgardeditabledisable', function (event, options) {
+      widget.element.bind(widget.options.editableNs + 'disable', function (event, options) {
         widget._restoreLocal(options.instance);
         jQuery('#midgardcreate-save').hide();
       });
 
-      widget.element.bind('midgardeditableenable', function (event, options) {
+      widget.element.bind(widget.options.editableNs + 'enable', function (event, options) {
         jQuery('#midgardcreate-save').button({disabled: true});
         jQuery('#midgardcreate-save').show();
 
