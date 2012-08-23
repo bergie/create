@@ -1709,7 +1709,7 @@
     _create: function () {
       var widget = this;
 
-      if (Modernizr.localstorage) {
+      if (window.localStorage) {
         this.options.localStorage = true;
       }
 
