@@ -46,12 +46,17 @@
       this.enable();
     },
 
+    findEditableElements: function (callback) {
+      this.vie.service('rdfa').findPredicateElements(this.options.model.id, jQuery('[property]', this.element), false).each(callback);
+    },
+
     enable: function () {
       var widget = this;
       if (!this.options.model) {
         return;
       }
-      this.vie.service('rdfa').findPredicateElements(this.options.model.id, jQuery('[property]', this.element), false).each(function () {
+
+      this.findEditableElements(function () {
         return widget._enableProperty(jQuery(this));
       });
 
@@ -59,6 +64,10 @@
         instance: this.options.model,
         entityElement: this.element
       });
+
+      if (!this.vie.services['rdfa']) {
+        return;
+      }
 
       _.forEach(this.vie.service('rdfa').views, function (view) {
         if (view instanceof widget.vie.view.Collection && widget.options.model === view.owner) {
@@ -104,9 +113,13 @@
       });
     },
 
+    getElementPredicate: function (element) {
+      return this.vie.service('rdfa').getElementPredicate(element);
+    },
+
     _enableProperty: function (element) {
       var widget = this;
-      var propertyName = this.vie.service('rdfa').getElementPredicate(element);
+      var propertyName = this.getElementPredicate(element);
       if (!propertyName) {
         return true;
       }
