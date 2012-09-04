@@ -12,6 +12,7 @@
       editingWidgets: null,
       collection: null,
       model: null,
+      definition: null,
       view: null,
       disabled: false,
       vie: null,
@@ -24,11 +25,14 @@
         widget.options.collection.url = widget.options.model.url();
       }
 
-      widget.options.view.collection.bind('add', function (model) {
+      widget.options.collection.bind('add', function (model) {
         model.primaryCollection = widget.options.collection;
         widget.options.vie.entities.add(model);
         model.collection = widget.options.collection;
       });
+
+      // Re-check collection constraints
+      widget.options.collection.bind('add remove reset', widget.checkCollectionConstraints, widget);
 
       widget._bindCollectionView(widget.options.view);
     },
@@ -36,8 +40,9 @@
     _bindCollectionView: function (view) {
       var widget = this;
       view.bind('add', function (itemView) {
-        //itemView.el.effect('slide');
-        widget._makeEditable(itemView);
+        itemView.$el.effect('slide', function () {
+          widget._makeEditable(itemView);
+        });
       });
     },
 
@@ -55,8 +60,32 @@
       this.enable();
     },
 
+    checkCollectionConstraints: function () {
+      if (this.options.disabled) {
+        return;
+      }
+
+      if (!this.options.definition) {
+        // We have now information on the constraints applying to this collection
+        return;
+      }
+
+      if (!this.options.definition.max || this.options.definition.max === -1) {
+        // No maximum constraint
+        return;
+      }
+      
+      if (this.options.collection.length < this.options.definition.max) {
+        this.addButton.show();
+        return;
+      }
+      // Collection is already full by its definition
+      this.addButton.hide();
+    },
+
     enable: function () {
       var widget = this;
+
       widget.addButton = jQuery('<button class="btn"><i class="icon-plus"></i> Add</button>').button();
       widget.addButton.addClass('midgard-create-add');
       widget.addButton.click(function () {
@@ -64,6 +93,7 @@
       });
 
       jQuery(widget.options.view.el).after(widget.addButton);
+      widget.checkCollectionConstraints();
     },
 
     disable: function () {
