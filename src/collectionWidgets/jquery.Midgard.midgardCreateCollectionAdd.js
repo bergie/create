@@ -22,7 +22,13 @@
     _create: function () {
       var widget = this;
       if (!widget.options.collection.localStorage) {
-        widget.options.collection.url = widget.options.model.url();
+        try {
+          widget.options.collection.url = widget.options.model.url();
+        } catch (e) {
+          if (window.console) {
+            console.log(e);
+          }
+        }
       }
 
       widget.options.collection.bind('add', function (model) {
