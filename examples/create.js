@@ -1789,7 +1789,6 @@
 //     http://createjs.org/
 (function (jQuery, undefined) {
   jQuery.widget('Midgard.midgardStorage', {
-    changedModels: [],
     saveEnabled: true,
     options: {
       // Whether to use localstorage
@@ -1813,6 +1812,7 @@
 
     _create: function () {
       var widget = this;
+      this.changedModels = [];
 
       if (window.localStorage) {
         this.options.localStorage = true;
@@ -2005,7 +2005,7 @@
       }
 
       widget.disableSave();
-      _.forEach(widget.changedModels, function (model, index) {
+      _.each(widget.changedModels, function (model) {
 
         // Optionally handle entities referenced in this model first
         _.each(model.attributes, function (value, property) {
@@ -2035,7 +2035,9 @@
             model._originalAttributes = _.clone(model.attributes);
 
             widget._removeLocal(model);
-            widget.changedModels.splice(index, 1);
+            setTimeout(function () {
+              widget.changedModels.splice(widget.changedModels.indexOf(model), 1);
+            }, 0);
             needed--;
             if (needed <= 0) {
               // All models were happily saved
