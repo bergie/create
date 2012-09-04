@@ -6,7 +6,7 @@
 (function (jQuery, undefined) {
   // # Widget for adding items to a collection
   jQuery.widget('Midgard.midgardCollectionAdd', {
-    addButton: null,
+    addButtons: [],
 
     options: {
       editingWidgets: null,
@@ -75,32 +75,37 @@
         return;
       }
       
-      if (this.options.collection.length < this.options.definition.max) {
-        this.addButton.show();
+      if (this.options.view.canAdd() && this.options.collection.length < this.options.definition.max) {
+        _.each(this.addButtons, function (button) {
+          button.show();
+        });
         return;
       }
       // Collection is already full by its definition
-      this.addButton.hide();
+      _.each(this.addButtons, function (button) {
+        button.hide();
+      });
     },
 
     enable: function () {
       var widget = this;
 
-      widget.addButton = jQuery('<button class="btn"><i class="icon-plus"></i> Add</button>').button();
-      widget.addButton.addClass('midgard-create-add');
-      widget.addButton.click(function () {
+      var addButton = jQuery('<button class="btn"><i class="icon-plus"></i> Add</button>').button();
+      addButton.addClass('midgard-create-add');
+      addButton.click(function () {
         widget.options.collection.add({});
       });
+      jQuery(widget.options.view.el).after(addButton);
 
-      jQuery(widget.options.view.el).after(widget.addButton);
+      widget.addButtons.push(addButton);
       widget.checkCollectionConstraints();
     },
 
     disable: function () {
-      if (this.addButton) {
-        this.addButton.remove();
-        delete this.addButton;
-      }
+      _.each(this.addButtons, function (button) {
+        button.remove();
+      });
+      this.addButtons = [];
     }
   });
 })(jQuery);

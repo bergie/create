@@ -71,10 +71,12 @@
 
       _.forEach(this.vie.service('rdfa').views, function (view) {
         if (view instanceof widget.vie.view.Collection && widget.options.model === view.owner) {
+          var property = jQuery(view.el).attr('rel');
           var collection = widget.enableCollection({
             model: widget.options.model,
             collection: view.collection,
-            property: jQuery(view.el).attr('rel'),
+            property: property,
+            definition: widget.getAttributeDefinition(property),
             view: view,
             element: view.el,
             vie: widget.vie,

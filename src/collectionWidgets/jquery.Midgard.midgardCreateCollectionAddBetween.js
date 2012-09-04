@@ -53,6 +53,8 @@
         jQuery(view.el).after(addButton);
         widget.addButtons.push(addButton);
       });
+
+      this.checkCollectionConstraints();
     },
 
     disable: function () {
