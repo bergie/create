@@ -33,7 +33,7 @@
       var addButton = jQuery('<button class="btn"><i class="icon-plus"></i></button>').button();
       addButton.addClass('midgard-create-add');
       addButton.click(function () {
-        widget.options.collection.add({}, {
+        widget.addItem(addButton, {
           at: index
         });
       });

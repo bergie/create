@@ -93,7 +93,7 @@
       var addButton = jQuery('<button class="btn"><i class="icon-plus"></i> Add</button>').button();
       addButton.addClass('midgard-create-add');
       addButton.click(function () {
-        widget.options.collection.add({});
+        widget.addItem(addButton);
       });
       jQuery(widget.options.view.el).after(addButton);
 
@@ -106,6 +106,45 @@
         button.remove();
       });
       this.addButtons = [];
+    },
+
+    _getTypeActions: function (options) {
+      var widget = this;
+      var actions = [];
+      _.each(this.options.definition.range, function (type) {
+        actions.push({
+          name: type,
+          label: type,
+          cb: function () {
+            widget.options.collection.add({
+              '@type': type
+            }, options);
+          },
+          className: 'create-ui-btn'
+        });
+      });
+      return actions;
+    },
+
+    addItem: function (button, options) {
+      var itemData = {};
+      if (this.options.definition && this.options.definition.range) {
+        if (this.options.definition.range.length === 1) {
+          // Items can be of single type, add that
+          itemData['@type'] = this.options.definition.range[0];
+        } else {
+          // Ask user which type to add
+          jQuery('body').data('midgardCreate').showNotification({
+            bindTo: button,
+            gravity: 'L',
+            body: 'Choose type to add',
+            timeout: 0,
+            actions: this._getTypeActions(options)
+          });
+          return;
+        }
+      }
+      this.options.collection.add({}, options);
     }
   });
 })(jQuery);
