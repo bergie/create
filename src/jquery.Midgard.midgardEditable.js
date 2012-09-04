@@ -186,13 +186,10 @@
       }
 
       // Load the widget configuration for the data type
-      // TODO: make sure type is already loaded into VIE
       var propertyType = 'default';
-      var type = this.options.model.get('@type');
-      if (type) {
-        if (type.attributes && type.attributes.get(data.property)) {
-          propertyType = type.attributes.get(data.property).range[0];
-        }
+      var attributeDefinition = this.getAttributeDefinition(data.property);
+      if (attributeDefinition) {
+        propertyType = attributeDefinition.range[0];
       }
       if (this.options.widgets[propertyType] !== undefined) {
         return this.options.widgets[propertyType];
@@ -206,6 +203,17 @@
 
     _editorOptions: function (editor) {
       return this.options.editors[editor].options;
+    },
+
+    getAttributeDefinition: function (property) {
+      var type = this.options.model.get('@type');
+      if (!type) {
+        return;
+      }
+      if (!type.attributes) {
+        return;
+      }
+      return type.attributes.get(property);
     },
 
     enableEditor: function (data) {
@@ -247,15 +255,14 @@
       }
 
       var propertyType = 'default';
-      var type = this.options.model.get('@type');
-      if (type) {
-        if (type.attributes && type.attributes.get(data.property)) {
-          propertyType = type.attributes.get(data.property).range[0];
-        }
+      var attributeDefinition = this.getAttributeDefinition(data.property);
+      if (attributeDefinition) {
+        propertyType = attributeDefinition.range[0];
       }
       if (this.options.collectionWidgets[propertyType] !== undefined) {
         return this.options.collectionWidgets[propertyType];
       }
+      return this.options.collectionWidgets['default'];
     },
 
     enableCollection: function (data) {
