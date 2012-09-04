@@ -1025,8 +1025,7 @@
           hallolink: {},
           halloimage: {
             entity: this.options.entity
-          },
-          halloindicator: {}
+          }
         },
         buttonCssClass: 'create-ui-btn-small',
         placeholder: '[' + this.options.property + ']'
