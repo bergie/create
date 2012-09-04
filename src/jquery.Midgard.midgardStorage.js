@@ -383,16 +383,18 @@
       if (!model) { return; }
       _.each(model.attributes, function (attributeValue, property) {
         if (attributeValue instanceof widget.vie.Collection) {
+          var removables = [];
           attributeValue.forEach(function (model) {
             if (model.isNew()) {
-              attributeValue.remove(model);
+              removables.push(model);
             }
           });
+          attributeValue.remove(removables);
         }
       });
 
       // Restore original object properties
-      if (jQuery.isEmptyObject(model.changedAttributes())) {
+      if (!model.changedAttributes()) {
         if (model._originalAttributes) {
           model.set(model._originalAttributes);
         }
