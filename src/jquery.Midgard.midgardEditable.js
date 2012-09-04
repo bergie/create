@@ -69,9 +69,9 @@
         return;
       }
 
-      _.forEach(this.vie.service('rdfa').views, function (view) {
+      _.each(this.vie.service('rdfa').views, function (view) {
         if (view instanceof widget.vie.view.Collection && widget.options.model === view.owner) {
-          var property = jQuery(view.el).attr('rel');
+          var property = view.collection.predicate;
           var collection = widget.enableCollection({
             model: widget.options.model,
             collection: view.collection,

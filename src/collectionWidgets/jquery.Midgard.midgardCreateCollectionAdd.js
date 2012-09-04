@@ -6,8 +6,6 @@
 (function (jQuery, undefined) {
   // # Widget for adding items to a collection
   jQuery.widget('Midgard.midgardCollectionAdd', {
-    addButtons: [],
-
     options: {
       editingWidgets: null,
       collection: null,
@@ -20,6 +18,7 @@
     },
 
     _create: function () {
+      this.addButtons = [];
       var widget = this;
       if (!widget.options.collection.localStorage) {
         try {
@@ -55,7 +54,7 @@
     _makeEditable: function (itemView) {
       this.options.editableOptions.disabled = this.options.disabled;
       this.options.editableOptions.model = itemView.model;
-      jQuery(itemView.el).midgardEditable(this.options.editableOptions);
+      itemView.$el.midgardEditable(this.options.editableOptions);
     },
 
     _init: function () {
@@ -66,31 +65,46 @@
       this.enable();
     },
 
+    hideButtons: function () {
+      _.each(this.addButtons, function (button) {
+        button.hide();
+      });
+    },
+
+    showButtons: function () {
+      _.each(this.addButtons, function (button) {
+        button.show();
+      });
+    },
+
     checkCollectionConstraints: function () {
       if (this.options.disabled) {
         return;
       }
 
+      if (!this.options.view.canAdd()) {
+        this.hideButtons();
+        return;
+      }
+
       if (!this.options.definition) {
         // We have now information on the constraints applying to this collection
+        this.showButtons();
         return;
       }
 
       if (!this.options.definition.max || this.options.definition.max === -1) {
         // No maximum constraint
+        this.showButtons();
         return;
       }
-      
-      if (this.options.view.canAdd() && this.options.collection.length < this.options.definition.max) {
-        _.each(this.addButtons, function (button) {
-          button.show();
-        });
+
+      if (this.options.collection.length < this.options.definition.max) {
+        this.showButtons();
         return;
       }
       // Collection is already full by its definition
-      _.each(this.addButtons, function (button) {
-        button.hide();
-      });
+      this.hideButtons();
     },
 
     enable: function () {

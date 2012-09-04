@@ -318,8 +318,6 @@
 (function (jQuery, undefined) {
   // # Widget for adding items to a collection
   jQuery.widget('Midgard.midgardCollectionAdd', {
-    addButtons: [],
-
     options: {
       editingWidgets: null,
       collection: null,
@@ -332,6 +330,7 @@
     },
 
     _create: function () {
+      this.addButtons = [];
       var widget = this;
       if (!widget.options.collection.localStorage) {
         try {
@@ -367,7 +366,7 @@
     _makeEditable: function (itemView) {
       this.options.editableOptions.disabled = this.options.disabled;
       this.options.editableOptions.model = itemView.model;
-      jQuery(itemView.el).midgardEditable(this.options.editableOptions);
+      itemView.$el.midgardEditable(this.options.editableOptions);
     },
 
     _init: function () {
@@ -378,31 +377,46 @@
       this.enable();
     },
 
+    hideButtons: function () {
+      _.each(this.addButtons, function (button) {
+        button.hide();
+      });
+    },
+
+    showButtons: function () {
+      _.each(this.addButtons, function (button) {
+        button.show();
+      });
+    },
+
     checkCollectionConstraints: function () {
       if (this.options.disabled) {
         return;
       }
 
+      if (!this.options.view.canAdd()) {
+        this.hideButtons();
+        return;
+      }
+
       if (!this.options.definition) {
         // We have now information on the constraints applying to this collection
+        this.showButtons();
         return;
       }
 
       if (!this.options.definition.max || this.options.definition.max === -1) {
         // No maximum constraint
+        this.showButtons();
         return;
       }
-      
-      if (this.options.view.canAdd() && this.options.collection.length < this.options.definition.max) {
-        _.each(this.addButtons, function (button) {
-          button.show();
-        });
+
+      if (this.options.collection.length < this.options.definition.max) {
+        this.showButtons();
         return;
       }
       // Collection is already full by its definition
-      _.each(this.addButtons, function (button) {
-        button.hide();
-      });
+      this.hideButtons();
     },
 
     enable: function () {
@@ -474,8 +488,6 @@
 (function (jQuery, undefined) {
   // # Widget for adding items anywhere inside a collection
   jQuery.widget('Midgard.midgardCollectionAddBetween', jQuery.Midgard.midgardCollectionAdd, {
-    addButtons: [],
-
     _bindCollectionView: function (view) {
       var widget = this;
       view.bind('add', function (itemView) {
@@ -512,13 +524,12 @@
       var widget = this;
 
       var firstAddButton = widget.prepareButton(0);
-      jQuery(widget.options.view.el).before(firstAddButton);
+      jQuery(widget.options.view.el).prepend(firstAddButton);
       widget.addButtons.push(firstAddButton);
-
       jQuery.each(widget.options.view.entityViews, function (cid, view) {
         var index = widget.options.collection.indexOf(view.model);
         var addButton = widget.prepareButton(index + 1);
-        jQuery(view.el).after(addButton);
+        jQuery(view.el).append(addButton);
         widget.addButtons.push(addButton);
       });
 
@@ -605,9 +616,9 @@
         return;
       }
 
-      _.forEach(this.vie.service('rdfa').views, function (view) {
+      _.each(this.vie.service('rdfa').views, function (view) {
         if (view instanceof widget.vie.view.Collection && widget.options.model === view.owner) {
-          var property = jQuery(view.el).attr('rel');
+          var property = view.collection.predicate;
           var collection = widget.enableCollection({
             model: widget.options.model,
             collection: view.collection,

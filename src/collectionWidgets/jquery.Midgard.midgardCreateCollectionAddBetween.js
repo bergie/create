@@ -6,8 +6,6 @@
 (function (jQuery, undefined) {
   // # Widget for adding items anywhere inside a collection
   jQuery.widget('Midgard.midgardCollectionAddBetween', jQuery.Midgard.midgardCollectionAdd, {
-    addButtons: [],
-
     _bindCollectionView: function (view) {
       var widget = this;
       view.bind('add', function (itemView) {
@@ -44,13 +42,12 @@
       var widget = this;
 
       var firstAddButton = widget.prepareButton(0);
-      jQuery(widget.options.view.el).before(firstAddButton);
+      jQuery(widget.options.view.el).prepend(firstAddButton);
       widget.addButtons.push(firstAddButton);
-
       jQuery.each(widget.options.view.entityViews, function (cid, view) {
         var index = widget.options.collection.indexOf(view.model);
         var addButton = widget.prepareButton(index + 1);
-        jQuery(view.el).after(addButton);
+        jQuery(view.el).append(addButton);
         widget.addButtons.push(addButton);
       });
 

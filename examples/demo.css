@@ -25,3 +25,21 @@ article p {
     margin-bottom: 0.5em;
     text-indent: 2em;
 }
+
+section {
+    display: block;
+    min-height: 1em;
+}
+
+.sections > section {
+    clear: left;
+}
+
+.sections > button {
+    clear: left;
+}
+
+.multicolumn > section {
+    width: 48%;
+    float: left;
+}
