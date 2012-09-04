@@ -1,4 +1,4 @@
-//     Create.js 1.0.0alpha2 - On-site web editing interface
+//     Create.js 1.0.0alpha3 - On-site web editing interface
 //     (c) 2011-2012 Henri Bergius, IKS Consortium
 //     Create may be freely distributed under the MIT license.
 //     For all details and documentation:
@@ -318,12 +318,13 @@
 (function (jQuery, undefined) {
   // # Widget for adding items to a collection
   jQuery.widget('Midgard.midgardCollectionAdd', {
-    addButton: null,
+    addButtons: [],
 
     options: {
       editingWidgets: null,
       collection: null,
       model: null,
+      definition: null,
       view: null,
       disabled: false,
       vie: null,
@@ -333,14 +334,23 @@
     _create: function () {
       var widget = this;
       if (!widget.options.collection.localStorage) {
-        widget.options.collection.url = widget.options.model.url();
+        try {
+          widget.options.collection.url = widget.options.model.url();
+        } catch (e) {
+          if (window.console) {
+            console.log(e);
+          }
+        }
       }
 
-      widget.options.view.collection.bind('add', function (model) {
+      widget.options.collection.bind('add', function (model) {
         model.primaryCollection = widget.options.collection;
         widget.options.vie.entities.add(model);
         model.collection = widget.options.collection;
       });
+
+      // Re-check collection constraints
+      widget.options.collection.bind('add remove reset', widget.checkCollectionConstraints, widget);
 
       widget._bindCollectionView(widget.options.view);
     },
@@ -348,8 +358,9 @@
     _bindCollectionView: function (view) {
       var widget = this;
       view.bind('add', function (itemView) {
-        //itemView.el.effect('slide');
-        widget._makeEditable(itemView);
+        itemView.$el.effect('slide', function () {
+          widget._makeEditable(itemView);
+        });
       });
     },
 
@@ -367,22 +378,91 @@
       this.enable();
     },
 
+    checkCollectionConstraints: function () {
+      if (this.options.disabled) {
+        return;
+      }
+
+      if (!this.options.definition) {
+        // We have now information on the constraints applying to this collection
+        return;
+      }
+
+      if (!this.options.definition.max || this.options.definition.max === -1) {
+        // No maximum constraint
+        return;
+      }
+      
+      if (this.options.view.canAdd() && this.options.collection.length < this.options.definition.max) {
+        _.each(this.addButtons, function (button) {
+          button.show();
+        });
+        return;
+      }
+      // Collection is already full by its definition
+      _.each(this.addButtons, function (button) {
+        button.hide();
+      });
+    },
+
     enable: function () {
       var widget = this;
-      widget.addButton = jQuery('<button class="btn"><i class="icon-plus"></i> Add</button>').button();
-      widget.addButton.addClass('midgard-create-add');
-      widget.addButton.click(function () {
-        widget.options.collection.add({});
-      });
 
-      jQuery(widget.options.view.el).after(widget.addButton);
+      var addButton = jQuery('<button class="btn"><i class="icon-plus"></i> Add</button>').button();
+      addButton.addClass('midgard-create-add');
+      addButton.click(function () {
+        widget.addItem(addButton);
+      });
+      jQuery(widget.options.view.el).after(addButton);
+
+      widget.addButtons.push(addButton);
+      widget.checkCollectionConstraints();
     },
 
     disable: function () {
-      if (this.addButton) {
-        this.addButton.remove();
-        delete this.addButton;
+      _.each(this.addButtons, function (button) {
+        button.remove();
+      });
+      this.addButtons = [];
+    },
+
+    _getTypeActions: function (options) {
+      var widget = this;
+      var actions = [];
+      _.each(this.options.definition.range, function (type) {
+        actions.push({
+          name: type,
+          label: type,
+          cb: function () {
+            widget.options.collection.add({
+              '@type': type
+            }, options);
+          },
+          className: 'create-ui-btn'
+        });
+      });
+      return actions;
+    },
+
+    addItem: function (button, options) {
+      var itemData = {};
+      if (this.options.definition && this.options.definition.range) {
+        if (this.options.definition.range.length === 1) {
+          // Items can be of single type, add that
+          itemData['@type'] = this.options.definition.range[0];
+        } else {
+          // Ask user which type to add
+          jQuery('body').data('midgardCreate').showNotification({
+            bindTo: button,
+            gravity: 'L',
+            body: 'Choose type to add',
+            timeout: 0,
+            actions: this._getTypeActions(options)
+          });
+          return;
+        }
       }
+      this.options.collection.add({}, options);
     }
   });
 })(jQuery);
@@ -421,7 +501,7 @@
       var addButton = jQuery('<button class="btn"><i class="icon-plus"></i></button>').button();
       addButton.addClass('midgard-create-add');
       addButton.click(function () {
-        widget.options.collection.add({}, {
+        widget.addItem(addButton, {
           at: index
         });
       });
@@ -441,6 +521,8 @@
         jQuery(view.el).after(addButton);
         widget.addButtons.push(addButton);
       });
+
+      this.checkCollectionConstraints();
     },
 
     disable: function () {
@@ -525,10 +607,12 @@
 
       _.forEach(this.vie.service('rdfa').views, function (view) {
         if (view instanceof widget.vie.view.Collection && widget.options.model === view.owner) {
+          var property = jQuery(view.el).attr('rel');
           var collection = widget.enableCollection({
             model: widget.options.model,
             collection: view.collection,
-            property: jQuery(view.el).attr('rel'),
+            property: property,
+            definition: widget.getAttributeDefinition(property),
             view: view,
             element: view.el,
             vie: widget.vie,
@@ -640,13 +724,10 @@
       }
 
       // Load the widget configuration for the data type
-      // TODO: make sure type is already loaded into VIE
       var propertyType = 'default';
-      var type = this.options.model.get('@type');
-      if (type) {
-        if (type.attributes && type.attributes.get(data.property)) {
-          propertyType = type.attributes.get(data.property).range[0];
-        }
+      var attributeDefinition = this.getAttributeDefinition(data.property);
+      if (attributeDefinition) {
+        propertyType = attributeDefinition.range[0];
       }
       if (this.options.widgets[propertyType] !== undefined) {
         return this.options.widgets[propertyType];
@@ -660,6 +741,17 @@
 
     _editorOptions: function (editor) {
       return this.options.editors[editor].options;
+    },
+
+    getAttributeDefinition: function (property) {
+      var type = this.options.model.get('@type');
+      if (!type) {
+        return;
+      }
+      if (!type.attributes) {
+        return;
+      }
+      return type.attributes.get(property);
     },
 
     enableEditor: function (data) {
@@ -701,15 +793,14 @@
       }
 
       var propertyType = 'default';
-      var type = this.options.model.get('@type');
-      if (type) {
-        if (type.attributes && type.attributes.get(data.property)) {
-          propertyType = type.attributes.get(data.property).range[0];
-        }
+      var attributeDefinition = this.getAttributeDefinition(data.property);
+      if (attributeDefinition) {
+        propertyType = attributeDefinition.range[0];
       }
       if (this.options.collectionWidgets[propertyType] !== undefined) {
         return this.options.collectionWidgets[propertyType];
       }
+      return this.options.collectionWidgets['default'];
     },
 
     enableCollection: function (data) {
@@ -1241,7 +1332,11 @@
           if (element.css('position') === 'fixed') {
             return true;
           }
-          return this._isFixed(element.offsetParent());
+          var parentElement = element.offsetParent();
+          if (parentElement.get(0) === element.get(0)) {
+            return false;
+          }
+          return this._isFixed(parentElement);
         },
 
         _setPosition: function () {
@@ -2062,16 +2157,18 @@
       if (!model) { return; }
       _.each(model.attributes, function (attributeValue, property) {
         if (attributeValue instanceof widget.vie.Collection) {
+          var removables = [];
           attributeValue.forEach(function (model) {
             if (model.isNew()) {
-              attributeValue.remove(model);
+              removables.push(model);
             }
           });
+          attributeValue.remove(removables);
         }
       });
 
       // Restore original object properties
-      if (jQuery.isEmptyObject(model.changedAttributes())) {
+      if (!model.changedAttributes()) {
         if (model._originalAttributes) {
           model.set(model._originalAttributes);
         }

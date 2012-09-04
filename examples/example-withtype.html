@@ -21,6 +21,19 @@
     <script src="../deps/rangy-core-1.2.3.js"></script>
     <script src="../deps/hallo-min.js"></script>
     <script src="./create.js"></script>
+    <script type="text/html" id="SectionText">
+      <section typeof="Text" about="">
+        <h2>A block of text</h2>
+        <div property="content"></div>
+      </section>
+    </script>
+    <script type="text/html" id="SectionQuote">
+      <section typeof="Quote" about="">
+        <h2>A quote</h2>
+        <blockquote property="quote"></blockquote>
+        <p property="citation"></p>
+      </section>
+    </script>
     <script>
       jQuery(document).ready(function () {
         // Use a custom VIE instance so that we can feed it our type information
@@ -36,15 +49,15 @@
           }
         ]);
 
-        vie.types.add('Image', [
+        vie.types.add('Quote', [
           {
-            id: 'url',
-            range: 'URL',
+            id: 'quote',
+            range: 'Text',
             min: 1,
             max: 1
           },
           {
-            id: 'caption',
+            id: 'citation',
             range: 'SimpleText',
             min: 0,
             max: 1
@@ -66,11 +79,14 @@
           },
           {
             id: 'section',
-            range: ['Text', 'Image'],
+            range: ['Text', 'Quote'],
             min: 0,
-            max: 2
+            max: 3
           }
         ]);
+
+        vie.service('rdfa').setTemplate('Text', 'section', jQuery('#SectionText').html());
+        vie.service('rdfa').setTemplate('Quote', 'section', jQuery('#SectionQuote').html());
 
         jQuery('body').midgardCreate({
           url: function () {
@@ -89,7 +105,6 @@
 
         // Disable editing of author fields
         jQuery('body').midgardCreate('setEditorForProperty', 'PersonName', null);
-
       });
       // Fake Backbone.sync since there is no server to communicate with
       Backbone.sync = function(method, model, options) {
@@ -107,25 +122,13 @@
     />
     <link rel="stylesheet" href="demo.css" />
 
-    <script type="text/html" id="SectionText">
-      <section typeof="Text" about="">
-        <div property="text"></div>
-      </section>
-    </script>
-
-    <script type="text/html" id="SectionImage">
-      <section typeof="Image" about="">
-        <img src="" property="url" />
-        <p property="caption"></p>
-      </section>
-    </script>
   </head>
   
   <body>
     <div about="http://example.net/page" typeof="Page">
       <h1 property="title">My page title</h1>
       <div property="author">Henri Bergius</div>
-      <div rel="section">
+      <div rel="section" rev="sectionOf">
       </div>
     </div>
   </body>
