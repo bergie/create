@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Midgard Create type-based example</title>
+    <script src="../deps/jquery-1.7.1.min.js"></script>
+    <script src="../deps/jquery-ui-1.8.18.custom.min.js"></script>
+    <script src="../deps/modernizr.custom.80485.js"></script>
+    <script src="../deps/underscore-min.js"></script>
+    <script src="../deps/backbone-min.js"></script>
+    <script src="../deps/vie-min.js"></script>
+
+    <!-- Tags input is needed for the Tag widget -->
+    <script src="../deps/jquery.tagsinput.min.js"></script>
+
+    <!-- rdfQuery and annotate are only needed for the Hallo
+    annotations plugin -->
+    <script src="../deps/jquery.rdfquery.min.js"></script>
+    <script src="../deps/annotate-min.js"></script>
+
+    <script src="../deps/rangy-core-1.2.3.js"></script>
+    <script src="../deps/hallo-min.js"></script>
+    <script src="./create.js"></script>
+    <script>
+      jQuery(document).ready(function () {
+        // Use a custom VIE instance so that we can feed it our type information
+        var vie = new VIE();
+        vie.use(new vie.RdfaService());
+
+        vie.types.add('Text', [
+          {
+            id: 'content',
+            range: 'Text',
+            min: 1,
+            max: 1
+          }
+        ]);
+
+        vie.types.add('Image', [
+          {
+            id: 'url',
+            range: 'URL',
+            min: 1,
+            max: 1
+          },
+          {
+            id: 'caption',
+            range: 'SimpleText',
+            min: 0,
+            max: 1
+          }
+        ]);
+
+        vie.types.add('Page', [
+          {
+            id: 'title',
+            range: 'SimpleText',
+            min: 1,
+            max: 1
+          },
+          {
+            id: 'author',
+            range: 'PersonName',
+            min: 0,
+            max: -1
+          },
+          {
+            id: 'section',
+            range: ['Text', 'Image'],
+            min: 0,
+            max: 2
+          }
+        ]);
+
+        jQuery('body').midgardCreate({
+          url: function () {
+            return 'javascript:false;';
+          },
+          vie: vie
+        });
+
+        // Set a simpler editor for title fields
+        jQuery('body').midgardCreate('configureEditor', 'simpleHallo', 'halloWidget', {
+          plugins: {
+            halloformat: {}
+          }
+        });
+        jQuery('body').midgardCreate('setEditorForProperty', 'SimpleText', 'simpleHallo');
+
+        // Disable editing of author fields
+        jQuery('body').midgardCreate('setEditorForProperty', 'PersonName', null);
+
+      });
+      // Fake Backbone.sync since there is no server to communicate with
+      Backbone.sync = function(method, model, options) {
+        if (console && console.log) {
+          console.log('Model contents', model.toJSONLD());
+        }
+        options.success(model);
+      };
+    </script>
+    <link rel="stylesheet" href="./font-awesome/css/font-awesome.css"
+    />
+    <link rel="stylesheet" href="../themes/create-ui/css/create-ui.css"
+    />
+    <link rel="stylesheet" href="../themes/midgard-notifications/midgardnotif.css"
+    />
+    <link rel="stylesheet" href="demo.css" />
+
+    <script type="text/html" id="SectionText">
+      <section typeof="Text" about="">
+        <div property="text"></div>
+      </section>
+    </script>
+
+    <script type="text/html" id="SectionImage">
+      <section typeof="Image" about="">
+        <img src="" property="url" />
+        <p property="caption"></p>
+      </section>
+    </script>
+  </head>
+  
+  <body>
+    <div about="http://example.net/page" typeof="Page">
+      <h1 property="title">My page title</h1>
+      <div property="author">Henri Bergius</div>
+      <div rel="section">
+      </div>
+    </div>
+  </body>
+</html>
