@@ -222,7 +222,11 @@
           if (element.css('position') === 'fixed') {
             return true;
           }
-          return this._isFixed(element.offsetParent());
+          var parentElement = element.offsetParent();
+          if (parentElement.get(0) === element.get(0)) {
+            return false;
+          }
+          return this._isFixed(parentElement);
         },
 
         _setPosition: function () {
