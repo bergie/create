@@ -154,7 +154,7 @@
           itemData['@type'] = this.options.definition.range[0];
         } else {
           // Ask user which type to add
-          jQuery('body').data('midgardCreate').showNotification({
+          jQuery('body').midgardNotifications('create', {
             bindTo: button,
             gravity: 'L',
             body: 'Choose type to add',

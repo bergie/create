@@ -131,7 +131,7 @@
 
     showNotification: function (options) {
       if (this.element.midgardNotifications) {
-        return jQuery(this.element).data('midgardNotifications').create(options);
+        return this.element.midgardNotifications('create', options);
       }
     },
 

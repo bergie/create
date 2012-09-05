@@ -155,7 +155,7 @@
           return;
         }
         
-        restorer = jQuery('body').data('midgardCreate').showNotification({
+        restorer = jQuery('body').midgardNotifications('create', {
           bindTo: '#midgardcreate-edit a',
           gravity: 'TR',
           body: restorables.length + " items on this page have local modifications",
@@ -259,7 +259,7 @@
               // All models were happily saved
               widget._trigger('saved', null, {});
               options.success();
-              jQuery('body').data('midgardCreate').showNotification({
+              jQuery('body').midgardNotifications('create', {
                 body: notification_msg
               });
               widget.enableSave();
@@ -272,7 +272,7 @@
             }
 
             options.error();
-            jQuery('body').data('midgardCreate').showNotification({
+            jQuery('body').midgardNotifications('create', {
               body: notification_msg,
               timeout: 0
             });
