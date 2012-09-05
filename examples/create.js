@@ -444,6 +444,10 @@
       var widget = this;
       var actions = [];
       _.each(this.options.definition.range, function (type) {
+        var nsType = widget.options.collection.vie.namespaces.uri(type);
+        if (!widget.options.view.canAdd(nsType)) {
+          return;
+        }
         actions.push({
           name: type,
           label: type,
