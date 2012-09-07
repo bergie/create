@@ -174,7 +174,7 @@
     },
 
     _checkSession: function () {
-      if (!Modernizr.sessionstorage) {
+      if (!window.sessionStorage) {
         return;
       }
 
@@ -234,7 +234,7 @@
     _enableToolbar: function () {
       var widget = this;
       this.element.bind('midgardtoolbarstatechange', function (event, options) {
-        if (Modernizr.sessionstorage) {
+        if (window.sessionStorage) {
           sessionStorage.setItem(widget.options.storagePrefix + 'Midgard.create.toolbar', options.display);
         }
         widget._setOption('toolbar', options.display);

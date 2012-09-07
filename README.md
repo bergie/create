@@ -35,7 +35,6 @@ Please refer to the [Create.js Integration Guide](http://createjs.org/guide/).
 * [VIE](https://github.com/bergie/vie) - editable RDFa library
 * [Backbone.js](http://documentcloud.github.com/backbone/) - client-side management of models, views, and collections
 * [jQuery UI](http://jqueryui.com/) - widget and effect library
-* [Modernizr](http://www.modernizr.com/) - HTML5 browser compatibility library
 
 ## Building Create
 
