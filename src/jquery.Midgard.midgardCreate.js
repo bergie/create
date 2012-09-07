@@ -41,19 +41,36 @@
           widget: 'halloWidget'
         }
       },
+      // Widgets to use for managing collections.
       collectionWidgets: {
         default: 'midgardCollectionAdd'
       },
+      // URL callback used with Backbone.sync. Will be passed to the
+      // Storage widget.
       url: function () {},
+      // Prefix used for localStorage.
       storagePrefix: 'node',
+      // Workflow configuration. URL callback is used for retrieving
+      // list of workflow actions that can be initiated for an item.
       workflows: {
         url: null
       },
+      // Notifications configuration.
       notifications: {},
+      // VIE instance used with Create.js. If no VIE instance is passed,
+      // Create.js will create its own instance.
       vie: null,
+      // URL for the Apache Stanbol service used for annotations, and tag
+      // and image suggestions.
       stanbolUrl: null,
+      // URL for the DBpedia instance used for finding more information
+      // about annotations and tags.
       dbPediaUrl: null,
-      tags: false
+      // Whether to enable the Tags widget.
+      tags: false,
+      // Selector for element where Create.js will place its buttons, like
+      // Save and Edit/Cancel.
+      buttonContainer: '.create-ui-toolbar-statustoolarea .create-ui-statustools'
     },
 
     _create: function () {
@@ -181,7 +198,7 @@
         return this.options.saveButton;
       }
 
-      jQuery('.create-ui-toolbar-statustoolarea .create-ui-statustools', this.element).append(jQuery('<li id="midgardcreate-save"><a class="create-ui-btn">Save <i class="icon-ok"></i></a></li>'));
+      jQuery(this.options.buttonContainer, this.element).append(jQuery('<li id="midgardcreate-save"><a class="create-ui-btn">Save <i class="icon-ok"></i></a></li>'));
       this.options.saveButton = jQuery('#midgardcreate-save', this.element);
       this.options.saveButton.hide();
       return this.options.saveButton;
@@ -189,7 +206,7 @@
 
     _editButton: function () {
       var widget = this;
-      jQuery('.create-ui-toolbar-statustoolarea .create-ui-statustools', this.element).append(jQuery('<li id="midgardcreate-edit"></li>'));
+      jQuery(this.options.buttonContainer, this.element).append(jQuery('<li id="midgardcreate-edit"></li>'));
       jQuery('#midgardcreate-edit', this.element).bind('click', function () {
         if (widget.options.state === 'edit') {
           widget.setState('browse');
