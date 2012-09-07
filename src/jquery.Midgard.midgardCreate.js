@@ -74,27 +74,7 @@
     },
 
     _create: function () {
-      if (this.options.vie) {
-        this.vie = this.options.vie;
-      } else {
-        this.vie = new VIE();
-
-        this.vie.use(new this.vie.RdfaService());
-
-        if (this.options.stanbolUrl) {
-          this.vie.use(new this.vie.StanbolService({
-            proxyDisabled: true,
-            url: this.options.stanbolUrl
-          }));
-        }
-
-        if (this.options.dbPediaUrl) {
-          this.vie.use(new this.vie.DBPediaService({
-            proxyDisabled: true,
-            url: this.options.dbPediaUrl
-          }));
-        }
-      }
+      this.vie = this._setupVIE(this.options);
 
       var widget = this;
       window.setTimeout(function () {
@@ -113,6 +93,36 @@
       if (this.element.midgardNotifications) {
         this.element.midgardNotifications(this.options.notifications);
       }
+    },
+
+    _setupVIE: function (options) {
+      var vie;
+      if (options.vie) {
+        vie = options.vie;
+      } else {
+        // Set up our own VIE instance
+        var vie = new VIE();
+      }
+
+      if (!vie.hasService('rdfa')) {
+        vie.use(new vie.RdfaService());
+      }
+
+      if (!vie.hasService('stanbol') && options.stanbolUrl) {
+        vie.use(new vie.StanbolService({
+          proxyDisabled: true,
+          url: options.stanbolUrl
+        }));
+      }
+
+      if (!vie.hasService('dbpedia') && options.dbPediaUrl) {
+        vie.use(new vie.DBPediaService({
+          proxyDisabled: true,
+          url: options.dbPediaUrl
+        }));
+      }
+
+      return vie;
     },
 
     _prepareStorage: function () {
