@@ -1874,6 +1874,12 @@
       saveReferencedChanged: false,
       // Namespace used for events from midgardEditable-derived widget
       editableNs: 'midgardeditable',
+      // CSS selector for the Edit button, leave to null to not bind
+      // notifications to any element
+      editSelector: '#midgardcreate-edit a',
+      // CSS selector for the Save button
+      saveSelector: '#midgardcreate-save',
+      // Templates used for dialog output
       templates: {
         localModifications: '<%= number %> items on this page have local modifications',
         saveSuccess: 'Item "<%= label %>" saved successfully',
@@ -1898,10 +1904,10 @@
         model.toJSON = model.toJSONLD;
       });
 
-      jQuery('#midgardcreate-save').click(function () {
+      jQuery(widget.options.saveSelector).click(function () {
         widget.saveRemote({
           success: function () {
-            jQuery('#midgardcreate-save').button({
+            jQuery(widget.options.saveSelector).button({
               disabled: true
             });
           },
@@ -1930,7 +1936,7 @@
 
         widget.saveRemote({
           success: function () {
-            jQuery('#midgardcreate-save').button({
+            jQuery(widget.options.saveSelector).button({
               disabled: true
             });
           },
@@ -1974,17 +1980,17 @@
           widget.changedModels.push(options.instance);
         }
         widget._saveLocal(options.instance);
-        jQuery('#midgardcreate-save').button({disabled: false});
+        jQuery(widget.options.saveSelector).button({disabled: false});
       });
 
       widget.element.bind(widget.options.editableNs + 'disable', function (event, options) {
         widget._restoreLocal(options.instance);
-        jQuery('#midgardcreate-save').hide();
+        jQuery(widget.options.saveSelector).hide();
       });
 
       widget.element.bind(widget.options.editableNs + 'enable', function (event, options) {
-        jQuery('#midgardcreate-save').button({disabled: true});
-        jQuery('#midgardcreate-save').show();
+        jQuery(widget.options.saveSelector).button({disabled: true});
+        jQuery(widget.options.saveSelector).show();
 
         if (!options.instance._originalAttributes) {
           options.instance._originalAttributes = _.clone(options.instance.attributes);
@@ -2017,7 +2023,7 @@
         if (_.indexOf(widget.changedModels, options.instance) === -1) {
           widget.changedModels.push(options.instance);
         }
-        jQuery('#midgardcreate-save').button({
+        jQuery(widget.options.saveSelector).button({
           disabled: false
         });
       });
@@ -2030,7 +2036,7 @@
       }
 
       var restorer = jQuery('body').midgardNotifications('create', {
-        bindTo: '#midgardcreate-edit a',
+        bindTo: widget.options.editSelector,
         gravity: 'TR',
         body: _.template(widget.options.templates.localModifications, {
           number: widget.restorables.length
