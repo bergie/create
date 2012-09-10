@@ -49,7 +49,7 @@
       });
 
       jQuery('#midgardcreate-save').click(function () {
-        widget._saveRemote({
+        widget.saveRemote({
           success: function () {
             jQuery('#midgardcreate-save').button({
               disabled: true
@@ -78,7 +78,7 @@
           return;
         }
 
-        widget._saveRemote({
+        widget.saveRemote({
           success: function () {
             jQuery('#midgardcreate-save').button({
               disabled: true
@@ -210,7 +210,7 @@
       });
     },
 
-    _saveRemote: function (options) {
+    saveRemote: function (options) {
       var widget = this;
       if (widget.changedModels.length === 0) {
         return;
