@@ -7,6 +7,12 @@
   jQuery.widget('Midgard.midgardToolbar', {
     options: {
       display: 'full',
+      templates: {
+        minimized: '<div class="create-ui-logo"><a class="create-ui-toggle" id="create-ui-toggle-toolbar"></a></div>',
+        full: '<div class="create-ui-toolbar-wrapper"><div class="create-ui-toolbar-toolarea"><%= dynamic %><%= status %></div></div>',
+        toolcontainer: '<div class="create-ui-toolbar-<%= name %>toolarea"><ul class="create-ui-<%= name %>tools"><%= content %></ul></div>',
+        toolarea: '<li class="create-ui-tool-<%= name %>area"></li>'
+      }
     },
 
     _create: function () {
@@ -74,11 +80,29 @@
     },
 
     _getMinimized: function () {
-      return jQuery('<div class="create-ui-logo"><a class="create-ui-toggle" id="create-ui-toggle-toolbar"></a></div>');
+      return jQuery(_.template(this.options.templates.minimized, {}));
     },
 
     _getFull: function () {
-      return jQuery('<div class="create-ui-toolbar-wrapper"><div class="create-ui-toolbar-toolarea"><div class="create-ui-toolbar-dynamictoolarea"><ul class="create-ui-dynamictools create-ui-toolset-1"><li class="create-ui-tool-metadataarea"></li><li class="create-ui-tool-workflowarea"></li><li class="create-ui-tool-freearea"></li></ul></div><div class="create-ui-toolbar-statustoolarea"><ul class="create-ui-statustools"></ul></div></div></div>');
+      return jQuery(_.template(this.options.templates.full, {
+        dynamic: _.template(this.options.templates.toolcontainer, {
+          name: 'dynamic',
+          content:
+            _.template(this.options.templates.toolarea, {
+              name: 'metadata'
+            }) +
+            _.template(this.options.templates.toolarea, {
+              name: 'workflow'
+            }) +
+            _.template(this.options.templates.toolarea, {
+              name: 'free'
+            })
+        }),
+        status: _.template(this.options.templates.toolcontainer, {
+          name: 'status',
+          content: ''
+        })
+      }));
     },
 
     _clearWorkflows: function () {
