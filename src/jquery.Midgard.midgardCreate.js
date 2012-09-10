@@ -70,7 +70,12 @@
       tags: false,
       // Selector for element where Create.js will place its buttons, like
       // Save and Edit/Cancel.
-      buttonContainer: '.create-ui-toolbar-statustoolarea .create-ui-statustools'
+      buttonContainer: '.create-ui-toolbar-statustoolarea .create-ui-statustools',
+      // Templates used for UI elements of the Create widget
+      templates: {
+        buttonContent: '<%= label %> <i class="icon-<%= icon %>"></i>',
+        button: '<li id="<%= id %>"><a class="create-ui-btn"><%= buttonContent %></a></li>'
+      }
     },
 
     _create: function () {
@@ -131,12 +136,19 @@
         url: this.options.url
       });
 
+      var widget = this;
       this.element.bind('midgardstoragesave', function () {
-        jQuery('#midgardcreate-save a').html('Saving <i class="icon-upload"></i>');
+        jQuery('#midgardcreate-save a').html(_.template(widget.options.templates.buttonContent, {
+          label: 'Saving',
+          icon: 'upload'
+        }));
       });
 
       this.element.bind('midgardstoragesaved midgardstorageerror', function () {
-        jQuery('#midgardcreate-save a').html('Save <i class="icon-ok"></i>');
+        jQuery('#midgardcreate-save a').html(_.template(widget.options.templates.buttonContent, {
+          label: 'Save',
+          icon: 'ok'
+        }));
       });
     },
 
@@ -207,8 +219,13 @@
       if (this.options.saveButton) {
         return this.options.saveButton;
       }
-
-      jQuery(this.options.buttonContainer, this.element).append(jQuery('<li id="midgardcreate-save"><a class="create-ui-btn">Save <i class="icon-ok"></i></a></li>'));
+      jQuery(this.options.buttonContainer, this.element).append(jQuery(_.template(this.options.templates.button, {
+        id: 'midgardcreate-save',
+        buttonContent: _.template(this.options.templates.buttonContent, {
+          label: 'Save',
+          icon: 'ok'
+        })
+      })));
       this.options.saveButton = jQuery('#midgardcreate-save', this.element);
       this.options.saveButton.hide();
       return this.options.saveButton;
@@ -216,7 +233,10 @@
 
     _editButton: function () {
       var widget = this;
-      jQuery(this.options.buttonContainer, this.element).append(jQuery('<li id="midgardcreate-edit"></li>'));
+      jQuery(this.options.buttonContainer, this.element).append(jQuery(_.template(this.options.templates.button, {
+        id: 'midgardcreate-edit',
+        buttonContent: ''
+      })));
       jQuery('#midgardcreate-edit', this.element).bind('click', function () {
         if (widget.options.state === 'edit') {
           widget.setState('browse');
@@ -228,10 +248,16 @@
 
     _setEditButtonState: function (state) {
       var buttonContents = {
-        edit: '<a class="create-ui-btn">Cancel <i class="icon-remove"></i></a>',
-        browse: '<a class="create-ui-btn">Edit <i class="icon-edit"></i></a>'
+        edit: _.template(this.options.templates.buttonContent, {
+          label: 'Cancel',
+          icon: 'remove'
+        }),
+        browse: _.template(this.options.templates.buttonContent, {
+          label: 'Edit',
+          icon: 'edit'
+        })
       };
-      var editButton = jQuery('#midgardcreate-edit', this.element);
+      var editButton = jQuery('#midgardcreate-edit a', this.element);
       if (!editButton) {
         return;
       }
