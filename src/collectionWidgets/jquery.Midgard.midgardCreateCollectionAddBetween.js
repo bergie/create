@@ -28,7 +28,10 @@
 
     prepareButton: function (index) {
       var widget = this;
-      var addButton = jQuery('<button class="btn"><i class="icon-plus"></i></button>').button();
+      var addButton = jQuery(_.template(this.options.templates.button, {
+        icon: 'plus',
+        label: ''
+      })).button();
       addButton.addClass('midgard-create-add');
       addButton.click(function () {
         widget.addItem(addButton, {

@@ -379,7 +379,10 @@
       view: null,
       disabled: false,
       vie: null,
-      editableOptions: null
+      editableOptions: null,
+      templates: {
+        button: '<button class="btn"><i class="icon-<%= icon %>"></i> <%= label %></button>'
+      }
     },
 
     _create: function () {
@@ -475,7 +478,10 @@
     enable: function () {
       var widget = this;
 
-      var addButton = jQuery('<button class="btn"><i class="icon-plus"></i> Add</button>').button();
+      var addButton = jQuery(_.template(this.options.templates.button, {
+        icon: 'plus',
+        label: 'Add'
+      })).button();
       addButton.addClass('midgard-create-add');
       addButton.click(function () {
         widget.addItem(addButton);
@@ -567,7 +573,10 @@
 
     prepareButton: function (index) {
       var widget = this;
-      var addButton = jQuery('<button class="btn"><i class="icon-plus"></i></button>').button();
+      var addButton = jQuery(_.template(this.options.templates.button, {
+        icon: 'plus',
+        label: ''
+      })).button();
       addButton.addClass('midgard-create-add');
       addButton.click(function () {
         widget.addItem(addButton, {
