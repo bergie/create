@@ -7,10 +7,16 @@
   jQuery.widget('Midgard.midgardWorkflows', {
     options: {
       url: function (model) {},
+      templates: {
+        button: '<button class="create-ui-btn" id="<%= id %>"><%= label %></button>'
+      },
       renderers: {
         button: function (model, workflow, action_cb, final_cb) {
           button_id = 'midgardcreate-workflow_' + workflow.get('name');
-          html = jQuery('<button class="create-ui-btn" id="' + button_id + '">' + workflow.get('label') + '</button>').button();
+          html = jQuery(_.template(this.options.templates.button, {
+            id: button_id,
+            label: workflow.get('label')
+          })).button();
 
           html.bind('click', function (evt) {
             action_cb(model, workflow, final_cb);
@@ -196,7 +202,7 @@
       renderer = this.getRenderer(workflow.get("type"));
       action_type_cb = this.getActionType(workflow.get("action").type);
 
-      return renderer(model, workflow, action_type_cb, function (err, m) {
+      return renderer.call(this, model, workflow, action_type_cb, function (err, m) {
         delete widget.workflows[model.cid];
         widget._last_instance = null;
         if (workflow.get('action').type !== 'backbone_destroy') {
