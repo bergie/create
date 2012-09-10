@@ -2279,7 +2279,12 @@
       element: null,
       entityElement: null,
       parentElement: '.create-ui-tool-metadataarea',
-      predicate: 'skos:related'
+      predicate: 'skos:related',
+      templates: {
+        button: '<button class="create-ui-btn"><i class="icon-<%= icon %>"></i> <%= label %></button>',
+        contentArea: '<div class="dropdown-menu"></div>',
+        tags: '<div class="create-ui-tags <%= type %>Tags"><h3><%= label %></h3><input type="text" class="tags" value="" /></div>'
+      }
     },
 
     _init: function () {
@@ -2412,9 +2417,15 @@
     },
 
     _prepareEditor: function (button) {
-      var contentArea = jQuery('<div class="dropdown-menu"></div>');
-      var articleTags = jQuery('<div class="create-ui-tags articleTags"><h3>Article tags</h3><input type="text" class="tags" value="" /></div>');
-      var suggestedTags = jQuery('<div class="create-ui-tags suggestedTags"><h3>Suggested tags</h3><input type="text" class="tags" value="" /></div>');
+      var contentArea = jQuery(_.template(this.options.templates.contentArea, {}));
+      var articleTags = jQuery(_.template(this.options.templates.tags, {
+        type: 'article',
+        label: 'Item tags'
+      }));
+      var suggestedTags = jQuery(_.template(this.options.templates.tags, {
+        type: 'suggested',
+        label: 'Suggested tags'
+      }));
 
       // Tags plugin requires IDs to exist
       jQuery('input', articleTags).attr('id', 'articleTags-' + this.entity.cid);
@@ -2435,7 +2446,10 @@
       var widget = this;
       var subject = this.entity.getSubject();
 
-      var button = jQuery('<button class="create-ui-btn"><i class="icon-tags"></i> Tags</a>').button();
+      var button = jQuery(_.template(this.options.templates.button, {
+        icon: 'tags',
+        label: 'Tags'
+      }));
 
       var parentElement = jQuery(this.options.parentElement);
       parentElement.empty();
