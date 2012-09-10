@@ -23,7 +23,13 @@
       saveReferencedNew: false,
       saveReferencedChanged: false,
       // Namespace used for events from midgardEditable-derived widget
-      editableNs: 'midgardeditable'
+      editableNs: 'midgardeditable',
+      templates: {
+        localModifications: '<%= number %> items on this page have local modifications',
+        saveSuccess: 'Item "<%= label %>" saved successfully',
+        saveSuccessMultiple: '<%= number %> items saved successfully',
+        saveError: 'Error occurred while saving<br /><%= error %>'
+      }
     },
 
     _create: function () {
@@ -158,7 +164,9 @@
         restorer = jQuery('body').midgardNotifications('create', {
           bindTo: '#midgardcreate-edit a',
           gravity: 'TR',
-          body: restorables.length + " items on this page have local modifications",
+          body: _.template(widget.options.templates.localModifications, {
+            number: restorables.length
+          }),
           timeout: 0,
           actions: [
             {
@@ -214,10 +222,13 @@
 
       var needed = widget.changedModels.length;
       if (needed > 1) {
-        notification_msg = needed + ' objects saved successfully';
+        notification_msg = _.template(widget.options.templates.saveSuccessMultiple, {
+          number: needed
+        });
       } else {
-        subject = widget.changedModels[0].getSubjectUri();
-        notification_msg = 'Object with subject ' + subject + ' saved successfully';
+        notification_msg = _.template(widget.options.templates.saveSuccess, {
+          label: widget.changedModels[0].getSubjectUri()
+        });
       }
 
       widget.disableSave();
@@ -266,14 +277,11 @@
             }
           },
           error: function (m, err) {
-            notification_msg = 'Error occurred while saving';
-            if (err.responseText) {
-              notification_msg = notification_msg + ':<br />' + err.responseText;
-            }
-
             options.error();
             jQuery('body').midgardNotifications('create', {
-              body: notification_msg,
+              body: _.template(widget.options.templates.saveError, {
+                error: err.responseText || ''
+              }),
               timeout: 0
             });
 
