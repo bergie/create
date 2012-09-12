@@ -108,3 +108,47 @@ test('Create edit events', function () {
     state: 'edit'
   });
 });
+
+test('Create state change events', function () {
+  expect(20);
+  var fixture = jQuery('.create-state-events');
+
+  var previous = null;
+  fixture.bind('midgardcreatestatechange', function (event, data) {
+    ok(data.state, 'State change events provide a state value');
+    if (previous === 'browse') {
+      equal(data.state, 'edit', 'from browse we go to edit state');
+      previous = 'edit';
+    } else {
+      equal(data.state, 'browse', 'from edit we got to browse state');
+      previous = 'browse';
+    }
+  });
+
+  // Will be called once, when we go to edit state
+  fixture.bind('midgardeditableenable', function (event, data) {
+    ok(data.instance, 'enabled editables provide entity instance');
+    ok(data.entityElement, 'enabled editables provide the entity element');
+  });
+
+  // Will be called twice, initially and then when returning to browse state
+  fixture.bind('midgardeditabledisable', function (event, data) {
+    ok(data.instance, 'disabled editables provide entity instance');
+    ok(data.entityElement, 'disabled editables provide the entity element');
+  });
+
+  // We have two properties, so this will be called twice
+  fixture.bind('midgardeditableenableproperty', function (event, data) {
+    ok(data.property, 'enabled properties have property name');
+    ok(data.instance, 'enabled properties have entity instance');
+    ok(data.element, 'enabled properties have property element');
+    ok(data.entityElement, 'enabled properties have entity element');
+  });
+
+  // Start in browse state
+  fixture.midgardCreate();
+  // Enter edit state
+  fixture.midgardCreate('setState', 'edit');
+  // Return to browse state
+  fixture.midgardCreate('setState', 'browse');
+});
