@@ -20,9 +20,15 @@ test('Create instantiation and destruction', function () {
   fixture.midgardCreate();
 
   // Check that all Create.js widgets have been instantiated
-  ok(fixture.data('midgardCreate'));
-  ok(fixture.data('midgardNotifications'));
-  ok(fixture.data('midgardWorkflows'));
+  ok(fixture.data('midgardCreate'), 'Create instance');
+  ok(fixture.data('midgardNotifications'), 'Notifications instance');
+  ok(fixture.data('midgardWorkflows'), 'Workflows instance');
+  ok(fixture.data('midgardToolbar'), 'Toolbar instance');
+  ok(fixture.data('midgardStorage'), 'Storage instance');
+
+  jQuery('[about]', fixture).each(function () {
+    ok(jQuery(this).data('midgardEditable'), 'Editable instance');
+  });
 
   fixture.midgardCreate('destroy');
 
@@ -30,6 +36,12 @@ test('Create instantiation and destruction', function () {
   equal(fixture.data('midgardCreate'), undefined);
   equal(fixture.data('midgardNotifications'), undefined);
   equal(fixture.data('midgardWorkflows'), undefined);
+  equal(fixture.data('midgardToolbar'), undefined);
+  equal(fixture.data('midgardStorage'), undefined);
+
+  jQuery('[about]', fixture).each(function () {
+    equal(jQuery(this).data('midgardEditable'), undefined);
+  });
 
   /*
    * TODO: enable when jQuery UI 1.9 is out

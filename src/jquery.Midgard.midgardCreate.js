@@ -102,11 +102,22 @@
 
     destroy: function () {
       // Clean up on widget destruction
+      this.element.midgardStorage('destroy');
+      this.element.midgardToolbar('destroy');
+
+      jQuery('[about]', this.element).each(function () {
+        jQuery(this).midgardEditable('destroy');
+      });
+
+      // Conditional widgets
       if (this.element.midgardWorkflows) {
         this.element.midgardWorkflows('destroy');
       }
       if (this.element.midgardNotifications) {
         this.element.midgardNotifications('destroy');
+      }
+      if (this.options.tags) {
+        this.element.midgardTags('destroy');
       }
       // TODO: use _destroy in jQuery UI 1.9 and above
       jQuery.Widget.prototype.destroy.call(this);
