@@ -10,6 +10,6 @@
     "docco-husky": ">=0.3.2"
   },
   "scripts":    {
-    "test": "phantomjs test/run-qunit.js test/index.html"
+    "test": "phantomjs test/qunit/run.js test/index.html"
   }
 }
