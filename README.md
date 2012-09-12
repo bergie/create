@@ -93,7 +93,7 @@ Direct your browser to the `test/index.html` file to run Create's [QUnit](http:/
 
 You need a working [PhantomJS installation]. Then just run:
 
-    $ phantomjs test/run-qunit.js test/index.html
+    $ phantomjs test/qunit/run.js test/index.html
 
 If you have Node.js installed, you can do this also more simply with:
 
