@@ -152,3 +152,47 @@ test('Create state change events', function () {
   // Return to browse state
   fixture.midgardCreate('setState', 'browse');
 });
+
+test('Create toolbar minimize / maximize', function () {
+  var fixture = jQuery('.create-toolbar-state');
+  fixture.midgardCreate();
+
+  // Initially the full toolbar should be shown
+  equal(jQuery('div.create-ui-toolbar-wrapper:visible', fixture).length, 1);
+  equal(jQuery('div.create-ui-logo:visible', fixture).length, 1);
+
+  var previous = 'full';
+  fixture.bind('midgardtoolbarstatechange', function (event, data) {
+    ok(data.display, 'toolbar change events should communicate display state');
+    if (previous === 'full') {
+      equal(data.display, 'minimized', 'after full the toolbar should get minimized');
+      previous = 'minimized';
+    } else {
+      equal(data.display, 'full', 'after minimized the toolbar should be maximized');
+      previous = 'full';
+    }
+    start();
+  });
+
+  // Click the Logo to minimize
+  stop(2);
+  jQuery('div.create-ui-logo a.create-ui-toggle', fixture).click();
+
+  setTimeout(function () {
+    equal(jQuery('div.create-ui-toolbar-wrapper:visible', fixture).length, 0, 'after minimization there should be no visible toolbars');
+    equal(jQuery('div.create-ui-toolbar-wrapper:hidden', fixture).length, 1, 'after minimization there should be no visible toolbars');
+    equal(jQuery('div.create-ui-logo:visible', fixture).length, 1, 'Create.js logo should remain visible');
+    start();
+
+    // Click the Logo to maximize again
+    stop(2);
+    jQuery('div.create-ui-logo a.create-ui-toggle', fixture).click();
+
+    setTimeout(function () {
+      equal(jQuery('div.create-ui-toolbar-wrapper:hidden', fixture).length, 0);
+      equal(jQuery('div.create-ui-toolbar-wrapper:visible', fixture).length, 1);
+      equal(jQuery('div.create-ui-logo:visible', fixture).length, 1, 'Create.js logo should remain visible');
+      start();
+    }, 500);
+  }, 500);
+});

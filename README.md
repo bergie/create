@@ -52,11 +52,11 @@ You can also generate a minified version (requires uglifyjs):
 * [Using RDFa to make a web page editable](http://bergie.iki.fi/blog/using_rdfa_to_make_a_web_page_editable/)
 * [Midgard Create and VIE presentation in the Aloha Editor conference](http://bergie.iki.fi/blog/midgard_create_and_vie_in_the_aloha_editor_conference/)
 * [Proposal for using Create as the reference UI in Symfony CMF](http://groups.google.com/group/symfony-cmf-devs/browse_thread/thread/6c609030661cee08)
-* [CreateJS integration module for Drupal](http://drupal.org/sandbox/dominikb1888/1388900)
+* [Create.js integration module for Drupal](http://drupal.org/sandbox/dominikb1888/1388900)
 
 ## Discussion
 
-* [CreateJS Google Groups mailing list](http://groups.google.com/group/createjs)
+* [Create.js Google Groups mailing list](http://groups.google.com/group/createjs)
 * [`#iks` IRC channel on Freenode](irc://irc.freenode.net/iks)
 
 ## Similar projects

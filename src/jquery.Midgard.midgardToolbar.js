@@ -20,7 +20,7 @@
       this.element.append(this._getFull());
 
       var widget = this;
-      jQuery('.create-ui-toggle').click(function () {
+      jQuery('.create-ui-toggle', this.element).click(function () {
         if (widget.options.display === 'full') {
           widget.hide();
           widget.options.display = 'minimized';
