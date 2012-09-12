@@ -85,15 +85,18 @@ Using Aloha Editor with Create is covered by Aloha's FOSS License Exception:
 
 You need to acquire a [Redactor license](http://redactorjs.com/license/) and include the editor JavaScript and CSS files into your pages separately. Then you can set Create to use Redactor for particular areas by using the `redactorWidget` editor option.
 
-### Running Unit Tests
+### Running Unit Tests in browser
 
 Direct your browser to the `test/index.html` file to run Create's [QUnit](http://docs.jquery.com/Qunit) tests.
 
-#### Unit tests on Node.js
+#### Headless unit tests on PhantomJS
 
-You need Node.js and [NPM](http://npmjs.org/). Then just run:
+You need a working [PhantomJS installation]. Then just run:
 
-    $ npm install --dev
+    $ phantomjs test/run-qunit.js test/index.html
+
+If you have Node.js installed, you can do this also more simply with:
+
     $ npm test
 
 #### Continuous integration

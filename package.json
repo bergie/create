@@ -5,16 +5,11 @@
   "author": "Henri Bergius <henri.bergius@iki.fi>",
   "dependencies": {},
   "devDependencies": {
-    "underscore": ">=1.2.0",
-    "nodeunit": ">=0.6.0",
-    "zombie": "0.12.x",
-    "express": "2.5.x",
-    "request": ">=2.9.3",
     "async": ">=0.1.18",
     "uglify-js": ">=1.2.6",
     "docco-husky": ">=0.3.2"
   },
   "scripts":    {
-    "test": "./node_modules/nodeunit/bin/nodeunit test/nodejs"
+    "test": "phantomjs test/run-qunit.js test/index.html"
   }
 }

@@ -1,51 +1,31 @@
 module('midgardCreate');
 
-test('Create widget', function() {
+test('Create widget registered', function () {
   equal(typeof jQuery('body').midgardCreate, 'function');
 });
 
-test('Toolbar state', function() {
-  jQuery('#qunit-fixture .toolbar-state').midgardCreate({
-    storagePrefix: 'toolbar-state'
-  });
-  equal(jQuery('#midgard-bar').length, 1);
-  ok(jQuery('#midgard-bar').css('display') !== 'none');
-  equal(jQuery('#midgard-bar-minimized').css('display'), 'none');
+test('Create instantiation w/o VIE', function () {
+  var fixture = jQuery('.create-instance');
+  fixture.midgardCreate();
+  var instance = fixture.data('midgardCreate');
+  ok(instance);
 
-
-  jQuery('#midgard-bar-hidebutton').click();
-  equal(jQuery('#midgard-bar-minimized').length, 1);
-  stop();
-  setTimeout(function() {
-    equal(jQuery('#midgard-bar').css('display'), 'none');
-    ok(jQuery('#midgard-bar-minimized').css('display') !== 'none');
-    jQuery('#qunit-fixture .toolbar-state').empty();
-    start();
-  }, 1500);
+  // Check some of the autoinitialization
+  ok(instance.vie);
+  ok(instance.vie.hasService('rdfa'));
 });
 
-test('Toolbar edit', function() {
-  jQuery('#qunit-fixture .toolbar-edit').midgardCreate({
-    storagePrefix: 'toolbar-edit'
+test('Create instantiation with VIE', function () {
+  var v = new VIE();
+  var fixture = jQuery('.create-instance');
+  fixture.midgardCreate({
+    vie: v
   });
 
-  var checkEdit = function(event, options) {
-    equal(options.state, 'edit');
-    start();
-    jQuery('#qunit-fixture .toolbar-edit').unbind('midgardcreatestatechange', checkEdit);
-  };
+  var instance = fixture.data('midgardCreate');
+  ok(instance);
 
-  var checkBrowse = function(event, options) {
-    equal(options.state, 'browse');
-    start();
-    jQuery('#qunit-fixture .toolbar-edit').unbind('midgardcreatestatechange', checkBrowse);
-  };
-
-  stop();
-  jQuery('#qunit-fixture .toolbar-edit').bind('midgardcreatestatechange', checkEdit);
-  jQuery('#qunit-fixture .toolbar-edit #midgard-bar #midgardcreate-edit').click();
-
-  stop();
-  jQuery('#qunit-fixture .toolbar-edit').bind('midgardcreatestatechange', checkBrowse);
-  jQuery('#qunit-fixture .toolbar-edit #midgard-bar #midgardcreate-edit').click();
+  // Check that Create uses *our* VIE
+  ok(instance.vie);
+  equal(instance.vie, v);
 });
