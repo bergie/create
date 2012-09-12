@@ -1,4 +1,4 @@
-Create - On-site web editing interface
+Create - On-site web editing interface [![Build Status](https://secure.travis-ci.org/bergie/create.png)](http://travis-ci.org/bergie/create)
 ======================================
 
 ![Create logo](https://github.com/bergie/create/raw/master/design/create.png)
@@ -101,6 +101,4 @@ If you have Node.js installed, you can do this also more simply with:
 
 #### Continuous integration
 
-Create uses [Travis](http://travis-ci.org/) for continuous integration. Simply add your fork there and every time you push you'll get the tests run.
-
-[![Build Status](https://secure.travis-ci.org/bergie/create.png)](http://travis-ci.org/bergie/create)
+Create uses [Travis](http://travis-ci.org/) for continuous integration. Simply add your fork there and every time you push you'll get the tests run. See [our Travis build page](http://travis-ci.org/#!/bergie/create) for more information.
