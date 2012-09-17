@@ -98,7 +98,10 @@
         // Set a simpler editor for title fields
         jQuery('body').midgardCreate('configureEditor', 'simpleHallo', 'halloWidget', {
           plugins: {
-            halloformat: {}
+            halloformat: {},
+            halloblacklist: {
+              tags: ['br']
+            }
           }
         });
         jQuery('body').midgardCreate('setEditorForProperty', 'SimpleText', 'simpleHallo');
