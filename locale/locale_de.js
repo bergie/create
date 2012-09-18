@@ -15,8 +15,8 @@ window.midgardCreate.locale.de = {
   'localModifications': '<%= number %> Einträge auf dieser Seite haben lokale Modifikationen',
   'Restore': 'Wiederherstellen',
   'Ignore': 'Ignorieren',
-  'saveSuccess': 'Eintrag "<%= label %>" erforlgreich gespeichert',
-  'saveSuccessMultiple': '<%= number %> Einträge erfogreich gespeichert',
+  'saveSuccess': 'Eintrag "<%= label %>" erfolgreich gespeichert',
+  'saveSuccessMultiple': '<%= number %> Einträge erfolgreich gespeichert',
   'saveError': 'Beim Speichern trat ein Fehler auf<br /><%= error %>',
   // Tagging
   'Item tags': 'Schlagwörter des Eintrags',
