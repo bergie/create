@@ -1,61 +1,3 @@
-if (window.midgardCreate === undefined) {
-  window.midgardCreate = {};
-}
-if (window.midgardCreate.locale === undefined) {
-  window.midgardCreate.locale = {};
-}
-
-window.midgardCreate.locale.en = {
-  // Session-state buttons for the main toolbar
-  'Save': 'Save',
-  'Saving': 'Saving',
-  'Cancel': 'Cancel',
-  'Edit': 'Edit',
-  // Storage status messages
-  'localModifications': '<%= number %> items on this page have local modifications',
-  'Restore': 'Restore',
-  'Ignore': 'Ignore',
-  'saveSuccess': 'Item "<%= label %>" saved successfully',
-  'saveSuccessMultiple': '<%= number %> items saved successfully',
-  'saveError': 'Error occurred while saving<br /><%= error %>',
-  // Tagging
-  'Item tags': 'Item tags',
-  'Suggested tags': 'Suggested tags',
-  'Tags': 'Tags',
-  'add a tag': 'add a tag',
-  // Collection widgets
-  'Add': 'Add',
-  'Choose type to add': 'Choose type to add'
-};
-if (window.midgardCreate === undefined) {
-  window.midgardCreate = {};
-}
-if (window.midgardCreate.locale === undefined) {
-  window.midgardCreate.locale = {};
-}
-
-window.midgardCreate.locale.fi = {
-  // Session-state buttons for the main toolbar
-  'Save': 'Tallenna',
-  'Saving': 'Tallennetaan',
-  'Cancel': 'Peruuta',
-  'Edit': 'Muokkaa',
-  // Storage status messages
-  'localModifications': '<%= number %> oliota sivulla omaa paikallisia muutoksia',
-  'Restore': 'Palauta',
-  'Ignore': 'Poista',
-  'saveSuccess': 'Olio "<%= label %>" tallennettu',
-  'saveSuccessMultiple': '<%= number %> oliota tallennettu',
-  'saveError': 'Virhe tallennettaessa<br /><%= error %>',
-  // Tagging
-  'Item tags': 'Avainsanat',
-  'Suggested tags': 'Ehdotukset',
-  'Tags': 'Avainsanat',
-  'add a tag': 'lisää avainsana',
-  // Collection widgets
-  'Add': 'Lisää',
-  'Choose type to add': 'Mitä haluat lisätä?'
-};
 //     Create.js 1.0.0alpha4 - On-site web editing interface
 //     (c) 2011-2012 Henri Bergius, IKS Consortium
 //     Create may be freely distributed under the MIT license.
@@ -3142,19 +3084,60 @@ window.midgardCreate.locale.fi = {
 if (window.midgardCreate === undefined) {
   window.midgardCreate = {};
 }
+if (window.midgardCreate.locale === undefined) {
+  window.midgardCreate.locale = {};
+}
 
-window.midgardCreate.localize = function (id, language) {
-  if (!window.midgardCreate.locale) {
-    // No localization files loaded, return as-is
-    return id;
-  }
-  if (window.midgardCreate.locale[language] && window.midgardCreate.locale[language][id]) {
-    return window.midgardCreate.locale[language][id];
-  }
-  if (window.midgardCreate.locale.en[id]) {
-    return window.midgardCreate.locale.en[id];
-  }
-  return id;
+window.midgardCreate.locale.en = {
+  // Session-state buttons for the main toolbar
+  'Save': 'Save',
+  'Saving': 'Saving',
+  'Cancel': 'Cancel',
+  'Edit': 'Edit',
+  // Storage status messages
+  'localModifications': '<%= number %> items on this page have local modifications',
+  'Restore': 'Restore',
+  'Ignore': 'Ignore',
+  'saveSuccess': 'Item "<%= label %>" saved successfully',
+  'saveSuccessMultiple': '<%= number %> items saved successfully',
+  'saveError': 'Error occurred while saving<br /><%= error %>',
+  // Tagging
+  'Item tags': 'Item tags',
+  'Suggested tags': 'Suggested tags',
+  'Tags': 'Tags',
+  'add a tag': 'add a tag',
+  // Collection widgets
+  'Add': 'Add',
+  'Choose type to add': 'Choose type to add'
+};
+if (window.midgardCreate === undefined) {
+  window.midgardCreate = {};
+}
+if (window.midgardCreate.locale === undefined) {
+  window.midgardCreate.locale = {};
+}
+
+window.midgardCreate.locale.fi = {
+  // Session-state buttons for the main toolbar
+  'Save': 'Tallenna',
+  'Saving': 'Tallennetaan',
+  'Cancel': 'Peruuta',
+  'Edit': 'Muokkaa',
+  // Storage status messages
+  'localModifications': '<%= number %> oliota sivulla omaa paikallisia muutoksia',
+  'Restore': 'Palauta',
+  'Ignore': 'Poista',
+  'saveSuccess': 'Olio "<%= label %>" tallennettu',
+  'saveSuccessMultiple': '<%= number %> oliota tallennettu',
+  'saveError': 'Virhe tallennettaessa<br /><%= error %>',
+  // Tagging
+  'Item tags': 'Avainsanat',
+  'Suggested tags': 'Ehdotukset',
+  'Tags': 'Avainsanat',
+  'add a tag': 'lisää avainsana',
+  // Collection widgets
+  'Add': 'Lisää',
+  'Choose type to add': 'Mitä haluat lisätä?'
 };
 if (window.midgardCreate === undefined) {
   window.midgardCreate = {};
@@ -3184,4 +3167,21 @@ window.midgardCreate.locale.pt_BR = {
   // Collection widgets
   'Add': 'Adicionar',
   'Choose type to add': 'Selecione o tipo para adicionar'
+};
+if (window.midgardCreate === undefined) {
+  window.midgardCreate = {};
+}
+
+window.midgardCreate.localize = function (id, language) {
+  if (!window.midgardCreate.locale) {
+    // No localization files loaded, return as-is
+    return id;
+  }
+  if (window.midgardCreate.locale[language] && window.midgardCreate.locale[language][id]) {
+    return window.midgardCreate.locale[language][id];
+  }
+  if (window.midgardCreate.locale.en[id]) {
+    return window.midgardCreate.locale.en[id];
+  }
+  return id;
 };
