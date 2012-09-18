@@ -4,6 +4,7 @@ node_js:
 
 before_script:
   - npm install --dev
+  - ./node_modules/.bin/cake bam
 
 script:
   - ./node_modules/.bin/jshint examples/create.js
