@@ -65,7 +65,7 @@
         entityElement: this.element
       });
 
-      if (!this.vie.services['rdfa']) {
+      if (!this.vie.services.rdfa) {
         return;
       }
 

@@ -129,7 +129,7 @@
         vie = options.vie;
       } else {
         // Set up our own VIE instance
-        var vie = new VIE();
+        vie = new VIE();
       }
 
       if (!vie.hasService('rdfa')) {

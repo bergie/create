@@ -230,6 +230,7 @@
         },
 
         _setPosition: function () {
+          var pos;
           if (_config.bindTo) {
             itemDimensions = {
               width: _item.width() ? _item.width() : 280,
@@ -254,7 +255,7 @@
               targetDimensions.top = _bind_target.offset().top;
             }
             
-            var pos = this._calculatePositionForGravity(_item, _config.gravity, targetDimensions, itemDimensions);
+            pos = this._calculatePositionForGravity(_item, _config.gravity, targetDimensions, itemDimensions);
             properties.top = pos.top;
             properties.left = pos.left;
 
