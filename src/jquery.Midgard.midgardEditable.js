@@ -22,7 +22,7 @@
       },
       // the available widgets by data type
       widgets: {
-        default: 'hallo'
+        'default': 'hallo'
       },
       collectionWidgets: {
         'default': 'midgardCollectionAdd'

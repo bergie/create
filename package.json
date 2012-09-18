@@ -7,7 +7,8 @@
   "devDependencies": {
     "async": ">=0.1.18",
     "uglify-js": ">=1.2.6",
-    "docco-husky": ">=0.3.2"
+    "docco-husky": ">=0.3.2",
+    "jshint": "0.9.x"
   },
   "scripts":    {
     "test": "phantomjs test/qunit/run.js test/index.html"

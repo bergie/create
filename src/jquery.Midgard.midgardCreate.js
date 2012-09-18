@@ -38,7 +38,7 @@
       highlightColor: '#67cc08',
       // Widgets to use for editing various content types.
       editorWidgets: {
-        default: 'hallo' 
+        'default': 'hallo' 
       },
       // Additional editor options.
       editorOptions: {
@@ -48,7 +48,7 @@
       },
       // Widgets to use for managing collections.
       collectionWidgets: {
-        default: 'midgardCollectionAdd'
+        'default': 'midgardCollectionAdd'
       },
       // URL callback used with Backbone.sync. Will be passed to the
       // Storage widget.

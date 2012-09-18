@@ -96,7 +96,7 @@ window.midgardCreate.locale.fi = {
       highlightColor: '#67cc08',
       // Widgets to use for editing various content types.
       editorWidgets: {
-        default: 'hallo' 
+        'default': 'hallo' 
       },
       // Additional editor options.
       editorOptions: {
@@ -106,7 +106,7 @@ window.midgardCreate.locale.fi = {
       },
       // Widgets to use for managing collections.
       collectionWidgets: {
-        default: 'midgardCollectionAdd'
+        'default': 'midgardCollectionAdd'
       },
       // URL callback used with Backbone.sync. Will be passed to the
       // Storage widget.
@@ -759,7 +759,7 @@ window.midgardCreate.locale.fi = {
       },
       // the available widgets by data type
       widgets: {
-        default: 'hallo'
+        'default': 'hallo'
       },
       collectionWidgets: {
         'default': 'midgardCollectionAdd'

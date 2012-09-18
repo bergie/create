@@ -5,7 +5,9 @@ node_js:
 before_script:
   - npm install --dev
 
-script: npm test
+script:
+  - ./node_modules/.bin/jshint examples/create.js
+  - npm test
 
 notifications:
   irc:
