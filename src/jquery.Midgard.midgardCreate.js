@@ -340,6 +340,9 @@
                 return;
               }
 
+              // Ensure other animations are stopped before proceeding
+              options.element.stop(true, true);
+
               // Highlight the editable
               options.element.effect('highlight', {
                 color: widget.options.highlightColor
