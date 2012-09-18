@@ -52,7 +52,8 @@
           return;
         }
         self.options.toolbarState = data.display;
-        jQuery(self.element).hallo(self.getHalloOptions());
+        var newOptions = self.getHalloOptions();
+        self.element.hallo('changeToolbar', newOptions.parentElement, newOptions.toolbar, true);
       });
     },
 
@@ -85,7 +86,7 @@
         defaults.toolbar = 'halloToolbarFixed';
       } else {
         // Tools area minimized, use floating toolbar
-        defaults.showAlways = false;
+        defaults.parentElement = 'body';
         defaults.toolbar = 'halloToolbarContextual';
       }
       return _.extend(defaults, this.options.editorOptions);
