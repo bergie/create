@@ -4,6 +4,10 @@
 //     For all details and documentation:
 //     http://createjs.org/
 (function (jQuery, undefined) {
+  // Run JavaScript in strict mode
+  /*global jQuery:false _:false document:false */
+  'use strict';
+
   // # Base editing widget
   //
   // This editing widget provides a very simplistic `contentEditable` editor

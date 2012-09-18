@@ -25,6 +25,10 @@
  });
  */
 (function (jQuery, undefined) {
+  // Run JavaScript in strict mode
+  /*global jQuery:false _:false window:false Backbone:false document:false */
+  'use strict';
+
   var _midgardnotifications_active = [];
   var MidgardNotification = function (parent, options) {
       var _defaults = {
@@ -232,7 +236,7 @@
         _setPosition: function () {
           var pos;
           if (_config.bindTo) {
-            itemDimensions = {
+            var itemDimensions = {
               width: _item.width() ? _item.width() : 280,
               height: _item.height() ? _item.height() : 109
             };
@@ -273,6 +277,7 @@
             position: 'fixed'
           };
 
+          var item;
           var activeHeight = function (items) {
             var total_height = 0;
             jQuery.each(items, function (i, item) {
@@ -326,7 +331,7 @@
           }
 
           if (_config.timeout > 0 && !_config.actions.length) {
-            setTimeout(function () {
+            window.setTimeout(function () {
               self.close();
             }, _config.timeout);
           }
@@ -394,6 +399,7 @@
       var _previous_item_name = null;
       var _first_item_name = null;
       var _last_item_name = null;
+      var _current_item = null;
 
       var base = {
         constructor: function (options) {
@@ -462,7 +468,7 @@
 
             if (item.show_actions) {
               if (item.back) {
-                back_label = item.back_label;
+                var back_label = item.back_label;
                 if (!back_label) {
                   back_label = 'Back';
                 }
@@ -476,7 +482,7 @@
               }
 
               if (item.forward) {
-                forward_label = item.forward_label;
+                var forward_label = item.forward_label;
                 if (!forward_label) {
                   forward_label = 'Back';
                 }
@@ -518,7 +524,7 @@
         next: function () {
           _current_item.close();
           if (_storyline[_current_item.name].forward) {
-            next_item = _storyline[_current_item.name].forward;
+            var next_item = _storyline[_current_item.name].forward;
             this._showNotification(_storyline[next_item]);
           } else {
             this._showNotification(_storyline[_last_item_name]);
@@ -528,7 +534,7 @@
           if (_previous_item_name) {
             _current_item.close();
             if (_storyline[_current_item.name].back) {
-              prev_item = _storyline[_current_item.name].back;
+              var prev_item = _storyline[_current_item.name].back;
               this._showNotification(_storyline[prev_item]);
             } else {
               this._showNotification(_storyline[_previous_item_name]);
@@ -651,7 +657,7 @@
     create: function (options) {
       options = jQuery.extend({}, this.options.notification_defaults, options || {});
 
-      item = new MidgardNotification(this.container, options);
+      var item = new MidgardNotification(this.container, options);
       item.show();
 
       return item;

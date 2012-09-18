@@ -4,6 +4,10 @@
 //     For all details and documentation:
 //     http://createjs.org/
 (function (jQuery, undefined) {
+  // Run JavaScript in strict mode
+  /*global jQuery:false _:false window:false */
+  'use strict';
+
   jQuery.widget('Midgard.midgardStorage', {
     saveEnabled: true,
     options: {
@@ -233,6 +237,7 @@
         models: widget.changedModels
       });
 
+      var notification_msg;
       var needed = widget.changedModels.length;
       if (needed > 1) {
         notification_msg = _.template(widget.options.templates.saveSuccessMultiple, {
@@ -275,7 +280,7 @@
             model._originalAttributes = _.clone(model.attributes);
 
             widget._removeLocal(model);
-            setTimeout(function () {
+            window.setTimeout(function () {
               widget.changedModels.splice(widget.changedModels.indexOf(model), 1);
             }, 0);
             needed--;
@@ -318,7 +323,7 @@
         }
         return this._saveLocalReferences(model.primaryCollection.subject, model.primaryCollection.predicate, model);
       }
-      localStorage.setItem(model.getSubjectUri(), JSON.stringify(model.toJSONLD()));
+      window.localStorage.setItem(model.getSubjectUri(), JSON.stringify(model.toJSONLD()));
     },
 
     _getReferenceId: function (model, property) {
@@ -337,18 +342,18 @@
       var widget = this;
       var identifier = subject + ':' + predicate;
       var json = model.toJSONLD();
-      if (localStorage.getItem(identifier)) {
-        var referenceList = JSON.parse(localStorage.getItem(identifier));
+      if (window.localStorage.getItem(identifier)) {
+        var referenceList = JSON.parse(window.localStorage.getItem(identifier));
         var index = _.pluck(referenceList, '@').indexOf(json['@']);
         if (index !== -1) {
           referenceList[index] = json;
         } else {
           referenceList.push(json);
         }
-        localStorage.setItem(identifier, JSON.stringify(referenceList));
+        window.localStorage.setItem(identifier, JSON.stringify(referenceList));
         return;
       }
-      localStorage.setItem(identifier, JSON.stringify([json]));
+      window.localStorage.setItem(identifier, JSON.stringify([json]));
     },
 
     _checkLocal: function (model) {
@@ -356,7 +361,7 @@
         return false;
       }
 
-      var local = localStorage.getItem(model.getSubjectUri());
+      var local = window.localStorage.getItem(model.getSubjectUri());
       if (!local) {
         return false;
       }
@@ -369,7 +374,7 @@
         return;
       }
 
-      var local = localStorage.getItem(model.getSubjectUri());
+      var local = window.localStorage.getItem(model.getSubjectUri());
       if (!local) {
         return;
       }
@@ -392,7 +397,7 @@
       }
 
       var identifier = this._getReferenceId(model, property);
-      var local = localStorage.getItem(identifier);
+      var local = window.localStorage.getItem(identifier);
       if (!local) {
         return;
       }
@@ -432,7 +437,7 @@
         return;
       }
 
-      localStorage.removeItem(model.getSubjectUri());
+      window.localStorage.removeItem(model.getSubjectUri());
     }
   });
 })(jQuery);

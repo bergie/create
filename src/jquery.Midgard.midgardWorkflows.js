@@ -4,6 +4,10 @@
 //     For all details and documentation:
 //     http://createjs.org/
 (function (jQuery, undefined) {
+  // Run JavaScript in strict mode
+  /*global jQuery:false _:false window:false Backbone:false */
+  'use strict';
+
   jQuery.widget('Midgard.midgardWorkflows', {
     options: {
       url: function (model) {},
@@ -12,8 +16,8 @@
       },
       renderers: {
         button: function (model, workflow, action_cb, final_cb) {
-          button_id = 'midgardcreate-workflow_' + workflow.get('name');
-          html = jQuery(_.template(this.options.templates.button, {
+          var button_id = 'midgardcreate-workflow_' + workflow.get('name');
+          var html = jQuery(_.template(this.options.templates.button, {
             id: button_id,
             label: workflow.get('label')
           })).button();
@@ -26,11 +30,11 @@
       },
       action_types: {
         backbone_save: function (model, workflow, callback) {
-          copy_of_url = model.url;
-          original_model = model.clone();
+          var copy_of_url = model.url;
+          var original_model = model.clone();
           original_model.url = copy_of_url;
 
-          action = workflow.get('action');
+          var action = workflow.get('action');
           if (action.url) {
             model.url = action.url;
           }
@@ -48,11 +52,11 @@
           });
         },
         backbone_destroy: function (model, workflow, callback) {
-          copy_of_url = model.url;
-          original_model = model.clone();
+          var copy_of_url = model.url;
+          var original_model = model.clone();
           original_model.url = copy_of_url;
 
-          action = workflow.get('action');
+          var action = workflow.get('action');
           if (action.url) {
             model.url = action.url;
           }
@@ -71,17 +75,17 @@
           });
         },
         http: function (model, workflow, callback) {
-          action = workflow.get('action');
+          var action = workflow.get('action');
           if (!action.url) {
             return callback('No action url defined!');
           }
 
-          wf_opts = {};
+          var wf_opts = {};
           if (action.http) {
             wf_opts = action.http;
           }
 
-          ajax_options = jQuery.extend({
+          var ajax_options = jQuery.extend({
             url: action.url,
             type: 'POST',
             data: model.toJSON(),
@@ -161,7 +165,7 @@
       if (widget.options.url) {
         widget._fetchModelWorkflows(model);
       } else {
-        flows = new(widget._generateCollectionFor(model))([], {});
+        var flows = new(widget._generateCollectionFor(model))([], {});
         widget._trigger('changed', null, {
           instance: model,
           workflows: flows
@@ -199,8 +203,8 @@
     prepareItem: function (model, workflow, final_cb) {
       var widget = this;
 
-      renderer = this.getRenderer(workflow.get("type"));
-      action_type_cb = this.getActionType(workflow.get("action").type);
+      var renderer = this.getRenderer(workflow.get("type"));
+      var action_type_cb = this.getActionType(workflow.get("action").type);
 
       return renderer.call(this, model, workflow, action_type_cb, function (err, m) {
         delete widget.workflows[model.cid];

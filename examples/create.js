@@ -3,7 +3,12 @@
 //     Create may be freely distributed under the MIT license.
 //     For all details and documentation:
 //     http://createjs.org/
+
 (function (jQuery, undefined) {
+  // Run JavaScript in strict mode
+  /*global jQuery:false _:false window:false VIE:false */
+  'use strict';
+
   // # Create main widget
   //
   // The `midgardCreate` widget is the main entry point into using
@@ -224,17 +229,17 @@
       }
 
       var toolbarID = this.options.storagePrefix + 'Midgard.create.toolbar';
-      if (sessionStorage.getItem(toolbarID)) {
-        this._setOption('toolbar', sessionStorage.getItem(toolbarID));
+      if (window.sessionStorage.getItem(toolbarID)) {
+        this._setOption('toolbar', window.sessionStorage.getItem(toolbarID));
       }
 
       var stateID = this.options.storagePrefix + 'Midgard.create.state';
-      if (sessionStorage.getItem(stateID)) {
-        this.setState(sessionStorage.getItem(stateID));
+      if (window.sessionStorage.getItem(stateID)) {
+        this.setState(window.sessionStorage.getItem(stateID));
       }
 
       this.element.bind('midgardcreatestatechange', function (event, options) {
-        sessionStorage.setItem(stateID, options.state);
+        window.sessionStorage.setItem(stateID, options.state);
       });
     },
 
@@ -294,7 +299,7 @@
       var widget = this;
       this.element.bind('midgardtoolbarstatechange', function (event, options) {
         if (window.sessionStorage) {
-          sessionStorage.setItem(widget.options.storagePrefix + 'Midgard.create.toolbar', options.display);
+          window.sessionStorage.setItem(widget.options.storagePrefix + 'Midgard.create.toolbar', options.display);
         }
         widget._setOption('toolbar', options.display);
       });
@@ -317,10 +322,10 @@
         collectionWidgets: widget.options.collectionWidgets
       };
       if (widget.options.enableEditor) {
-        editableOptions[enableEditor] = widget.options.enableEditor;
+        editableOptions.enableEditor = widget.options.enableEditor;
       }
       if (widget.options.disableEditor) {
-        editableOptions[disableEditor] = widget.options.disableEditor;
+        editableOptions.disableEditor = widget.options.disableEditor;
       }
       jQuery('[about]', this.element).each(function () {
         var element = this;
@@ -392,6 +397,10 @@
 //     For all details and documentation:
 //     http://createjs.org/
 (function (jQuery, undefined) {
+  // Run JavaScript in strict mode
+  /*global jQuery:false _:false window:false console:false */
+  'use strict';
+
   // # Widget for adding items to a collection
   jQuery.widget('Midgard.midgardCollectionAdd', {
     options: {
@@ -572,6 +581,10 @@
 //     For all details and documentation:
 //     http://createjs.org/
 (function (jQuery, undefined) {
+  // Run JavaScript in strict mode
+  /*global jQuery:false _:false window:false console:false */
+  'use strict';
+
   // # Widget for adding items anywhere inside a collection
   jQuery.widget('Midgard.midgardCollectionAddBetween', jQuery.Midgard.midgardCollectionAdd, {
     _bindCollectionView: function (view) {
@@ -640,6 +653,10 @@
 //     For all details and documentation:
 //     http://createjs.org/
 (function (jQuery, undefined) {
+  // Run JavaScript in strict mode
+  /*global jQuery:false _:false window:false VIE:false */
+  'use strict';
+
   // # Create editing widget
   jQuery.widget('Midgard.midgardEditable', {
     options: {
@@ -937,6 +954,10 @@
 //     For all details and documentation:
 //     http://createjs.org/
 (function (jQuery, undefined) {
+  // Run JavaScript in strict mode
+  /*global jQuery:false _:false document:false */
+  'use strict';
+
   // # Base editing widget
   //
   // This editing widget provides a very simplistic `contentEditable` editor
@@ -1003,6 +1024,10 @@
 //     For all details and documentation:
 //     http://createjs.org/
 (function (jQuery, undefined) {
+  // Run JavaScript in strict mode
+  /*global jQuery:false _:false document:false Aloha:false */
+  'use strict';
+
   // # Aloha editing widget
   //
   // This widget allows editing textual contents using the
@@ -1068,6 +1093,10 @@
 //     For all details and documentation:
 //     http://createjs.org/
 (function (jQuery, undefined) {
+  // Run JavaScript in strict mode
+  /*global jQuery:false _:false document:false */
+  'use strict';
+
   // # Hallo editing widget
   //
   // This widget allows editing textual content areas with the
@@ -1158,6 +1187,10 @@
 //     For all details and documentation:
 //     http://createjs.org/
 (function (jQuery, undefined) {
+  // Run JavaScript in strict mode
+  /*global jQuery:false _:false document:false */
+  'use strict';
+
   // # Redactor editing widget
   //
   // This widget allows editing textual content areas with the
@@ -1234,6 +1267,10 @@
  });
  */
 (function (jQuery, undefined) {
+  // Run JavaScript in strict mode
+  /*global jQuery:false _:false window:false Backbone:false document:false */
+  'use strict';
+
   var _midgardnotifications_active = [];
   var MidgardNotification = function (parent, options) {
       var _defaults = {
@@ -1441,7 +1478,7 @@
         _setPosition: function () {
           var pos;
           if (_config.bindTo) {
-            itemDimensions = {
+            var itemDimensions = {
               width: _item.width() ? _item.width() : 280,
               height: _item.height() ? _item.height() : 109
             };
@@ -1482,6 +1519,7 @@
             position: 'fixed'
           };
 
+          var item;
           var activeHeight = function (items) {
             var total_height = 0;
             jQuery.each(items, function (i, item) {
@@ -1535,7 +1573,7 @@
           }
 
           if (_config.timeout > 0 && !_config.actions.length) {
-            setTimeout(function () {
+            window.setTimeout(function () {
               self.close();
             }, _config.timeout);
           }
@@ -1603,6 +1641,7 @@
       var _previous_item_name = null;
       var _first_item_name = null;
       var _last_item_name = null;
+      var _current_item = null;
 
       var base = {
         constructor: function (options) {
@@ -1671,7 +1710,7 @@
 
             if (item.show_actions) {
               if (item.back) {
-                back_label = item.back_label;
+                var back_label = item.back_label;
                 if (!back_label) {
                   back_label = 'Back';
                 }
@@ -1685,7 +1724,7 @@
               }
 
               if (item.forward) {
-                forward_label = item.forward_label;
+                var forward_label = item.forward_label;
                 if (!forward_label) {
                   forward_label = 'Back';
                 }
@@ -1727,7 +1766,7 @@
         next: function () {
           _current_item.close();
           if (_storyline[_current_item.name].forward) {
-            next_item = _storyline[_current_item.name].forward;
+            var next_item = _storyline[_current_item.name].forward;
             this._showNotification(_storyline[next_item]);
           } else {
             this._showNotification(_storyline[_last_item_name]);
@@ -1737,7 +1776,7 @@
           if (_previous_item_name) {
             _current_item.close();
             if (_storyline[_current_item.name].back) {
-              prev_item = _storyline[_current_item.name].back;
+              var prev_item = _storyline[_current_item.name].back;
               this._showNotification(_storyline[prev_item]);
             } else {
               this._showNotification(_storyline[_previous_item_name]);
@@ -1860,7 +1899,7 @@
     create: function (options) {
       options = jQuery.extend({}, this.options.notification_defaults, options || {});
 
-      item = new MidgardNotification(this.container, options);
+      var item = new MidgardNotification(this.container, options);
       item.show();
 
       return item;
@@ -1878,6 +1917,10 @@
 //     For all details and documentation:
 //     http://createjs.org/
 (function (jQuery, undefined) {
+  // Run JavaScript in strict mode
+  /*global jQuery:false _:false window:false */
+  'use strict';
+
   jQuery.widget('Midgard.midgardStorage', {
     saveEnabled: true,
     options: {
@@ -2107,6 +2150,7 @@
         models: widget.changedModels
       });
 
+      var notification_msg;
       var needed = widget.changedModels.length;
       if (needed > 1) {
         notification_msg = _.template(widget.options.templates.saveSuccessMultiple, {
@@ -2149,7 +2193,7 @@
             model._originalAttributes = _.clone(model.attributes);
 
             widget._removeLocal(model);
-            setTimeout(function () {
+            window.setTimeout(function () {
               widget.changedModels.splice(widget.changedModels.indexOf(model), 1);
             }, 0);
             needed--;
@@ -2192,7 +2236,7 @@
         }
         return this._saveLocalReferences(model.primaryCollection.subject, model.primaryCollection.predicate, model);
       }
-      localStorage.setItem(model.getSubjectUri(), JSON.stringify(model.toJSONLD()));
+      window.localStorage.setItem(model.getSubjectUri(), JSON.stringify(model.toJSONLD()));
     },
 
     _getReferenceId: function (model, property) {
@@ -2211,18 +2255,18 @@
       var widget = this;
       var identifier = subject + ':' + predicate;
       var json = model.toJSONLD();
-      if (localStorage.getItem(identifier)) {
-        var referenceList = JSON.parse(localStorage.getItem(identifier));
+      if (window.localStorage.getItem(identifier)) {
+        var referenceList = JSON.parse(window.localStorage.getItem(identifier));
         var index = _.pluck(referenceList, '@').indexOf(json['@']);
         if (index !== -1) {
           referenceList[index] = json;
         } else {
           referenceList.push(json);
         }
-        localStorage.setItem(identifier, JSON.stringify(referenceList));
+        window.localStorage.setItem(identifier, JSON.stringify(referenceList));
         return;
       }
-      localStorage.setItem(identifier, JSON.stringify([json]));
+      window.localStorage.setItem(identifier, JSON.stringify([json]));
     },
 
     _checkLocal: function (model) {
@@ -2230,7 +2274,7 @@
         return false;
       }
 
-      var local = localStorage.getItem(model.getSubjectUri());
+      var local = window.localStorage.getItem(model.getSubjectUri());
       if (!local) {
         return false;
       }
@@ -2243,7 +2287,7 @@
         return;
       }
 
-      var local = localStorage.getItem(model.getSubjectUri());
+      var local = window.localStorage.getItem(model.getSubjectUri());
       if (!local) {
         return;
       }
@@ -2266,7 +2310,7 @@
       }
 
       var identifier = this._getReferenceId(model, property);
-      var local = localStorage.getItem(identifier);
+      var local = window.localStorage.getItem(identifier);
       if (!local) {
         return;
       }
@@ -2306,7 +2350,7 @@
         return;
       }
 
-      localStorage.removeItem(model.getSubjectUri());
+      window.localStorage.removeItem(model.getSubjectUri());
     }
   });
 })(jQuery);
@@ -2316,6 +2360,10 @@
 //     For all details and documentation:
 //     http://createjs.org/
 (function (jQuery, undefined) {
+  // Run JavaScript in strict mode
+  /*global jQuery:false _:false window:false */
+  'use strict';
+
   jQuery.widget('Midgard.midgardTags', {
     enhanced: false,
 
@@ -2629,6 +2677,10 @@
 //     For all details and documentation:
 //     http://createjs.org/
 (function (jQuery, undefined) {
+  // Run JavaScript in strict mode
+  /*global jQuery:false _:false window:false */
+  'use strict';
+
   jQuery.widget('Midgard.midgardToolbar', {
     options: {
       display: 'full',
@@ -2671,7 +2723,7 @@
         widget._clearWorkflows();
         if (options.workflows.length) {
           options.workflows.each(function (workflow) {
-            html = jQuery('body').data().midgardWorkflows.prepareItem(options.instance, workflow, function (err, model) {
+            var html = jQuery('body').data().midgardWorkflows.prepareItem(options.instance, workflow, function (err, model) {
               widget._clearWorkflows();
               if (err) {
                 return;
@@ -2745,6 +2797,10 @@
 //     For all details and documentation:
 //     http://createjs.org/
 (function (jQuery, undefined) {
+  // Run JavaScript in strict mode
+  /*global jQuery:false _:false window:false Backbone:false */
+  'use strict';
+
   jQuery.widget('Midgard.midgardWorkflows', {
     options: {
       url: function (model) {},
@@ -2753,8 +2809,8 @@
       },
       renderers: {
         button: function (model, workflow, action_cb, final_cb) {
-          button_id = 'midgardcreate-workflow_' + workflow.get('name');
-          html = jQuery(_.template(this.options.templates.button, {
+          var button_id = 'midgardcreate-workflow_' + workflow.get('name');
+          var html = jQuery(_.template(this.options.templates.button, {
             id: button_id,
             label: workflow.get('label')
           })).button();
@@ -2767,11 +2823,11 @@
       },
       action_types: {
         backbone_save: function (model, workflow, callback) {
-          copy_of_url = model.url;
-          original_model = model.clone();
+          var copy_of_url = model.url;
+          var original_model = model.clone();
           original_model.url = copy_of_url;
 
-          action = workflow.get('action');
+          var action = workflow.get('action');
           if (action.url) {
             model.url = action.url;
           }
@@ -2789,11 +2845,11 @@
           });
         },
         backbone_destroy: function (model, workflow, callback) {
-          copy_of_url = model.url;
-          original_model = model.clone();
+          var copy_of_url = model.url;
+          var original_model = model.clone();
           original_model.url = copy_of_url;
 
-          action = workflow.get('action');
+          var action = workflow.get('action');
           if (action.url) {
             model.url = action.url;
           }
@@ -2812,17 +2868,17 @@
           });
         },
         http: function (model, workflow, callback) {
-          action = workflow.get('action');
+          var action = workflow.get('action');
           if (!action.url) {
             return callback('No action url defined!');
           }
 
-          wf_opts = {};
+          var wf_opts = {};
           if (action.http) {
             wf_opts = action.http;
           }
 
-          ajax_options = jQuery.extend({
+          var ajax_options = jQuery.extend({
             url: action.url,
             type: 'POST',
             data: model.toJSON(),
@@ -2902,7 +2958,7 @@
       if (widget.options.url) {
         widget._fetchModelWorkflows(model);
       } else {
-        flows = new(widget._generateCollectionFor(model))([], {});
+        var flows = new(widget._generateCollectionFor(model))([], {});
         widget._trigger('changed', null, {
           instance: model,
           workflows: flows
@@ -2940,8 +2996,8 @@
     prepareItem: function (model, workflow, final_cb) {
       var widget = this;
 
-      renderer = this.getRenderer(workflow.get("type"));
-      action_type_cb = this.getActionType(workflow.get("action").type);
+      var renderer = this.getRenderer(workflow.get("type"));
+      var action_type_cb = this.getActionType(workflow.get("action").type);
 
       return renderer.call(this, model, workflow, action_type_cb, function (err, m) {
         delete widget.workflows[model.cid];

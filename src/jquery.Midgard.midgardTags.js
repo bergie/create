@@ -4,6 +4,10 @@
 //     For all details and documentation:
 //     http://createjs.org/
 (function (jQuery, undefined) {
+  // Run JavaScript in strict mode
+  /*global jQuery:false _:false window:false */
+  'use strict';
+
   jQuery.widget('Midgard.midgardTags', {
     enhanced: false,
 

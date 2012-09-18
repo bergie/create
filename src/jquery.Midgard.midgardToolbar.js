@@ -4,6 +4,10 @@
 //     For all details and documentation:
 //     http://createjs.org/
 (function (jQuery, undefined) {
+  // Run JavaScript in strict mode
+  /*global jQuery:false _:false window:false */
+  'use strict';
+
   jQuery.widget('Midgard.midgardToolbar', {
     options: {
       display: 'full',
@@ -46,7 +50,7 @@
         widget._clearWorkflows();
         if (options.workflows.length) {
           options.workflows.each(function (workflow) {
-            html = jQuery('body').data().midgardWorkflows.prepareItem(options.instance, workflow, function (err, model) {
+            var html = jQuery('body').data().midgardWorkflows.prepareItem(options.instance, workflow, function (err, model) {
               widget._clearWorkflows();
               if (err) {
                 return;

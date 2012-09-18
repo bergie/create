@@ -3,7 +3,12 @@
 //     Create may be freely distributed under the MIT license.
 //     For all details and documentation:
 //     http://createjs.org/
+
 (function (jQuery, undefined) {
+  // Run JavaScript in strict mode
+  /*global jQuery:false _:false window:false VIE:false */
+  'use strict';
+
   // # Create main widget
   //
   // The `midgardCreate` widget is the main entry point into using
@@ -224,17 +229,17 @@
       }
 
       var toolbarID = this.options.storagePrefix + 'Midgard.create.toolbar';
-      if (sessionStorage.getItem(toolbarID)) {
-        this._setOption('toolbar', sessionStorage.getItem(toolbarID));
+      if (window.sessionStorage.getItem(toolbarID)) {
+        this._setOption('toolbar', window.sessionStorage.getItem(toolbarID));
       }
 
       var stateID = this.options.storagePrefix + 'Midgard.create.state';
-      if (sessionStorage.getItem(stateID)) {
-        this.setState(sessionStorage.getItem(stateID));
+      if (window.sessionStorage.getItem(stateID)) {
+        this.setState(window.sessionStorage.getItem(stateID));
       }
 
       this.element.bind('midgardcreatestatechange', function (event, options) {
-        sessionStorage.setItem(stateID, options.state);
+        window.sessionStorage.setItem(stateID, options.state);
       });
     },
 
@@ -294,7 +299,7 @@
       var widget = this;
       this.element.bind('midgardtoolbarstatechange', function (event, options) {
         if (window.sessionStorage) {
-          sessionStorage.setItem(widget.options.storagePrefix + 'Midgard.create.toolbar', options.display);
+          window.sessionStorage.setItem(widget.options.storagePrefix + 'Midgard.create.toolbar', options.display);
         }
         widget._setOption('toolbar', options.display);
       });
@@ -317,10 +322,10 @@
         collectionWidgets: widget.options.collectionWidgets
       };
       if (widget.options.enableEditor) {
-        editableOptions[enableEditor] = widget.options.enableEditor;
+        editableOptions.enableEditor = widget.options.enableEditor;
       }
       if (widget.options.disableEditor) {
-        editableOptions[disableEditor] = widget.options.disableEditor;
+        editableOptions.disableEditor = widget.options.disableEditor;
       }
       jQuery('[about]', this.element).each(function () {
         var element = this;
