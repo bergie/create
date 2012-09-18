@@ -56,7 +56,7 @@ window.midgardCreate.locale.fi = {
   'Add': 'Lisää',
   'Choose type to add': 'Mitä haluat lisätä?'
 };
-//     Create.js 1.0.0alpha3 - On-site web editing interface
+//     Create.js 1.0.0alpha4 - On-site web editing interface
 //     (c) 2011-2012 Henri Bergius, IKS Consortium
 //     Create may be freely distributed under the MIT license.
 //     For all details and documentation:

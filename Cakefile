@@ -44,18 +44,18 @@ task 'min', 'minify the generated JavaScript file', ->
     (sh "cat merged/*.js > examples/create.js")
     (sh "sed -i 's/{{ VERSION }}/#{version}/' #{__dirname}/examples/create.js")
     (sh "rm -r merged")
-    (sh "uglifyjs examples/create.js > examples/create-min.js")
+    (sh "./node_modules/.bin/uglifyjs examples/create.js > examples/create-min.js")
   ]
 
 task 'bam', 'build and minify Create', ->
   invoke 'min'
 
 task 'doc', 'generate documentation for *.coffee files', ->
-  sh("docco-husky src") ->
+  sh("./node_modules/.bin/docco-husky src") ->
 
 task 'docpub', 'publish API documentation', ->
   series [
-    (sh "docco-husky src")
+    (sh "./node_modules/.bin/docco-husky src")
     (sh "mv docs docs_tmp")
     (sh "git checkout gh-pages")
     (sh "cp -R docs_tmp/* docs/")
