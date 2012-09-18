@@ -81,9 +81,17 @@ Using Aloha Editor with Create is covered by Aloha's FOSS License Exception:
 
 > Aloha Editor’s Free and Open Source Software ("FOSS") License Exception allows developers of FOSS applications to include Aloha Editor with their FOSS applications. Aloha Editor is typically licensed pursuant to version 3 of the General Afero Public License ("AGPLv3"), but this exception permits distribution of Aloha Editor with a developer’s FOSS applications licensed under the terms of another FOSS license listed below [MIT license is included], even though such other FOSS license may be incompatible with the AGPLv3.
 
-## Using Redactor
+### Using Redactor
 
 You need to acquire a [Redactor license](http://redactorjs.com/license/) and include the editor JavaScript and CSS files into your pages separately. Then you can set Create to use Redactor for particular areas by using the `redactorWidget` editor option.
+
+## Translations
+
+The whole Create.js user interface can be translated to different languages.
+
+To contribute a translation, copy the [English localization file](https://github.com/bergie/create/blob/master/locale/en.js) and replace the values there with your language. Then send the file via a pull request.
+
+Changes to strings used by Create.js will be announced on the [mailing list](http://groups.google.com/group/createjs), so it is a good idea to subscribe to it if you make translations.
 
 ### Running Unit Tests in browser
 
