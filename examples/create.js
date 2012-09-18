@@ -3146,7 +3146,7 @@ if (window.midgardCreate.locale === undefined) {
   window.midgardCreate.locale = {};
 }
 
-window.midgardCreate.locale.en = {
+window.midgardCreate.locale.fr = {
   // Session-state buttons for the main toolbar
   'Save': 'Sauver',
   'Saving': 'En cours',
