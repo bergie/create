@@ -33,13 +33,10 @@
       editSelector: '#midgardcreate-edit a',
       // CSS selector for the Save button
       saveSelector: '#midgardcreate-save',
-      // Templates used for dialog output
-      templates: {
-        localModifications: '<%= number %> items on this page have local modifications',
-        saveSuccess: 'Item "<%= label %>" saved successfully',
-        saveSuccessMultiple: '<%= number %> items saved successfully',
-        saveError: 'Error occurred while saving<br /><%= error %>'
-      }
+      localize: function (id, language) {
+        return window.midgardCreate.localize(id, language);
+      },
+      language: null
     },
 
     _create: function () {
@@ -192,14 +189,14 @@
       var restorer = jQuery('body').midgardNotifications('create', {
         bindTo: widget.options.editSelector,
         gravity: 'TR',
-        body: _.template(widget.options.templates.localModifications, {
+        body: _.template(widget.options.localize('localModifications', widget.options.language), {
           number: widget.restorables.length
         }),
         timeout: 0,
         actions: [
           {
             name: 'restore',
-            label: 'Restore',
+            label: widget.options.localize('Restore', widget.options.language),
             cb: function() {
               _.each(widget.restorables, function (instance) {
                 widget._readLocal(instance);
@@ -210,7 +207,7 @@
           },
           {
             name: 'ignore',
-            label: 'Ignore',
+            label: widget.options.localize('Ignore', widget.options.language),
             cb: function(event, notification) {
               if (widget.options.removeLocalstorageOnIgnore) {
                 _.each(widget.restorables, function (instance) {
@@ -240,11 +237,11 @@
       var notification_msg;
       var needed = widget.changedModels.length;
       if (needed > 1) {
-        notification_msg = _.template(widget.options.templates.saveSuccessMultiple, {
+        notification_msg = _.template(widget.options.localize('saveSuccessMultiple', widget.options.language), {
           number: needed
         });
       } else {
-        notification_msg = _.template(widget.options.templates.saveSuccess, {
+        notification_msg = _.template(widget.options.localize('saveSuccess', widget.options.language), {
           label: widget.changedModels[0].getSubjectUri()
         });
       }
@@ -297,7 +294,7 @@
           error: function (m, err) {
             options.error();
             jQuery('body').midgardNotifications('create', {
-              body: _.template(widget.options.templates.saveError, {
+              body: _.template(widget.options.localize('saveError', widget.options.language), {
                 error: err.responseText || ''
               }),
               timeout: 0

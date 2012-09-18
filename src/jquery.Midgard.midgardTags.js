@@ -22,7 +22,11 @@
         button: '<button class="create-ui-btn"><i class="icon-<%= icon %>"></i> <%= label %></button>',
         contentArea: '<div class="dropdown-menu"></div>',
         tags: '<div class="create-ui-tags <%= type %>Tags"><h3><%= label %></h3><input type="text" class="tags" value="" /></div>'
-      }
+      },
+      localize: function (id, language) {
+        return window.midgardCreate.localize(id, language);
+      },
+      language: null
     },
 
     _init: function () {
@@ -158,11 +162,11 @@
       var contentArea = jQuery(_.template(this.options.templates.contentArea, {}));
       var articleTags = jQuery(_.template(this.options.templates.tags, {
         type: 'article',
-        label: 'Item tags'
+        label: this.options.localize('Item tags', this.options.language)
       }));
       var suggestedTags = jQuery(_.template(this.options.templates.tags, {
         type: 'suggested',
-        label: 'Suggested tags'
+        label: this.options.localize('Suggested tags', this.options.language)
       }));
 
       // Tags plugin requires IDs to exist
@@ -186,7 +190,7 @@
 
       var button = jQuery(_.template(this.options.templates.button, {
         icon: 'tags',
-        label: 'Tags'
+        label: this.options.localize('Tags', this.options.language)
       }));
 
       var parentElement = jQuery(this.options.parentElement);
@@ -205,7 +209,8 @@
         },
         onRemoveTag: function (tag) {
           widget.removeTag(tag);
-        }
+        },
+        defaultText: this.options.localize('add a tag', this.options.language)
       });
 
       var selectSuggested = function () {

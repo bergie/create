@@ -23,6 +23,7 @@ mergeDirs = (k) ->
     (sh "cp src/*.js merged/")
     (sh "cp src/collectionWidgets/*.js merged/")
     (sh "cp src/editingWidgets/*.js merged/")
+    (sh "cp locale/*.js merged/")
   ], k
 
 task 'build', 'generate unified JavaScript file for whole Create', ->

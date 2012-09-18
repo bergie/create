@@ -29,7 +29,11 @@
       },
       toolbarState: 'full',
       vie: null,
-      disabled: false
+      disabled: false,
+      localize: function (id, language) {
+        return window.midgardCreate.localize(id, language);
+      },
+      language: null
     },
 
     _create: function () {

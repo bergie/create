@@ -80,7 +80,15 @@
       templates: {
         buttonContent: '<%= label %> <i class="icon-<%= icon %>"></i>',
         button: '<li id="<%= id %>"><a class="create-ui-btn"><%= buttonContent %></a></li>'
-      }
+      },
+      // Localization callback function. Will be run in the widget context.
+      // Override to connect Create.js with your own localization system
+      localize: function (id, language) {
+        return window.midgardCreate.localize(id, language);
+      },
+      // Language used for Create.js. Will be retrieved from page lang attrib
+      // if left blank
+      language: null
     },
 
     _create: function () {
@@ -90,6 +98,10 @@
       window.setTimeout(function () {
         widget._checkSession();
       }, 10);
+
+      if (!this.options.language) {
+        this.options.language = jQuery('html').attr('lang');
+      }
 
       this._enableToolbar();
       this._saveButton();
@@ -161,20 +173,22 @@
     _prepareStorage: function () {
       this.element.midgardStorage({
         vie: this.vie,
-        url: this.options.url
+        url: this.options.url,
+        localize: this.options.localize,
+        language: this.options.language
       });
 
       var widget = this;
       this.element.bind('midgardstoragesave', function () {
         jQuery('#midgardcreate-save a').html(_.template(widget.options.templates.buttonContent, {
-          label: 'Saving',
+          label: widget.options.localize('Saving', widget.options.language),
           icon: 'upload'
         }));
       });
 
       this.element.bind('midgardstoragesaved midgardstorageerror', function () {
         jQuery('#midgardcreate-save a').html(_.template(widget.options.templates.buttonContent, {
-          label: 'Save',
+          label: widget.options.localize('Save', widget.options.language),
           icon: 'ok'
         }));
       });
@@ -252,10 +266,11 @@
       if (this.options.saveButton) {
         return this.options.saveButton;
       }
+      var widget = this;
       jQuery(this.options.buttonContainer, this.element).append(jQuery(_.template(this.options.templates.button, {
         id: 'midgardcreate-save',
         buttonContent: _.template(this.options.templates.buttonContent, {
-          label: 'Save',
+          label: widget.options.localize('Save', widget.options.language),
           icon: 'ok'
         })
       })));
@@ -280,13 +295,14 @@
     },
 
     _setEditButtonState: function (state) {
+      var widget = this;
       var buttonContents = {
         edit: _.template(this.options.templates.buttonContent, {
-          label: 'Cancel',
+          label: widget.options.localize('Cancel', widget.options.language),
           icon: 'remove'
         }),
         browse: _.template(this.options.templates.buttonContent, {
-          label: 'Edit',
+          label: widget.options.localize('Edit', widget.options.language),
           icon: 'edit'
         })
       };
@@ -324,7 +340,9 @@
         vie: widget.vie,
         widgets: widget.options.editorWidgets,
         editors: widget.options.editorOptions,
-        collectionWidgets: widget.options.collectionWidgets
+        collectionWidgets: widget.options.collectionWidgets,
+        localize: widget.options.localize,
+        language: widget.options.language
       };
       if (widget.options.enableEditor) {
         editableOptions.enableEditor = widget.options.enableEditor;
@@ -368,7 +386,9 @@
             jQuery(this).midgardTags({
               vie: widget.vie,
               entityElement: options.entityElement,
-              entity: options.instance
+              entity: options.instance,
+              localize: widget.options.localize,
+              language: widget.options.language
             });
           });
         }
@@ -386,7 +406,9 @@
       var editableOptions = {
         disabled: true,
         vie: widget.vie,
-        editorOptions: widget.options.editorOptions
+        editorOptions: widget.options.editorOptions,
+        localize: widget.options.localize,
+        language: widget.options.language
       };
       jQuery('[about]', this.element).each(function () {
         jQuery(this).midgardEditable(editableOptions);

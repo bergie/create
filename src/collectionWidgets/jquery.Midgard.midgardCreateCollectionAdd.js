@@ -119,7 +119,7 @@
 
       var addButton = jQuery(_.template(this.options.templates.button, {
         icon: 'plus',
-        label: 'Add'
+        label: this.options.editableOptions.localize('Add', this.options.editableOptions.language)
       })).button();
       addButton.addClass('midgard-create-add');
       addButton.click(function () {
@@ -171,7 +171,7 @@
           jQuery('body').midgardNotifications('create', {
             bindTo: button,
             gravity: 'L',
-            body: 'Choose type to add',
+            body: this.options.editableOptions.localize('Choose type to add', this.options.editableOptions.language),
             timeout: 0,
             actions: this._getTypeActions(options)
           });

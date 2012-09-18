@@ -1,3 +1,61 @@
+if (window.midgardCreate === undefined) {
+  window.midgardCreate = {};
+}
+if (window.midgardCreate.locale === undefined) {
+  window.midgardCreate.locale = {};
+}
+
+window.midgardCreate.locale.en = {
+  // Session-state buttons for the main toolbar
+  'Save': 'Save',
+  'Saving': 'Saving',
+  'Cancel': 'Cancel',
+  'Edit': 'Edit',
+  // Storage status messages
+  'localModifications': '<%= number %> items on this page have local modifications',
+  'Restore': 'Restore',
+  'Ignore': 'Ignore',
+  'saveSuccess': 'Item "<%= label %>" saved successfully',
+  'saveSuccessMultiple': '<%= number %> items saved successfully',
+  'saveError': 'Error occurred while saving<br /><%= error %>',
+  // Tagging
+  'Item tags': 'Item tags',
+  'Suggested tags': 'Suggested tags',
+  'Tags': 'Tags',
+  'add a tag': 'add a tag',
+  // Collection widgets
+  'Add': 'Add',
+  'Choose type to add': 'Choose type to add'
+};
+if (window.midgardCreate === undefined) {
+  window.midgardCreate = {};
+}
+if (window.midgardCreate.locale === undefined) {
+  window.midgardCreate.locale = {};
+}
+
+window.midgardCreate.locale.fi = {
+  // Session-state buttons for the main toolbar
+  'Save': 'Tallenna',
+  'Saving': 'Tallennetaan',
+  'Cancel': 'Peruuta',
+  'Edit': 'Muokkaa',
+  // Storage status messages
+  'localModifications': '<%= number %> oliota sivulla omaa paikallisia muutoksia',
+  'Restore': 'Palauta',
+  'Ignore': 'Poista',
+  'saveSuccess': 'Olio "<%= label %>" tallennettu',
+  'saveSuccessMultiple': '<%= number %> oliota tallennettu',
+  'saveError': 'Virhe tallennettaessa<br /><%= error %>',
+  // Tagging
+  'Item tags': 'Avainsanat',
+  'Suggested tags': 'Ehdotukset',
+  'Tags': 'Avainsanat',
+  'add a tag': 'lisää avainsana',
+  // Collection widgets
+  'Add': 'Lisää',
+  'Choose type to add': 'Mitä haluat lisätä?'
+};
 //     Create.js 1.0.0alpha3 - On-site web editing interface
 //     (c) 2011-2012 Henri Bergius, IKS Consortium
 //     Create may be freely distributed under the MIT license.
@@ -80,7 +138,15 @@
       templates: {
         buttonContent: '<%= label %> <i class="icon-<%= icon %>"></i>',
         button: '<li id="<%= id %>"><a class="create-ui-btn"><%= buttonContent %></a></li>'
-      }
+      },
+      // Localization callback function. Will be run in the widget context.
+      // Override to connect Create.js with your own localization system
+      localize: function (id, language) {
+        return window.midgardCreate.localize(id, language);
+      },
+      // Language used for Create.js. Will be retrieved from page lang attrib
+      // if left blank
+      language: null
     },
 
     _create: function () {
@@ -90,6 +156,10 @@
       window.setTimeout(function () {
         widget._checkSession();
       }, 10);
+
+      if (!this.options.language) {
+        this.options.language = jQuery('html').attr('lang');
+      }
 
       this._enableToolbar();
       this._saveButton();
@@ -161,20 +231,22 @@
     _prepareStorage: function () {
       this.element.midgardStorage({
         vie: this.vie,
-        url: this.options.url
+        url: this.options.url,
+        localize: this.options.localize,
+        language: this.options.language
       });
 
       var widget = this;
       this.element.bind('midgardstoragesave', function () {
         jQuery('#midgardcreate-save a').html(_.template(widget.options.templates.buttonContent, {
-          label: 'Saving',
+          label: widget.options.localize('Saving', widget.options.language),
           icon: 'upload'
         }));
       });
 
       this.element.bind('midgardstoragesaved midgardstorageerror', function () {
         jQuery('#midgardcreate-save a').html(_.template(widget.options.templates.buttonContent, {
-          label: 'Save',
+          label: widget.options.localize('Save', widget.options.language),
           icon: 'ok'
         }));
       });
@@ -252,10 +324,11 @@
       if (this.options.saveButton) {
         return this.options.saveButton;
       }
+      var widget = this;
       jQuery(this.options.buttonContainer, this.element).append(jQuery(_.template(this.options.templates.button, {
         id: 'midgardcreate-save',
         buttonContent: _.template(this.options.templates.buttonContent, {
-          label: 'Save',
+          label: widget.options.localize('Save', widget.options.language),
           icon: 'ok'
         })
       })));
@@ -280,13 +353,14 @@
     },
 
     _setEditButtonState: function (state) {
+      var widget = this;
       var buttonContents = {
         edit: _.template(this.options.templates.buttonContent, {
-          label: 'Cancel',
+          label: widget.options.localize('Cancel', widget.options.language),
           icon: 'remove'
         }),
         browse: _.template(this.options.templates.buttonContent, {
-          label: 'Edit',
+          label: widget.options.localize('Edit', widget.options.language),
           icon: 'edit'
         })
       };
@@ -324,7 +398,9 @@
         vie: widget.vie,
         widgets: widget.options.editorWidgets,
         editors: widget.options.editorOptions,
-        collectionWidgets: widget.options.collectionWidgets
+        collectionWidgets: widget.options.collectionWidgets,
+        localize: widget.options.localize,
+        language: widget.options.language
       };
       if (widget.options.enableEditor) {
         editableOptions.enableEditor = widget.options.enableEditor;
@@ -368,7 +444,9 @@
             jQuery(this).midgardTags({
               vie: widget.vie,
               entityElement: options.entityElement,
-              entity: options.instance
+              entity: options.instance,
+              localize: widget.options.localize,
+              language: widget.options.language
             });
           });
         }
@@ -386,7 +464,9 @@
       var editableOptions = {
         disabled: true,
         vie: widget.vie,
-        editorOptions: widget.options.editorOptions
+        editorOptions: widget.options.editorOptions,
+        localize: widget.options.localize,
+        language: widget.options.language
       };
       jQuery('[about]', this.element).each(function () {
         jQuery(this).midgardEditable(editableOptions);
@@ -520,7 +600,7 @@
 
       var addButton = jQuery(_.template(this.options.templates.button, {
         icon: 'plus',
-        label: 'Add'
+        label: this.options.editableOptions.localize('Add', this.options.editableOptions.language)
       })).button();
       addButton.addClass('midgard-create-add');
       addButton.click(function () {
@@ -572,7 +652,7 @@
           jQuery('body').midgardNotifications('create', {
             bindTo: button,
             gravity: 'L',
-            body: 'Choose type to add',
+            body: this.options.editableOptions.localize('Choose type to add', this.options.editableOptions.language),
             timeout: 0,
             actions: this._getTypeActions(options)
           });
@@ -686,7 +766,11 @@
       },
       toolbarState: 'full',
       vie: null,
-      disabled: false
+      disabled: false,
+      localize: function (id, language) {
+        return window.midgardCreate.localize(id, language);
+      },
+      language: null
     },
 
     _create: function () {
@@ -1958,13 +2042,10 @@
       editSelector: '#midgardcreate-edit a',
       // CSS selector for the Save button
       saveSelector: '#midgardcreate-save',
-      // Templates used for dialog output
-      templates: {
-        localModifications: '<%= number %> items on this page have local modifications',
-        saveSuccess: 'Item "<%= label %>" saved successfully',
-        saveSuccessMultiple: '<%= number %> items saved successfully',
-        saveError: 'Error occurred while saving<br /><%= error %>'
-      }
+      localize: function (id, language) {
+        return window.midgardCreate.localize(id, language);
+      },
+      language: null
     },
 
     _create: function () {
@@ -2117,14 +2198,14 @@
       var restorer = jQuery('body').midgardNotifications('create', {
         bindTo: widget.options.editSelector,
         gravity: 'TR',
-        body: _.template(widget.options.templates.localModifications, {
+        body: _.template(widget.options.localize('localModifications', widget.options.language), {
           number: widget.restorables.length
         }),
         timeout: 0,
         actions: [
           {
             name: 'restore',
-            label: 'Restore',
+            label: widget.options.localize('Restore', widget.options.language),
             cb: function() {
               _.each(widget.restorables, function (instance) {
                 widget._readLocal(instance);
@@ -2135,7 +2216,7 @@
           },
           {
             name: 'ignore',
-            label: 'Ignore',
+            label: widget.options.localize('Ignore', widget.options.language),
             cb: function(event, notification) {
               if (widget.options.removeLocalstorageOnIgnore) {
                 _.each(widget.restorables, function (instance) {
@@ -2165,11 +2246,11 @@
       var notification_msg;
       var needed = widget.changedModels.length;
       if (needed > 1) {
-        notification_msg = _.template(widget.options.templates.saveSuccessMultiple, {
+        notification_msg = _.template(widget.options.localize('saveSuccessMultiple', widget.options.language), {
           number: needed
         });
       } else {
-        notification_msg = _.template(widget.options.templates.saveSuccess, {
+        notification_msg = _.template(widget.options.localize('saveSuccess', widget.options.language), {
           label: widget.changedModels[0].getSubjectUri()
         });
       }
@@ -2222,7 +2303,7 @@
           error: function (m, err) {
             options.error();
             jQuery('body').midgardNotifications('create', {
-              body: _.template(widget.options.templates.saveError, {
+              body: _.template(widget.options.localize('saveError', widget.options.language), {
                 error: err.responseText || ''
               }),
               timeout: 0
@@ -2390,7 +2471,11 @@
         button: '<button class="create-ui-btn"><i class="icon-<%= icon %>"></i> <%= label %></button>',
         contentArea: '<div class="dropdown-menu"></div>',
         tags: '<div class="create-ui-tags <%= type %>Tags"><h3><%= label %></h3><input type="text" class="tags" value="" /></div>'
-      }
+      },
+      localize: function (id, language) {
+        return window.midgardCreate.localize(id, language);
+      },
+      language: null
     },
 
     _init: function () {
@@ -2526,11 +2611,11 @@
       var contentArea = jQuery(_.template(this.options.templates.contentArea, {}));
       var articleTags = jQuery(_.template(this.options.templates.tags, {
         type: 'article',
-        label: 'Item tags'
+        label: this.options.localize('Item tags', this.options.language)
       }));
       var suggestedTags = jQuery(_.template(this.options.templates.tags, {
         type: 'suggested',
-        label: 'Suggested tags'
+        label: this.options.localize('Suggested tags', this.options.language)
       }));
 
       // Tags plugin requires IDs to exist
@@ -2554,7 +2639,7 @@
 
       var button = jQuery(_.template(this.options.templates.button, {
         icon: 'tags',
-        label: 'Tags'
+        label: this.options.localize('Tags', this.options.language)
       }));
 
       var parentElement = jQuery(this.options.parentElement);
@@ -2573,7 +2658,8 @@
         },
         onRemoveTag: function (tag) {
           widget.removeTag(tag);
-        }
+        },
+        defaultText: this.options.localize('add a tag', this.options.language)
       });
 
       var selectSuggested = function () {
@@ -3053,3 +3139,20 @@
     }
   });
 })(jQuery);
+if (window.midgardCreate === undefined) {
+  window.midgardCreate = {};
+}
+
+window.midgardCreate.localize = function (id, language) {
+  if (!window.midgardCreate.locale) {
+    // No localization files loaded, return as-is
+    return id;
+  }
+  if (window.midgardCreate.locale[language] && window.midgardCreate.locale[language][id]) {
+    return window.midgardCreate.locale[language][id];
+  }
+  if (window.midgardCreate.locale.en[id]) {
+    return window.midgardCreate.locale.en[id];
+  }
+  return id;
+};
