@@ -26,18 +26,11 @@
       var widget = this;
       jQuery('.create-ui-toggle', this.element).click(function () {
         if (widget.options.display === 'full') {
-          widget.hide();
-          widget.options.display = 'minimized';
+          widget.setDisplay('minimized');
         } else {
-          widget.show();
-          widget.options.display = 'full';
+          widget.setDisplay('full');
         }
-        widget._trigger('statechange', null, widget.options);
       });
-
-      this._setDisplay(this.options.display);
-
-      widget = this;
 
       jQuery(this.element).bind('midgardcreatestatechange', function (event, options) {
         if (options.state == 'browse') {
@@ -62,17 +55,22 @@
       });
     },
 
-    _setOption: function (key, value) {
-      if (key === 'display') {
-        this._setDisplay(value);
-      }
-      this.options[key] = value;
+    _init: function () {
+      this.setDisplay(this.options.display);
     },
 
-    _setDisplay: function (value) {
+    setDisplay: function (value) {
+      if (value === this.options.display) {
+        return;
+      }
       if (value === 'minimized') {
-        jQuery('div.create-ui-toolbar-wrapper').hide();
-      } 
+        this.hide();
+        this.options.display = 'minimized';
+      } else {
+        this.show();
+        this.options.display = 'full';
+      }
+      this._trigger('statechange', null, this.options);
     },
 
     hide: function () {

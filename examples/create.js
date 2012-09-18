@@ -196,6 +196,11 @@
       this._setEditButtonState(state);
     },
 
+    setToolbar: function (state) {
+      this.options.toolbar = state;
+      this.element.midgardToolbar('setDisplay', state);
+    },
+
     showNotification: function (options) {
       if (this.element.midgardNotifications) {
         return this.element.midgardNotifications('create', options);
@@ -230,7 +235,7 @@
 
       var toolbarID = this.options.storagePrefix + 'Midgard.create.toolbar';
       if (window.sessionStorage.getItem(toolbarID)) {
-        this._setOption('toolbar', window.sessionStorage.getItem(toolbarID));
+        this.setToolbar(window.sessionStorage.getItem(toolbarID));
       }
 
       var stateID = this.options.storagePrefix + 'Midgard.create.state';
@@ -298,10 +303,10 @@
     _enableToolbar: function () {
       var widget = this;
       this.element.bind('midgardtoolbarstatechange', function (event, options) {
+        widget.setToolbar(options.display);
         if (window.sessionStorage) {
           window.sessionStorage.setItem(widget.options.storagePrefix + 'Midgard.create.toolbar', options.display);
         }
-        widget._setOption('toolbar', options.display);
       });
 
       this.element.midgardToolbar({
@@ -314,7 +319,7 @@
       this._setOption('state', 'edit');
       var widget = this;
       var editableOptions = {
-        toolbarState: widget.options.display,
+        toolbarState: widget.options.toolbar,
         disabled: false,
         vie: widget.vie,
         widgets: widget.options.editorWidgets,
@@ -883,6 +888,7 @@
       var editorWidget = this._editorWidget(editorName);
 
       data.editorOptions = this._editorOptions(editorName);
+      data.toolbarState = this.options.toolbarState;
       data.disabled = false;
 
       if (typeof jQuery(data.element)[editorWidget] !== 'function') {
@@ -1118,12 +1124,14 @@
       });
       this.options.disabled = false;
     },
+
     disable: function () {
       jQuery(this.element).hallo({
         editable: false
       });
       this.options.disabled = true;
     },
+
     _initialize: function () {
       jQuery(this.element).hallo(this.getHalloOptions());
       var self = this;
@@ -2703,18 +2711,11 @@
       var widget = this;
       jQuery('.create-ui-toggle', this.element).click(function () {
         if (widget.options.display === 'full') {
-          widget.hide();
-          widget.options.display = 'minimized';
+          widget.setDisplay('minimized');
         } else {
-          widget.show();
-          widget.options.display = 'full';
+          widget.setDisplay('full');
         }
-        widget._trigger('statechange', null, widget.options);
       });
-
-      this._setDisplay(this.options.display);
-
-      widget = this;
 
       jQuery(this.element).bind('midgardcreatestatechange', function (event, options) {
         if (options.state == 'browse') {
@@ -2739,17 +2740,22 @@
       });
     },
 
-    _setOption: function (key, value) {
-      if (key === 'display') {
-        this._setDisplay(value);
-      }
-      this.options[key] = value;
+    _init: function () {
+      this.setDisplay(this.options.display);
     },
 
-    _setDisplay: function (value) {
+    setDisplay: function (value) {
+      if (value === this.options.display) {
+        return;
+      }
       if (value === 'minimized') {
-        jQuery('div.create-ui-toolbar-wrapper').hide();
-      } 
+        this.hide();
+        this.options.display = 'minimized';
+      } else {
+        this.show();
+        this.options.display = 'full';
+      }
+      this._trigger('statechange', null, this.options);
     },
 
     hide: function () {

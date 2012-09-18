@@ -26,12 +26,14 @@
       });
       this.options.disabled = false;
     },
+
     disable: function () {
       jQuery(this.element).hallo({
         editable: false
       });
       this.options.disabled = true;
     },
+
     _initialize: function () {
       jQuery(this.element).hallo(this.getHalloOptions());
       var self = this;

@@ -196,6 +196,11 @@
       this._setEditButtonState(state);
     },
 
+    setToolbar: function (state) {
+      this.options.toolbar = state;
+      this.element.midgardToolbar('setDisplay', state);
+    },
+
     showNotification: function (options) {
       if (this.element.midgardNotifications) {
         return this.element.midgardNotifications('create', options);
@@ -230,7 +235,7 @@
 
       var toolbarID = this.options.storagePrefix + 'Midgard.create.toolbar';
       if (window.sessionStorage.getItem(toolbarID)) {
-        this._setOption('toolbar', window.sessionStorage.getItem(toolbarID));
+        this.setToolbar(window.sessionStorage.getItem(toolbarID));
       }
 
       var stateID = this.options.storagePrefix + 'Midgard.create.state';
@@ -298,10 +303,10 @@
     _enableToolbar: function () {
       var widget = this;
       this.element.bind('midgardtoolbarstatechange', function (event, options) {
+        widget.setToolbar(options.display);
         if (window.sessionStorage) {
           window.sessionStorage.setItem(widget.options.storagePrefix + 'Midgard.create.toolbar', options.display);
         }
-        widget._setOption('toolbar', options.display);
       });
 
       this.element.midgardToolbar({
@@ -314,7 +319,7 @@
       this._setOption('state', 'edit');
       var widget = this;
       var editableOptions = {
-        toolbarState: widget.options.display,
+        toolbarState: widget.options.toolbar,
         disabled: false,
         vie: widget.vie,
         widgets: widget.options.editorWidgets,

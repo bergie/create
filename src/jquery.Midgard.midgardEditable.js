@@ -231,6 +231,7 @@
       var editorWidget = this._editorWidget(editorName);
 
       data.editorOptions = this._editorOptions(editorName);
+      data.toolbarState = this.options.toolbarState;
       data.disabled = false;
 
       if (typeof jQuery(data.element)[editorWidget] !== 'function') {
