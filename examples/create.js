@@ -3204,6 +3204,64 @@ if (window.midgardCreate.locale === undefined) {
   window.midgardCreate.locale = {};
 }
 
+window.midgardCreate.locale.it = {
+  // Session-state buttons for the main toolbar
+  'Save': 'Salva',
+  'Saving': 'Salvataggio',
+  'Cancel': 'Cancella',
+  'Edit': 'Modifica',
+  // Storage status messages
+  'localModifications': '<%= number %> articoli in questa pagina hanno modifiche locali',
+  'Restore': 'Ripristina',
+  'Ignore': 'Ignora',
+  'saveSuccess': 'Articolo "<%= label %>" salvato con successo',
+  'saveSuccessMultiple': '<%= number %> articoli salvati con successo',
+  'saveError': 'Errore durante il salvataggio<br /><%= error %>',
+  // Tagging
+  'Item tags': 'Tags articolo',
+  'Suggested tags': 'Tags suggerite',
+  'Tags': 'Tags',
+  'add a tag': 'Aggiungi una parola chiave',
+  // Collection widgets
+  'Add': 'Aggiungi',
+  'Choose type to add': 'Scegli il tipo da aggiungere'
+};
+if (window.midgardCreate === undefined) {
+  window.midgardCreate = {};
+}
+if (window.midgardCreate.locale === undefined) {
+  window.midgardCreate.locale = {};
+}
+
+window.midgardCreate.locale.no = {
+  // Session-state buttons for the main toolbar
+  'Save': 'Lagre',
+  'Saving': 'Lagrer',
+  'Cancel': 'Avbryt',
+  'Edit': 'Rediger',
+  // Storage status messages
+  'localModifications': '<%= number %> elementer på denne siden er modifisert lokalt',
+  'Restore': 'Gjenopprett',
+  'Ignore': 'Ignorer',
+  'saveSuccess': 'Element "<%= label %>" ble lagret',
+  'saveSuccessMultiple': '<%= number %> elementer ble lagret',
+  'saveError': 'En feil oppstod under lagring<br /><%= error %>',
+  // Tagging
+  'Item tags': 'Element-tagger',
+  'Suggested tags': 'Anbefalte tagger',
+  'Tags': 'Tagger',
+  'add a tag': 'legg til tagg',
+  // Collection widgets
+  'Add': 'Legg til',
+  'Choose type to add': 'Velg type å legge til'
+};
+if (window.midgardCreate === undefined) {
+  window.midgardCreate = {};
+}
+if (window.midgardCreate.locale === undefined) {
+  window.midgardCreate.locale = {};
+}
+
 window.midgardCreate.locale.pt_BR = {
   // Session-state buttons for the main toolbar
   'Save': 'Salvar',
