@@ -38,11 +38,15 @@ Please refer to the [Create.js Integration Guide](http://createjs.org/guide/).
 
 ## Building Create
 
+Create.js uses a build system running on [Node.js](http://nodejs.org/), so you'll need that. Install the build dependencies with:
+
+    $ npm install
+
 Use the supplied `Cakefile` to generate the merged JavaScript file for Create:
 
     $ cake build
 
-You can also generate a minified version (requires uglifyjs):
+You can also generate a minified version:
 
     $ cake min
 
