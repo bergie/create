@@ -12,6 +12,7 @@ window.midgardCreate.locale.no = {
   'Cancel': 'Avbryt',
   'Edit': 'Rediger',
   // Storage status messages
+  'localModification': 'Element "<%= label %>" på denne siden er modifisert lokalt',
   'localModifications': '<%= number %> elementer på denne siden er modifisert lokalt',
   'Restore': 'Gjenopprett',
   'Ignore': 'Ignorer',

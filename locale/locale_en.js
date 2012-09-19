@@ -12,6 +12,7 @@ window.midgardCreate.locale.en = {
   'Cancel': 'Cancel',
   'Edit': 'Edit',
   // Storage status messages
+  'localModification': 'Item "<%= label %>" has local modifications',
   'localModifications': '<%= number %> items on this page have local modifications',
   'Restore': 'Restore',
   'Ignore': 'Ignore',

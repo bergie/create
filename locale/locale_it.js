@@ -12,6 +12,7 @@ window.midgardCreate.locale.it = {
   'Cancel': 'Cancella',
   'Edit': 'Modifica',
   // Storage status messages
+  'localModification': 'Articolo "<%= label %>" in questa pagina hanno modifiche locali',
   'localModifications': '<%= number %> articoli in questa pagina hanno modifiche locali',
   'Restore': 'Ripristina',
   'Ignore': 'Ignora',

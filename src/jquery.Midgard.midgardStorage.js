@@ -186,12 +186,21 @@
         return;
       }
 
+      var message;
+      if (widget.restorables.length === 1) {
+        message = _.template(widget.options.localize('localModification', widget.options.language), {
+          label: widget.restorables[0].getSubjectUri()
+        });
+      } else {
+        message = _.template(widget.options.localize('localModifications', widget.options.language), {
+          number: widget.restorables.length
+        });
+      }
+
       var restorer = jQuery('body').midgardNotifications('create', {
         bindTo: widget.options.editSelector,
         gravity: 'TR',
-        body: _.template(widget.options.localize('localModifications', widget.options.language), {
-          number: widget.restorables.length
-        }),
+        body: message,
         timeout: 0,
         actions: [
           {

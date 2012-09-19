@@ -2137,12 +2137,21 @@
         return;
       }
 
+      var message;
+      if (widget.restorables.length === 1) {
+        message = _.template(widget.options.localize('localModification', widget.options.language), {
+          label: widget.restorables[0].getSubjectUri()
+        });
+      } else {
+        message = _.template(widget.options.localize('localModifications', widget.options.language), {
+          number: widget.restorables.length
+        });
+      }
+
       var restorer = jQuery('body').midgardNotifications('create', {
         bindTo: widget.options.editSelector,
         gravity: 'TR',
-        body: _.template(widget.options.localize('localModifications', widget.options.language), {
-          number: widget.restorables.length
-        }),
+        body: message,
         timeout: 0,
         actions: [
           {
@@ -3095,17 +3104,18 @@ window.midgardCreate.locale.de = {
   'Cancel': 'Abbrechen',
   'Edit': 'Bearbeiten',
   // Storage status messages
-  'localModifications': '<%= number %> Einträge auf dieser Seite haben lokale Modifikationen',
+  'localModification': 'Das Dokument "<%= label %>" auf dieser Seite hat lokale Änderungen',
+  'localModifications': '<%= number %> Dokumente auf dieser Seite haben lokale Änderungen',
   'Restore': 'Wiederherstellen',
   'Ignore': 'Ignorieren',
-  'saveSuccess': 'Eintrag "<%= label %>" erfolgreich gespeichert',
-  'saveSuccessMultiple': '<%= number %> Einträge erfolgreich gespeichert',
-  'saveError': 'Beim Speichern trat ein Fehler auf<br /><%= error %>',
+  'saveSuccess': 'Dokument "<%= label %>" erfolgreich gespeichert',
+  'saveSuccessMultiple': '<%= number %> Dokumente erfolgreich gespeichert',
+  'saveError': 'Fehler beim Speichern<br /><%= error %>',
   // Tagging
-  'Item tags': 'Schlagwörter des Eintrags',
+  'Item tags': 'Schlagwörter des Dokuments',
   'Suggested tags': 'Schlagwortvorschläge',
   'Tags': 'Schlagwörter',
-  'add a tag': 'Schlagwort hinzufügen',
+  'add a tag': 'Neues Schlagwort',
   // Collection widgets
   'Add': 'Hinzufügen',
   'Choose type to add': 'Typ zum Hinzufügen wählen'
@@ -3124,6 +3134,7 @@ window.midgardCreate.locale.en = {
   'Cancel': 'Cancel',
   'Edit': 'Edit',
   // Storage status messages
+  'localModification': 'Item "<%= label %>" has local modifications',
   'localModifications': '<%= number %> items on this page have local modifications',
   'Restore': 'Restore',
   'Ignore': 'Ignore',
@@ -3153,11 +3164,12 @@ window.midgardCreate.locale.fi = {
   'Cancel': 'Peruuta',
   'Edit': 'Muokkaa',
   // Storage status messages
-  'localModifications': '<%= number %> oliota sivulla omaa paikallisia muutoksia',
+  'localModification': 'Dokumentilla "<%= label %>" on paikallisia muutoksia',
+  'localModifications': '<%= number %> dokumenttia sivulla omaa paikallisia muutoksia',
   'Restore': 'Palauta',
   'Ignore': 'Poista',
-  'saveSuccess': 'Olio "<%= label %>" tallennettu',
-  'saveSuccessMultiple': '<%= number %> oliota tallennettu',
+  'saveSuccess': 'Dokumentti "<%= label %>" tallennettu',
+  'saveSuccessMultiple': '<%= number %> dokumenttia tallennettu',
   'saveError': 'Virhe tallennettaessa<br /><%= error %>',
   // Tagging
   'Item tags': 'Avainsanat',
@@ -3182,6 +3194,7 @@ window.midgardCreate.locale.fr = {
   'Cancel': 'Annuler',
   'Edit': 'Editer',
   // Storage status messages
+  'localModification': 'Objet "<%= label %>" sur cette page ont des modifications locales',
   'localModifications': '<%= number %> élements sur cette page ont des modifications locales',
   'Restore': 'Récupérer',
   'Ignore': 'Ignorer',
@@ -3211,6 +3224,7 @@ window.midgardCreate.locale.it = {
   'Cancel': 'Cancella',
   'Edit': 'Modifica',
   // Storage status messages
+  'localModification': 'Articolo "<%= label %>" in questa pagina hanno modifiche locali',
   'localModifications': '<%= number %> articoli in questa pagina hanno modifiche locali',
   'Restore': 'Ripristina',
   'Ignore': 'Ignora',
@@ -3240,6 +3254,7 @@ window.midgardCreate.locale.no = {
   'Cancel': 'Avbryt',
   'Edit': 'Rediger',
   // Storage status messages
+  'localModification': 'Element "<%= label %>" på denne siden er modifisert lokalt',
   'localModifications': '<%= number %> elementer på denne siden er modifisert lokalt',
   'Restore': 'Gjenopprett',
   'Ignore': 'Ignorer',
@@ -3269,6 +3284,7 @@ window.midgardCreate.locale.pt_BR = {
   'Cancel': 'Cancelar',
   'Edit': 'Editar',
   // Storage status messages
+  'localModification': 'Item "<%= label %>" nesta página possuem modificações locais',
   'localModifications': '<%= number %> itens nesta página possuem modificações locais',
   'Restore': 'Restaurar',
   'Ignore': 'Ignorar',

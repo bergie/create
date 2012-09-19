@@ -12,11 +12,12 @@ window.midgardCreate.locale.fi = {
   'Cancel': 'Peruuta',
   'Edit': 'Muokkaa',
   // Storage status messages
-  'localModifications': '<%= number %> oliota sivulla omaa paikallisia muutoksia',
+  'localModification': 'Dokumentilla "<%= label %>" on paikallisia muutoksia',
+  'localModifications': '<%= number %> dokumenttia sivulla omaa paikallisia muutoksia',
   'Restore': 'Palauta',
   'Ignore': 'Poista',
-  'saveSuccess': 'Olio "<%= label %>" tallennettu',
-  'saveSuccessMultiple': '<%= number %> oliota tallennettu',
+  'saveSuccess': 'Dokumentti "<%= label %>" tallennettu',
+  'saveSuccessMultiple': '<%= number %> dokumenttia tallennettu',
   'saveError': 'Virhe tallennettaessa<br /><%= error %>',
   // Tagging
   'Item tags': 'Avainsanat',

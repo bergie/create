@@ -12,6 +12,7 @@ window.midgardCreate.locale.pt_BR = {
   'Cancel': 'Cancelar',
   'Edit': 'Editar',
   // Storage status messages
+  'localModification': 'Item "<%= label %>" nesta página possuem modificações locais',
   'localModifications': '<%= number %> itens nesta página possuem modificações locais',
   'Restore': 'Restaurar',
   'Ignore': 'Ignorar',

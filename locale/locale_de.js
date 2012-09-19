@@ -12,17 +12,18 @@ window.midgardCreate.locale.de = {
   'Cancel': 'Abbrechen',
   'Edit': 'Bearbeiten',
   // Storage status messages
-  'localModifications': '<%= number %> Einträge auf dieser Seite haben lokale Modifikationen',
+  'localModification': 'Das Dokument "<%= label %>" auf dieser Seite hat lokale Änderungen',
+  'localModifications': '<%= number %> Dokumente auf dieser Seite haben lokale Änderungen',
   'Restore': 'Wiederherstellen',
   'Ignore': 'Ignorieren',
-  'saveSuccess': 'Eintrag "<%= label %>" erfolgreich gespeichert',
-  'saveSuccessMultiple': '<%= number %> Einträge erfolgreich gespeichert',
-  'saveError': 'Beim Speichern trat ein Fehler auf<br /><%= error %>',
+  'saveSuccess': 'Dokument "<%= label %>" erfolgreich gespeichert',
+  'saveSuccessMultiple': '<%= number %> Dokumente erfolgreich gespeichert',
+  'saveError': 'Fehler beim Speichern<br /><%= error %>',
   // Tagging
-  'Item tags': 'Schlagwörter des Eintrags',
+  'Item tags': 'Schlagwörter des Dokuments',
   'Suggested tags': 'Schlagwortvorschläge',
   'Tags': 'Schlagwörter',
-  'add a tag': 'Schlagwort hinzufügen',
+  'add a tag': 'Neues Schlagwort',
   // Collection widgets
   'Add': 'Hinzufügen',
   'Choose type to add': 'Typ zum Hinzufügen wählen'
