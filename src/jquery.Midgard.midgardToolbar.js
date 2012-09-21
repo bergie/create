@@ -49,7 +49,7 @@
                 return;
               }
             });
-            jQuery('.create-ui-tool-workflowarea', this.element).append(html);
+            jQuery('.create-ui-tool-workflowarea', widget.element).append(html);
           });
         }
       });
