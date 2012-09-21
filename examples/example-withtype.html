@@ -111,10 +111,20 @@
       });
       // Fake Backbone.sync since there is no server to communicate with
       Backbone.sync = function(method, model, options) {
+        var modelJson = model.toJSONLD();
         if (console && console.log) {
-          console.log('Model contents', model.toJSONLD());
+          console.log('Model contents', modelJson);
         }
-        options.success(model);
+        if (model.isNew()) {
+          // Create fake subject
+          modelJson['@subject'] = '<' + new Date().getTime() + '>';
+        }
+
+        // Simulate server delay
+        var delay = Math.random() * 1000;
+        window.setTimeout(function () {
+          options.success(modelJson);
+        }, delay);
       };
     </script>
     <link rel="stylesheet" href="./font-awesome/css/font-awesome.css"
