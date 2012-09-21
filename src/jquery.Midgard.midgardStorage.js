@@ -283,7 +283,7 @@
           });
         });
 
-        model.save(null, {
+        model.save(null, _.extend({}, options, {
           success: function () {
             // From now on we're going with the values we have on server
             model._originalAttributes = _.clone(model.attributes);
@@ -316,7 +316,7 @@
               instance: model
             });
           }
-        });
+        }));
       });
     },
 
