@@ -161,6 +161,11 @@
     },
 
     addItem: function (button, options) {
+      if (options === undefined) {
+          options = {};
+      }
+      var addOptions = _.extend({}, options, { validate: false });
+
       var itemData = {};
       if (this.options.definition && this.options.definition.range) {
         if (this.options.definition.range.length === 1) {
@@ -173,12 +178,12 @@
             gravity: 'L',
             body: this.options.editableOptions.localize('Choose type to add', this.options.editableOptions.language),
             timeout: 0,
-            actions: this._getTypeActions(options)
+            actions: this._getTypeActions(addOptions)
           });
           return;
         }
       }
-      this.options.collection.add({}, options);
+      this.options.collection.add(itemData, addOptions);
     }
   });
 })(jQuery);
