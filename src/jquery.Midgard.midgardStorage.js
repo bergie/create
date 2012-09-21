@@ -91,7 +91,10 @@
               disabled: true
             });
           },
-          error: function () {}
+          error: function () {},
+          // We make autosaves silent so that potential changes from server
+          // don't disrupt user while writing.
+          silent: true
         });
       };
 
