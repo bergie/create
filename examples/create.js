@@ -65,6 +65,8 @@
       // VIE instance used with Create.js. If no VIE instance is passed,
       // Create.js will create its own instance.
       vie: null,
+      // The VIE service used for DOM handling. By default 'rdfa'
+      domService: 'rdfa',
       // URL for the Apache Stanbol service used for annotations, and tag
       // and image suggestions.
       stanbolUrl: null,
@@ -93,6 +95,7 @@
 
     _create: function () {
       this.vie = this._setupVIE(this.options);
+      this.domService = this.vie.service(this.options.domService);
 
       var widget = this;
       window.setTimeout(function () {
@@ -122,7 +125,7 @@
       this.element.midgardStorage('destroy');
       this.element.midgardToolbar('destroy');
 
-      jQuery('[about]', this.element).each(function () {
+      this.domService.findSubjectElements(this.element).each(function () {
         jQuery(this).midgardEditable('destroy');
       });
 
@@ -149,7 +152,7 @@
         vie = new VIE();
       }
 
-      if (!vie.hasService('rdfa')) {
+      if (!vie.hasService(this.options.domService) && this.options.domService === 'rdfa') {
         vie.use(new vie.RdfaService());
       }
 
@@ -338,6 +341,7 @@
         toolbarState: widget.options.toolbar,
         disabled: false,
         vie: widget.vie,
+        domService: widget.options.domService,
         widgets: widget.options.editorWidgets,
         editors: widget.options.editorOptions,
         collectionWidgets: widget.options.collectionWidgets,
@@ -350,7 +354,7 @@
       if (widget.options.disableEditor) {
         editableOptions.disableEditor = widget.options.disableEditor;
       }
-      jQuery('[about]', this.element).each(function () {
+      this.domService.findSubjectElements(this.element).each(function () {
         var element = this;
         if (widget.options.highlight) {
           var highlightEditable = function (event, options) {
@@ -406,11 +410,12 @@
       var editableOptions = {
         disabled: true,
         vie: widget.vie,
+        domService: widget.options.domService,
         editorOptions: widget.options.editorOptions,
         localize: widget.options.localize,
         language: widget.options.language
       };
-      jQuery('[about]', this.element).each(function () {
+      this.domService.findSubjectElements(this.element).each(function () {
         jQuery(this).midgardEditable(editableOptions);
         jQuery(this).removeClass('ui-state-disabled');
       });
@@ -713,6 +718,7 @@
       },
       toolbarState: 'full',
       vie: null,
+      domService: 'rdfa',
       disabled: false,
       localize: function (id, language) {
         return window.midgardCreate.localize(id, language);
@@ -722,9 +728,12 @@
 
     _create: function () {
       this.vie = this.options.vie;
+      this.domService = this.vie.service(this.options.domService);
       if (!this.options.model) {
         var widget = this;
-        this.vie.load({element: this.element}).from('rdfa').execute().done(function (entities) {
+        this.vie.load({
+          element: this.element
+        }).from(this.options.domService).execute().done(function (entities) {
           widget.options.model = entities[0];
         });
       }
@@ -739,7 +748,7 @@
     },
 
     findEditableElements: function (callback) {
-      this.vie.service('rdfa').findPredicateElements(this.options.model.id, jQuery('[property]', this.element), false).each(callback);
+      this.domService.findPredicateElements(this.options.model.id, jQuery('[property]', this.element), false).each(callback);
     },
 
     enable: function () {
@@ -757,11 +766,7 @@
         entityElement: this.element
       });
 
-      if (!this.vie.services.rdfa) {
-        return;
-      }
-
-      _.each(this.vie.service('rdfa').views, function (view) {
+      _.each(this.domService.views, function (view) {
         if (view instanceof widget.vie.view.Collection && widget.options.model === view.owner) {
           var property = view.collection.predicate;
           var collection = widget.enableCollection({
@@ -808,7 +813,7 @@
     },
 
     getElementPredicate: function (element) {
-      return this.vie.service('rdfa').getElementPredicate(element);
+      return this.domService.getElementPredicate(element);
     },
 
     _enableProperty: function (element) {

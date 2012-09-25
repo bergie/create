@@ -29,6 +29,7 @@
       },
       toolbarState: 'full',
       vie: null,
+      domService: 'rdfa',
       disabled: false,
       localize: function (id, language) {
         return window.midgardCreate.localize(id, language);
@@ -38,9 +39,12 @@
 
     _create: function () {
       this.vie = this.options.vie;
+      this.domService = this.vie.service(this.options.domService);
       if (!this.options.model) {
         var widget = this;
-        this.vie.load({element: this.element}).from('rdfa').execute().done(function (entities) {
+        this.vie.load({
+          element: this.element
+        }).from(this.options.domService).execute().done(function (entities) {
           widget.options.model = entities[0];
         });
       }
@@ -55,7 +59,7 @@
     },
 
     findEditableElements: function (callback) {
-      this.vie.service('rdfa').findPredicateElements(this.options.model.id, jQuery('[property]', this.element), false).each(callback);
+      this.domService.findPredicateElements(this.options.model.id, jQuery('[property]', this.element), false).each(callback);
     },
 
     enable: function () {
@@ -73,11 +77,7 @@
         entityElement: this.element
       });
 
-      if (!this.vie.services.rdfa) {
-        return;
-      }
-
-      _.each(this.vie.service('rdfa').views, function (view) {
+      _.each(this.domService.views, function (view) {
         if (view instanceof widget.vie.view.Collection && widget.options.model === view.owner) {
           var property = view.collection.predicate;
           var collection = widget.enableCollection({
@@ -124,7 +124,7 @@
     },
 
     getElementPredicate: function (element) {
-      return this.vie.service('rdfa').getElementPredicate(element);
+      return this.domService.getElementPredicate(element);
     },
 
     _enableProperty: function (element) {
