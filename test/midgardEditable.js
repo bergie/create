@@ -1,6 +1,30 @@
 module('midgardEditable');
+
 test('Editable widget', function() {
   equal(typeof jQuery('body').midgardEditable, 'function');
+});
+
+test('Editable instance', function () {
+  var fixture = jQuery('.edit-instance');
+
+  var v = new VIE();
+  v.use(new v.RdfaService());
+
+  fixture.midgardEditable({
+    vie: v
+  });
+
+  var instance = fixture.data('midgardEditable');
+  ok(instance);
+
+  // Check VIE
+  ok(instance.vie);
+  equal(instance.vie, v);
+  ok(instance.domService);
+  equal(instance.domService, v.service(instance.options.domService));
+  ok(_.isFunction(instance.domService.findPredicateElements));
+  ok(_.isFunction(instance.domService.getElementPredicate));
+  ok(_.isArray(instance.domService.views)); 
 });
 
 test('Editable collection', function() {

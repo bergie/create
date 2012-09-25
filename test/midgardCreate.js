@@ -64,6 +64,12 @@ test('Create instantiation with VIE', function () {
   // Check that Create uses *our* VIE
   ok(instance.vie);
   equal(instance.vie, v);
+
+  // Check that VIE's DOM parsing service supplies the methods we need
+  ok(instance.domService);
+  ok(v.hasService(instance.options.domService));
+  equal(instance.domService, v.service(instance.options.domService));
+  ok(_.isFunction(instance.domService.findSubjectElements));
 });
 
 test('Create URL callback registration', function () {
