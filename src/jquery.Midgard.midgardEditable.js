@@ -30,6 +30,7 @@
       toolbarState: 'full',
       vie: null,
       domService: 'rdfa',
+      predicateSelector: '[property]',
       disabled: false,
       localize: function (id, language) {
         return window.midgardCreate.localize(id, language);
@@ -59,7 +60,7 @@
     },
 
     findEditableElements: function (callback) {
-      this.domService.findPredicateElements(this.options.model.id, jQuery('[property]', this.element), false).each(callback);
+      this.domService.findPredicateElements(this.options.model.id, jQuery(this.options.predicateSelector, this.element), false).each(callback);
     },
 
     enable: function () {
