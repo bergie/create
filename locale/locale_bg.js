@@ -7,24 +7,24 @@ if (window.midgardCreate.locale === undefined) {
 
 window.midgardCreate.locale.bg = {
   // Session-state buttons for the main toolbar
-  'Save': 'Запази',
-  'Saving': 'Запазване',
-  'Cancel': 'Откажи',
-  'Edit': 'Редактирай',
+  'Save': 'Р—Р°РїР°Р·Рё',
+  'Saving': 'Р—Р°РїР°Р·РІР°РЅРµ',
+  'Cancel': 'РћС‚РєР°Р¶Рё',
+  'Edit': 'Р РµРґР°РєС‚РёСЂР°Р№',
   // Storage status messages
-  'localModification': 'Item "<%= label %>" има локални модификации',
-  'localModifications': '<%= number %> елемента на тази страница имат локални модификации',
-  'Restore': 'Възстанови',
-  'Ignore': 'Игнорирай',
-  'saveSuccess': 'Елементът "<%= label %>" беше успешно запазен',
-  'saveSuccessMultiple': '<%= number %> елемента бяха успешно запазени',
-  'saveError': 'Възника грешка при запазване<br /><%= error %>',
+  'localModification': 'Item "<%= label %>" РёРјР° Р»РѕРєР°Р»РЅРё РјРѕРґРёС„РёРєР°С†РёРё',
+  'localModifications': '<%= number %> РµР»РµРјРµРЅС‚Р° РЅР° С‚Р°Р·Рё СЃС‚СЂР°РЅРёС†Р° РёРјР°С‚ Р»РѕРєР°Р»РЅРё РјРѕРґРёС„РёРєР°С†РёРё',
+  'Restore': 'Р’СЉР·СЃС‚Р°РЅРѕРІРё',
+  'Ignore': 'РРіРЅРѕСЂРёСЂР°Р№',
+  'saveSuccess': 'Р•Р»РµРјРµРЅС‚СЉС‚ "<%= label %>" Р±РµС€Рµ СѓСЃРїРµС€РЅРѕ Р·Р°РїР°Р·РµРЅ',
+  'saveSuccessMultiple': '<%= number %> РµР»РµРјРµРЅС‚Р° Р±СЏС…Р° СѓСЃРїРµС€РЅРѕ Р·Р°РїР°Р·РµРЅРё',
+  'saveError': 'Р’СЉР·РЅРёРєР° РіСЂРµС€РєР° РїСЂРё Р·Р°РїР°Р·РІР°РЅРµ<br /><%= error %>',
   // Tagging
-  'Item tags': 'Етикети на елемента',
-  'Suggested tags': 'Препоръчани етикети',
-  'Tags': 'Етикети',
-  'add a tag': 'добави етикет',
+  'Item tags': 'Р•С‚РёРєРµС‚Рё РЅР° РµР»РµРјРµРЅС‚Р°',
+  'Suggested tags': 'РџСЂРµРїРѕСЂСЉС‡Р°РЅРё РµС‚РёРєРµС‚Рё',
+  'Tags': 'Р•С‚РёРєРµС‚Рё',
+  'add a tag': 'РґРѕР±Р°РІРё РµС‚РёРєРµС‚',
   // Collection widgets
-  'Add': 'Добави',
-  'Choose type to add': 'Избери тип за добавяне'
+  'Add': 'Р”РѕР±Р°РІРё',
+  'Choose type to add': 'РР·Р±РµСЂРё С‚РёРї Р·Р° РґРѕР±Р°РІСЏРЅРµ'
 };
