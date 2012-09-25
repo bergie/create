@@ -12,7 +12,7 @@ window.midgardCreate.locale.bg = {
   'Cancel': 'Откажи',
   'Edit': 'Редактирай',
   // Storage status messages
-  'localModification': 'Item "<%= label %>" има локални модификации',
+  'localModification': 'Елементът "<%= label %>" има локални модификации',
   'localModifications': '<%= number %> елемента на тази страница имат локални модификации',
   'Restore': 'Възстанови',
   'Ignore': 'Игнорирай',
