@@ -190,6 +190,7 @@
       }
 
       var message;
+      var restorer;
       if (widget.restorables.length === 1) {
         message = _.template(widget.options.localize('localModification', widget.options.language), {
           label: widget.restorables[0].getSubjectUri()
@@ -200,7 +201,17 @@
         });
       }
 
-      var restorer = jQuery('body').midgardNotifications('create', {
+      var doRestore = function (event, notification) {
+        widget.restoreLocal();
+        restorer.close();
+      };
+
+      var doIgnore = function (event, notification) {
+        widget.ignoreLocal();
+        restorer.close();
+      };
+
+      restorer = jQuery('body').midgardNotifications('create', {
         bindTo: widget.options.editSelector,
         gravity: 'TR',
         body: message,
@@ -209,31 +220,56 @@
           {
             name: 'restore',
             label: widget.options.localize('Restore', widget.options.language),
-            cb: function() {
-              _.each(widget.restorables, function (instance) {
-                widget._readLocal(instance);
-              });
-              widget.restorables = [];
-            },
+            cb: doRestore,
             className: 'create-ui-btn'
           },
           {
             name: 'ignore',
             label: widget.options.localize('Ignore', widget.options.language),
-            cb: function(event, notification) {
-              if (widget.options.removeLocalstorageOnIgnore) {
-                _.each(widget.restorables, function (instance) {
-                  widget._removeLocal(instance);
-                });
-              }
-              notification.close();
-              widget.restorables = [];
-            },
+            cb: doIgnore,
             className: 'create-ui-btn'
           }
-        ]
+        ],
+        callbacks: {
+          beforeShow: function () {
+            if (!window.Mousetrap) {
+              return;
+            }
+            window.Mousetrap.bind(['command+shift+r', 'ctrl+shift+r'], function (event) {
+              event.preventDefault();
+              doRestore();
+            });
+            window.Mousetrap.bind(['command+shift+i', 'ctrl+shift+i'], function (event) {
+              event.preventDefault();
+              doIgnore();
+            });
+          },
+          afterClose: function () {
+            if (!window.Mousetrap) {
+              return;
+            }
+            window.Mousetrap.unbind(['command+shift+r', 'ctrl+shift+r']);
+            window.Mousetrap.unbind(['command+shift+i', 'ctrl+shift+i']);
+          }
+        }
       });
       return restorer;
+    },
+
+    restoreLocal: function () {
+      _.each(this.restorables, function (instance) {
+        this._readLocal(instance);
+      }, this);
+      this.restorables = [];
+    },
+
+    ignoreLocal: function () {
+      if (this.options.removeLocalstorageOnIgnore) {
+        _.each(this.restorables, function (instance) {
+          this._removeLocal(instance);
+        }, this);
+      }
+      this.restorables = [];
     },
 
     saveRemote: function (options) {

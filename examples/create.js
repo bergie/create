@@ -118,6 +118,8 @@
       if (this.element.midgardNotifications) {
         this.element.midgardNotifications(this.options.notifications);
       }
+
+      this._bindShortcuts();
     },
 
     destroy: function () {
@@ -265,6 +267,46 @@
       });
     },
 
+    _bindShortcuts: function () {
+      if (!window.Mousetrap) {
+        // Keyboard shortcuts are optional and only activated if Mousetrap
+        // library is available
+        return;
+      }
+
+      var widget = this;
+      // Ctrl-e enters edit state
+      window.Mousetrap.bind(['command+e', 'ctrl+e'], function () {
+        if (widget.options.state === 'edit') {
+          return;
+        }
+        widget.setState('edit');
+      });
+
+      // Esc leaves edit state
+      window.Mousetrap.bind('esc', function (event) {
+        if (widget.options.state === 'browse') {
+          return;
+        }
+        // Stop event from propagating so that possible active editable
+        // doesn't get falsely triggered
+        event.stopPropagation();
+        widget.setState('browse');
+      });
+
+      // Ctrl-s saves
+      window.Mousetrap.bind(['command+s', 'ctrl+s'], function (event) {
+        event.preventDefault();
+        if (!widget.options.saveButton) {
+          return;
+        }
+        if (widget.options.saveButton.hasClass('ui-state-disabled')) {
+          return;
+        }
+        widget.options.saveButton.click();
+      });
+    },
+
     _saveButton: function () {
       if (this.options.saveButton) {
         return this.options.saveButton;
@@ -365,6 +407,12 @@
               if (options.entityElement.get(0) !== element) {
                 // Propagated event from another entity, ignore
                 return;
+              }
+
+              if (window.Mousetrap) {
+                // contentEditable and form fields require special handling
+                // to allow keyboard shortcuts to work
+                options.element.addClass('mousetrap');
               }
 
               // Ensure other animations are stopped before proceeding
@@ -946,6 +994,10 @@
         // only if there has been an editing widget registered
         jQuery(data.element)[widgetName](data);
         jQuery(data.element).removeClass('ui-state-disabled');
+
+        if (data.element.is(':focus')) {
+          data.element.blur();
+        }
       }
     },
 
@@ -2152,6 +2204,7 @@
       }
 
       var message;
+      var restorer;
       if (widget.restorables.length === 1) {
         message = _.template(widget.options.localize('localModification', widget.options.language), {
           label: widget.restorables[0].getSubjectUri()
@@ -2162,7 +2215,17 @@
         });
       }
 
-      var restorer = jQuery('body').midgardNotifications('create', {
+      var doRestore = function (event, notification) {
+        widget.restoreLocal();
+        restorer.close();
+      };
+
+      var doIgnore = function (event, notification) {
+        widget.ignoreLocal();
+        restorer.close();
+      };
+
+      restorer = jQuery('body').midgardNotifications('create', {
         bindTo: widget.options.editSelector,
         gravity: 'TR',
         body: message,
@@ -2171,31 +2234,56 @@
           {
             name: 'restore',
             label: widget.options.localize('Restore', widget.options.language),
-            cb: function() {
-              _.each(widget.restorables, function (instance) {
-                widget._readLocal(instance);
-              });
-              widget.restorables = [];
-            },
+            cb: doRestore,
             className: 'create-ui-btn'
           },
           {
             name: 'ignore',
             label: widget.options.localize('Ignore', widget.options.language),
-            cb: function(event, notification) {
-              if (widget.options.removeLocalstorageOnIgnore) {
-                _.each(widget.restorables, function (instance) {
-                  widget._removeLocal(instance);
-                });
-              }
-              notification.close();
-              widget.restorables = [];
-            },
+            cb: doIgnore,
             className: 'create-ui-btn'
           }
-        ]
+        ],
+        callbacks: {
+          beforeShow: function () {
+            if (!window.Mousetrap) {
+              return;
+            }
+            window.Mousetrap.bind(['command+shift+r', 'ctrl+shift+r'], function (event) {
+              event.preventDefault();
+              doRestore();
+            });
+            window.Mousetrap.bind(['command+shift+i', 'ctrl+shift+i'], function (event) {
+              event.preventDefault();
+              doIgnore();
+            });
+          },
+          afterClose: function () {
+            if (!window.Mousetrap) {
+              return;
+            }
+            window.Mousetrap.unbind(['command+shift+r', 'ctrl+shift+r']);
+            window.Mousetrap.unbind(['command+shift+i', 'ctrl+shift+i']);
+          }
+        }
       });
       return restorer;
+    },
+
+    restoreLocal: function () {
+      _.each(this.restorables, function (instance) {
+        this._readLocal(instance);
+      }, this);
+      this.restorables = [];
+    },
+
+    ignoreLocal: function () {
+      if (this.options.removeLocalstorageOnIgnore) {
+        _.each(this.restorables, function (instance) {
+          this._removeLocal(instance);
+        }, this);
+      }
+      this.restorables = [];
     },
 
     saveRemote: function (options) {

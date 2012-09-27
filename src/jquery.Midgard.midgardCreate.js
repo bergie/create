@@ -118,6 +118,8 @@
       if (this.element.midgardNotifications) {
         this.element.midgardNotifications(this.options.notifications);
       }
+
+      this._bindShortcuts();
     },
 
     destroy: function () {
@@ -265,6 +267,46 @@
       });
     },
 
+    _bindShortcuts: function () {
+      if (!window.Mousetrap) {
+        // Keyboard shortcuts are optional and only activated if Mousetrap
+        // library is available
+        return;
+      }
+
+      var widget = this;
+      // Ctrl-e enters edit state
+      window.Mousetrap.bind(['command+e', 'ctrl+e'], function () {
+        if (widget.options.state === 'edit') {
+          return;
+        }
+        widget.setState('edit');
+      });
+
+      // Esc leaves edit state
+      window.Mousetrap.bind('esc', function (event) {
+        if (widget.options.state === 'browse') {
+          return;
+        }
+        // Stop event from propagating so that possible active editable
+        // doesn't get falsely triggered
+        event.stopPropagation();
+        widget.setState('browse');
+      });
+
+      // Ctrl-s saves
+      window.Mousetrap.bind(['command+s', 'ctrl+s'], function (event) {
+        event.preventDefault();
+        if (!widget.options.saveButton) {
+          return;
+        }
+        if (widget.options.saveButton.hasClass('ui-state-disabled')) {
+          return;
+        }
+        widget.options.saveButton.click();
+      });
+    },
+
     _saveButton: function () {
       if (this.options.saveButton) {
         return this.options.saveButton;
@@ -365,6 +407,12 @@
               if (options.entityElement.get(0) !== element) {
                 // Propagated event from another entity, ignore
                 return;
+              }
+
+              if (window.Mousetrap) {
+                // contentEditable and form fields require special handling
+                // to allow keyboard shortcuts to work
+                options.element.addClass('mousetrap');
               }
 
               // Ensure other animations are stopped before proceeding
