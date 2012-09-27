@@ -35,6 +35,7 @@ Please refer to the [Create.js Integration Guide](http://createjs.org/guide/).
 * [VIE](https://github.com/bergie/vie) - editable RDFa library
 * [Backbone.js](http://documentcloud.github.com/backbone/) - client-side management of models, views, and collections
 * [jQuery UI](http://jqueryui.com/) - widget and effect library
+* [Mousetrap](http://craig.is/killing/mice) - keyboard shortcuts library (optional)
 
 ## Building Create
 
