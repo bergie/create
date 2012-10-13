@@ -32,7 +32,7 @@ task 'build', 'generate unified JavaScript file for whole Create', ->
   series [
     mergeDirs
     (sh "cat merged/*.js > examples/create.js")
-    (sh "sed -i 's/{{ VERSION }}/#{version}/' #{__dirname}/examples/create.js")
+    (sh "sed -i '' 's/{{ VERSION }}/#{version}/' #{__dirname}/examples/create.js")
     (sh "rm -r merged")
   ]
 
@@ -42,7 +42,7 @@ task 'min', 'minify the generated JavaScript file', ->
   series [
     mergeDirs
     (sh "cat merged/*.js > examples/create.js")
-    (sh "sed -i 's/{{ VERSION }}/#{version}/' #{__dirname}/examples/create.js")
+    (sh "sed -i '' 's/{{ VERSION }}/#{version}/' #{__dirname}/examples/create.js")
     (sh "rm -r merged")
     (sh "./node_modules/.bin/uglifyjs examples/create.js > examples/create-min.js")
   ]
