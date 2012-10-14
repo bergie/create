@@ -26,6 +26,30 @@ mergeDirs = (k) ->
     (sh "cp locale/*.js merged/")
   ], k
 
+mergeEdit = (k) ->
+  try
+    stat = fs.statSync "merged"
+  catch e
+    fs.mkdirSync "merged"
+  series [
+    (sh "cp src/jquery.Midgard.midgardEditable.js merged/")
+    (sh "cp src/jquery.Midgard.midgardStorage.js merged/")
+    (sh "cp src/collectionWidgets/*.js merged/")
+    (sh "cp src/editingWidgets/*.js merged/")
+    (sh "cp locale/locale_en.js merged/")
+  ], k
+
+task 'editonly', 'generate and minify unified JavaScript file for only the editing features', ->
+  version = "#{getVersion()}-editonly"
+  console.log "Building #{version}"
+  series [
+    mergeEdit
+    (sh "cat merged/*.js > examples/create-editonly.js")
+    (sh "sed -i 's/{{ VERSION }}/#{version}/' #{__dirname}/examples/create-editonly.js")
+    (sh "rm -r merged")
+    (sh "./node_modules/.bin/uglifyjs examples/create-editonly.js > examples/create-editonly-min.js")
+  ]
+
 task 'build', 'generate unified JavaScript file for whole Create', ->
   version = do getVersion
   console.log "Building #{version}"
