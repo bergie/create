@@ -56,7 +56,7 @@
       });
 
       jQuery(widget.options.saveSelector).click(function () {
-        widget.saveRemote({
+        widget.saveRemoteAll({
           success: function () {
             jQuery(widget.options.saveSelector).button({
               disabled: true
@@ -85,7 +85,7 @@
           return;
         }
 
-        widget.saveRemote({
+        widget.saveRemoteAll({
           success: function () {
             jQuery(widget.options.saveSelector).button({
               disabled: true
@@ -272,7 +272,7 @@
       this.restorables = [];
     },
 
-    saveRemote: function (options) {
+    saveRemoteAll: function (options) {
       var widget = this;
       if (widget.changedModels.length === 0) {
         return;
