@@ -5,7 +5,7 @@ if (window.midgardCreate.locale === undefined) {
   window.midgardCreate.locale = {};
 }
 
-window.midgardCreate.locale.en = {
+window.midgardCreate.locale.ro = {
   // Session-state buttons for the main toolbar
   'Save': 'Salvează',
   'Saving': 'Se salvează',
