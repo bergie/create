@@ -2276,7 +2276,7 @@
 
     restoreLocal: function () {
       _.each(this.restorables, function (instance) {
-        this._readLocal(instance);
+        this.readLocal(instance);
       }, this);
       this.restorables = [];
     },
@@ -2449,7 +2449,18 @@
       return true;
     },
 
-    _readLocal: function (model) {
+    hasLocal: function (model) {
+      if (!this.options.localStorage) {
+        return false;
+      }
+
+      if (!window.localStorage.getItem(model.getSubjectUri())) {
+        return false;
+      }
+      return true;
+    },
+
+    readLocal: function (model) {
       if (!this.options.localStorage) {
         return;
       }
