@@ -321,7 +321,33 @@
       })));
       this.options.saveButton = jQuery('#midgardcreate-save', this.element);
       this.options.saveButton.hide();
-      return this.options.saveButton;
+
+      this.options.saveButton.click(function () {
+        widget.element.midgardStorage('saveRemoteAll');
+      });
+
+      this.element.bind('midgardeditablechanged midgardstorageloaded', function () {
+        widget.options.saveButton.button({
+          disabled: false
+        });
+      });
+
+      this.element.bind('midgardstoragesaved', function () {
+        widget.options.saveButton.button({
+          disabled: true
+        });
+      });
+
+      this.element.bind('midgardeditableenable', function () {
+        widget.options.saveButton.button({
+          disabled: true
+        });
+        widget.options.saveButton.show();
+      });
+
+      this.element.bind('midgardeditabledisable', function () {
+        widget.options.saveButton.hide();
+      });
     },
 
     _editButton: function () {
