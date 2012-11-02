@@ -138,7 +138,6 @@
         // For now we don't deal with multivalued properties in the editable
         return true;
       }
-
       var editable = this.enableEditor({
         widget: this,
         element: element,

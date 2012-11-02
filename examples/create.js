@@ -658,6 +658,12 @@
           });
           return;
         }
+      } else {
+        // Check the view templates for possible non-Thing type to use
+        var keys = _.keys(this.options.view.templates);
+        if (keys.length == 2) {
+          itemData['@type'] = keys[0];
+        }
       }
       this.options.collection.add(itemData, addOptions);
     }
@@ -875,7 +881,6 @@
         // For now we don't deal with multivalued properties in the editable
         return true;
       }
-
       var editable = this.enableEditor({
         widget: this,
         element: element,

@@ -28,29 +28,62 @@ test('Editable instance', function () {
 });
 
 test('Editable collection', function() {
-  jQuery('#qunit-fixture .edit-add').midgardCreate({
-    storagePrefix: 'editable-collection',
-    highlight: false
+  var fixture = jQuery('#qunit-fixture .edit-add');
+  var v = new VIE();
+  v.use(new v.RdfaService());
+  v.entities.on('add', function (entity) {
+    entity.url = function () { return entity.getSubjectUri(); };
   });
 
   var enabled = 0;
   var checkEnabled = function(event, options) {
-    equal(options.property, 'dcterms:title');
     enabled++;
-    start();
+    equal(options.property, 'dcterms:title');
+
+    if (options.instance.isNew()) {
+      equal(options.instance.get('@type').id, '<http://www.w3.org/2002/07/owl#Thing>');
+    }
   };
+  fixture.bind('midgardeditableenableproperty', checkEnabled);
 
-  equal(jQuery('#qunit-fixture .edit-add #midgard-bar #midgardcreate-edit').attr('checked') !== true, true);
+  v.service('rdfa').findSubjectElements(fixture).each(function () {
+    jQuery(this).midgardEditable({
+      disabled: false,
+      vie: v
+    });
+  });
 
-  jQuery('#qunit-fixture .edit-add').bind('midgardeditableenableproperty', checkEnabled);
   stop();
-  jQuery('#qunit-fixture .edit-add #midgard-bar #midgardcreate-edit').click();
-  jQuery('#qunit-fixture .edit-add .midgard-create-add').click();
+  jQuery('.midgard-create-add', fixture).click();
 
   setTimeout(function() {
-     if (enabled >= 2) {
+     if (enabled < 2) {
        return;
      }
      start();
-  }, 400);
+  }, 500);
+});
+
+test('Editable collection with type', function() {
+  var fixture = jQuery('#qunit-fixture .edit-add-typed');
+  var v = new VIE();
+  v.use(new v.RdfaService());
+  v.entities.on('add', function (entity) {
+    entity.url = function () { return entity.getSubjectUri(); };
+  });
+  v.service('rdfa').findSubjectElements(fixture).each(function () {
+    jQuery(this).midgardEditable({
+      disabled: false,
+      vie: v
+    });
+  });
+
+  fixture.bind('midgardeditableenable', function(event, options) {
+    ok(options.instance.isNew());
+    equal(options.instance.get('@type').id, '<http://rdfs.org/sioc/ns#Post>');
+    start();
+  });
+
+  jQuery('.midgard-create-add', fixture).click();
+  stop();
 });
