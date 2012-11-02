@@ -2131,22 +2131,22 @@
           window.clearInterval(timeout);
           timeout = null;
         }
-        widget.disableSave();
+        widget.disableAutoSave();
       });
       this.element.bind('stopPreventSave', function () {
         if (!timeout) {
           timeout = window.setInterval(doAutoSave, widget.options.autoSaveInterval);
         }
-        widget.enableSave();
+        widget.enableAutoSave();
       });
 
     },
 
-    enableSave: function () {
+    enableAutoSave: function () {
       this.saveEnabled = true;
     },
 
-    disableSave: function () {
+    disableAutoSave: function () {
       this.saveEnabled = false;
     },
 
@@ -2290,6 +2290,49 @@
       this.restorables = [];
     },
 
+    saveReferences: function (model) {
+      _.each(model.attributes, function (value, property) {
+        if (!value || !value.isCollection) {
+          return;
+        }
+
+        value.each(function (referencedModel) {
+          if (this.changedModels.indexOf(referencedModel) !== -1) {
+            // The referenced model is already in the save queue
+            return;
+          }
+
+          if (referencedModel.isNew() && this.options.saveReferencedNew) {
+            return referencedModel.save();
+          }
+
+          if (referencedModel.hasChanged() && this.options.saveReferencedChanged) {
+            return referencedModel.save();
+          }
+        }, this);
+      }, this);
+    },
+
+    saveRemote: function (model, options) {
+      // Optionally handle entities referenced in this model first
+      this.saveReferences(model);
+
+      var widget = this;
+      model.save(null, _.extend({}, options, {
+        success: function () {
+          // From now on we're going with the values we have on server
+          model._originalAttributes = _.clone(model.attributes);
+          widget._removeLocal(model);
+          window.setTimeout(function () {
+            // Remove the model from the list of changed models after saving
+            widget.changedModels.splice(widget.changedModels.indexOf(model), 1);
+          }, 0);
+
+          options.success();
+        }
+      }));
+    },
+
     saveRemoteAll: function (options) {
       var widget = this;
       if (widget.changedModels.length === 0) {
@@ -2312,40 +2355,10 @@
         });
       }
 
-      widget.disableSave();
+      widget.disableAutoSave();
       _.each(widget.changedModels, function (model) {
-
-        // Optionally handle entities referenced in this model first
-        _.each(model.attributes, function (value, property) {
-          if (!value || !value.isCollection) {
-            return;
-          }
-
-          value.each(function (referencedModel) {
-            if (widget.changedModels.indexOf(referencedModel) !== -1) {
-              // The referenced model is already in the save queue
-              return;
-            }
-
-            if (referencedModel.isNew() && widget.options.saveReferencedNew) {
-              return referencedModel.save();
-            }
-
-            if (referencedModel.hasChanged() && widget.options.saveReferencedChanged) {
-              return referencedModel.save();
-            }
-          });
-        });
-
-        model.save(null, _.extend({}, options, {
+        this.saveRemote(model, {
           success: function () {
-            // From now on we're going with the values we have on server
-            model._originalAttributes = _.clone(model.attributes);
-
-            widget._removeLocal(model);
-            window.setTimeout(function () {
-              widget.changedModels.splice(widget.changedModels.indexOf(model), 1);
-            }, 0);
             needed--;
             if (needed <= 0) {
               // All models were happily saved
@@ -2356,7 +2369,7 @@
               jQuery('body').midgardNotifications('create', {
                 body: notification_msg
               });
-              widget.enableSave();
+              widget.enableAutoSave();
             }
           },
           error: function (m, err) {
@@ -2374,8 +2387,8 @@
               instance: model
             });
           }
-        }));
-      });
+        });
+      }, this);
     },
 
     _saveLocal: function (model) {
