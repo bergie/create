@@ -804,7 +804,9 @@
       localize: function (id, language) {
         return window.midgardCreate.localize(id, language);
       },
-      language: null
+      language: null,
+      state: null,
+      acceptStateChange: true
     },
 
     _create: function () {
@@ -821,15 +823,79 @@
     },
 
     _init: function () {
-      if (this.options.disabled) {
-        this.disable();
+      // Old way of setting the widget inactive
+      if (this.options.disabled === true) {
+        this.setState('inactive');
         return;
       }
-      this.enable();
+
+      if (this.options.disabled === false && this.options.state === 'inactive') {
+        this.setState('candidate');
+        return;
+      }
+      this.options.disabled = false;
+
+      if (this.options.state) {
+        this.setState(this.options.state);
+        return;
+      }
+      this.setState('candidate');
+    },
+
+    // Method used for cycling between the different states of the Editable widget:
+    //
+    // * Inactive: editable is loaded but disabled
+    // * Candidate: editable is enabled but not activated
+    // * Highlight: user is hovering over the editable (not set by Editable widget directly)
+    // * Activating: an editor widget is being activated for user to edit with it (skipped for editors that activate instantly)
+    // * Active: user is actually editing something inside the editable
+    // * Modified: user has made changes to the editable
+    // * Invalid: the contents of the editable have validation errors
+    setState: function (state) {
+      var previous = this.options.state;
+      var current = state;
+      if (current === previous) {
+        return;
+      }
+
+      if (this.options.acceptStateChange === undefined || !_.isFunction(this.options.acceptStateChange)) {
+        // Skip state transition validation
+        this._doSetState(previous, current);
+        return;
+      }
+
+      var widget = this;
+      this.options.acceptStateChange(previous, current, function (accepted) {
+        if (!accepted) {
+          return;
+        }
+        widget._doSetState(previous, current);
+      });
+    },
+
+    _doSetState: function (previous, current) {
+      if (current === 'inactive') {
+        this.disable();
+      } else if ((previous === null || previous === 'inactive') && current !== 'inactive') {
+        this.enable();
+      }
+
+      this._trigger('statechange', null, {
+        previous: previous,
+        current: current,
+        instance: this.options.model,
+        entityElement: this.element
+      });
+
+      this.options.state = current;
     },
 
     findEditableElements: function (callback) {
       this.domService.findPredicateElements(this.options.model.id, jQuery(this.options.predicateSelector, this.element), false).each(callback);
+    },
+
+    getElementPredicate: function (element) {
+      return this.domService.getElementPredicate(element);
     },
 
     enable: function () {
@@ -866,35 +932,30 @@
     },
 
     disable: function () {
-      var widget = this;
-      jQuery.each(this.options.editables, function (index, editable) {
-        widget.disableEditor({
-          widget: widget,
+      _.each(this.options.editables, function (editable) {
+        this.disableEditor({
+          widget: this,
           editable: editable,
-          entity: widget.options.model,
-          element: jQuery(this)
+          entity: this.options.model,
+          element: jQuery(editable)
         });
-      });
+      }, this);
       this.options.editables = [];
-      jQuery.each(this.options.collections, function (index, collectionWidget) {
-        widget.disableCollection({
-          widget: widget,
-          model: widget.options.model,
+      _.each(this.options.collections, function (collectionWidget) {
+        this.disableCollection({
+          widget: this,
+          model: this.options.model,
           element: collectionWidget,
-          vie: widget.vie,
-          editableOptions: widget.options
+          vie: this.vie,
+          editableOptions: this.options
         });
-      });
+      }, this);
       this.options.collections = [];
 
       this._trigger('disable', null, {
         instance: this.options.model,
         entityElement: this.element
       });
-    },
-
-    getElementPredicate: function (element) {
-      return this.domService.getElementPredicate(element);
     },
 
     _enableProperty: function (element) {
@@ -907,6 +968,7 @@
         // For now we don't deal with multivalued properties in the editable
         return true;
       }
+
       var editable = this.enableEditor({
         widget: this,
         element: element,
@@ -914,11 +976,14 @@
         property: propertyName,
         vie: this.vie,
         modified: function (content) {
+          widget.setState('modified');
+
           var changedProperties = {};
           changedProperties[propertyName] = content;
           widget.options.model.set(changedProperties, {
             silent: true
           });
+
           widget._trigger('changed', null, {
             property: propertyName,
             instance: widget.options.model,
@@ -926,7 +991,11 @@
             entityElement: widget.element
           });
         },
+        activating: function () {
+          widget.setState('activating');
+        },
         activated: function () {
+          widget.setState('active');
           widget._trigger('activated', null, {
             property: propertyName,
             instance: widget.options.model,
@@ -935,6 +1004,7 @@
           });
         },
         deactivated: function () {
+          widget.setState('candidate');
           widget._trigger('deactivated', null, {
             property: propertyName,
             instance: widget.options.model,
@@ -944,15 +1014,16 @@
         }
       });
 
-      if (editable) {
-        this._trigger('enableproperty', null, {
-          editable: editable,
-          property: propertyName,
-          instance: this.options.model,
-          element: element,
-          entityElement: this.element
-        });
+      if (!editable) {
+        return;
       }
+      this._trigger('enableproperty', null, {
+        editable: editable,
+        property: propertyName,
+        instance: this.options.model,
+        element: element,
+        entityElement: this.element
+      });
 
       this.options.editables.push(editable);
     },
@@ -2319,7 +2390,7 @@
 
       var widget = this;
       model.save(null, _.extend({}, options, {
-        success: function () {
+        success: function (m, response) {
           // From now on we're going with the values we have on server
           model._originalAttributes = _.clone(model.attributes);
           widget._removeLocal(model);
@@ -2327,8 +2398,14 @@
             // Remove the model from the list of changed models after saving
             widget.changedModels.splice(widget.changedModels.indexOf(model), 1);
           }, 0);
-
-          options.success();
+          if (_.isFunction(options.success)) {
+            options.success(m, response);
+          }
+        },
+        error: function (m, response) {
+          if (_.isFunction(options.error)) {
+            options.error(m, response);
+          }
         }
       }));
     },
@@ -2358,13 +2435,13 @@
       widget.disableAutoSave();
       _.each(widget.changedModels, function (model) {
         this.saveRemote(model, {
-          success: function () {
+          success: function (m, response) {
             needed--;
             if (needed <= 0) {
               // All models were happily saved
               widget._trigger('saved', null, {});
               if (options && _.isFunction(options.success)) {
-                options.success();
+                options.success(m, response);
               }
               jQuery('body').midgardNotifications('create', {
                 body: notification_msg
@@ -2374,7 +2451,7 @@
           },
           error: function (m, err) {
             if (options && _.isFunction(options.error)) {
-              options.error();
+              options.error(m, err);
             }
             jQuery('body').midgardNotifications('create', {
               body: _.template(widget.options.localize('saveError', widget.options.language), {
