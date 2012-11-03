@@ -105,6 +105,7 @@
     },
 
     _doSetState: function (previous, current) {
+      this.options.state = current;
       if (current === 'inactive') {
         this.disable();
       } else if ((previous === null || previous === 'inactive') && current !== 'inactive') {
@@ -117,8 +118,6 @@
         instance: this.options.model,
         entityElement: this.element
       });
-
-      this.options.state = current;
     },
 
     findEditableElements: function (callback) {
