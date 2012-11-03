@@ -274,7 +274,7 @@
 
       var widget = this;
       model.save(null, _.extend({}, options, {
-        success: function () {
+        success: function (m, response) {
           // From now on we're going with the values we have on server
           model._originalAttributes = _.clone(model.attributes);
           widget._removeLocal(model);
@@ -282,8 +282,14 @@
             // Remove the model from the list of changed models after saving
             widget.changedModels.splice(widget.changedModels.indexOf(model), 1);
           }, 0);
-
-          options.success();
+          if (_.isFunction(options.success)) {
+            options.success(m, response);
+          }
+        },
+        error: function (m, response) {
+          if (_.isFunction(options.error)) {
+            options.error(m, response);
+          }
         }
       }));
     },
@@ -313,13 +319,13 @@
       widget.disableAutoSave();
       _.each(widget.changedModels, function (model) {
         this.saveRemote(model, {
-          success: function () {
+          success: function (m, response) {
             needed--;
             if (needed <= 0) {
               // All models were happily saved
               widget._trigger('saved', null, {});
               if (options && _.isFunction(options.success)) {
-                options.success();
+                options.success(m, response);
               }
               jQuery('body').midgardNotifications('create', {
                 body: notification_msg
@@ -329,7 +335,7 @@
           },
           error: function (m, err) {
             if (options && _.isFunction(options.error)) {
-              options.error();
+              options.error(m, err);
             }
             jQuery('body').midgardNotifications('create', {
               body: _.template(widget.options.localize('saveError', widget.options.language), {
