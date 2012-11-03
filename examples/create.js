@@ -913,21 +913,23 @@
       });
 
       _.each(this.domService.views, function (view) {
-        if (view instanceof widget.vie.view.Collection && widget.options.model === view.owner) {
+        if (view instanceof this.vie.view.Collection && this.options.model === view.owner) {
           var property = view.collection.predicate;
-          var collection = widget.enableCollection({
-            model: widget.options.model,
+          var editableOptions = _.clone(this.options);
+          editableOptions.state = null;
+          var collection = this.enableCollection({
+            model: this.options.model,
             collection: view.collection,
             property: property,
-            definition: widget.getAttributeDefinition(property),
+            definition: this.getAttributeDefinition(property),
             view: view,
             element: view.el,
             vie: widget.vie,
-            editableOptions: widget.options
+            editableOptions: editableOptions
           });
           widget.options.collections.push(collection);
         }
-      });
+      }, this);
     },
 
     disable: function () {
@@ -941,12 +943,14 @@
       }, this);
       this.options.editables = [];
       _.each(this.options.collections, function (collectionWidget) {
+        var editableOptions = _.clone(this.options);
+        editableOptions.state = 'inactive';
         this.disableCollection({
           widget: this,
           model: this.options.model,
           element: collectionWidget,
           vie: this.vie,
-          editableOptions: this.options
+          editableOptions: editableOptions
         });
       }, this);
       this.options.collections = [];
