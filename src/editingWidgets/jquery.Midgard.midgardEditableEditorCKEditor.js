@@ -4,7 +4,7 @@
 //     For all details and documentation:
 (function (jQuery, undefined) {
   // Run JavaScript in strict mode
-  /*global jQuery:false _:false document:false */
+  /*global jQuery:false _:false document:false CKEDITOR:false */
   'use strict';
 
   // # CKEditor editing widget
