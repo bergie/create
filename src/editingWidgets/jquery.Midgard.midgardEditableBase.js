@@ -43,6 +43,7 @@
           editable: this.options.widget,
           editor: this,
           predicate: this.options.property,
+          entity: this.options.entity,
           element: this.element
         });
       }

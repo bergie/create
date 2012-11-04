@@ -60,7 +60,8 @@
       if (_.isFunction(this.options.decorate)) {
         this.options.decorate({
           editable: this,
-          element: this.element
+          element: this.element,
+          entity: this.options.model
         });
       }
     },
