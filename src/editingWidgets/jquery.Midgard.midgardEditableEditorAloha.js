@@ -18,14 +18,6 @@
   // and configured separately.
   jQuery.widget('Create.alohaWidget', jQuery.Create.editWidget, {
     enable: function () {
-      this._initialize();
-      this.options.disabled = false;
-    },
-    disable: function () {
-      Aloha.jQuery(this.options.element.get(0)).mahalo();
-      this.options.disabled = true;
-    },
-    _initialize: function () {
       var options = this.options;
       var editable;
       var currentElement = Aloha.jQuery(options.element.get(0)).aloha();
@@ -65,6 +57,11 @@
         options.modified(data.editable.getContents());
         data.editable.setUnmodified();
       });
-    }
+      this.options.disabled = false;
+    },
+    disable: function () {
+      Aloha.jQuery(this.options.element.get(0)).mahalo();
+      this.options.disabled = true;
+    },
   });
 })(jQuery);
