@@ -17,6 +17,7 @@
   // Due to licensing incompatibilities, Aloha Editor needs to be installed
   // and configured separately.
   jQuery.widget('Create.alohaWidget', jQuery.Create.editWidget, {
+    _initialize: function () {},
     enable: function () {
       var options = this.options;
       var editable;
@@ -62,6 +63,6 @@
     disable: function () {
       Aloha.jQuery(this.options.element.get(0)).mahalo();
       this.options.disabled = true;
-    },
+    }
   });
 })(jQuery);
