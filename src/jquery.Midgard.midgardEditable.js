@@ -36,8 +36,14 @@
         return window.midgardCreate.localize(id, language);
       },
       language: null,
+      // Current state of the Editable
       state: null,
-      acceptStateChange: true
+      // Callback function for validating changes between states. Receives the previous state, new state, possible predicate, and a callback
+      acceptStateChange: true,
+      // Callback function for decorating the full editable. Will be called on instantiation
+      decorate: null,
+      // Callback function for decorating a single editing widget. Will be called on editing widget instantiation.
+      decorateEditor: null
     },
 
     _create: function () {
@@ -49,6 +55,12 @@
           element: this.element
         }).from(this.options.domService).execute().done(function (entities) {
           widget.options.model = entities[0];
+        });
+      }
+      if (_.isFunction(this.options.decorate)) {
+        this.options.decorate({
+          editable: this,
+          element: this.element
         });
       }
     },
@@ -214,6 +226,7 @@
         entity: this.options.model,
         property: propertyName,
         vie: this.vie,
+        decorate: this.options.decorateEditor,
         modified: function (content) {
           widget.setState('changed', propertyName);
 

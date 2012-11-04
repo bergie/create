@@ -37,6 +37,15 @@
     _create: function () {
       this._registerWidget();
       this._initialize();
+
+      if (_.isFunction(this.options.decorate)) {
+        this.options.decorate({
+          editable: this.options.widget,
+          editor: this,
+          predicate: this.options.property,
+          element: this.element
+        });
+      }
     },
     // called every time the widget is called
     _init: function () {
