@@ -46,10 +46,10 @@
       var self = this;
       var overrides = {
         keyupCallback: function (obj, event) {
-          self.options.modified(jQuery(self.element).getCode());
+          self.options.changed(jQuery(self.element).getCode());
         },
         execCommandCallback: function (obj, command) {
-          self.options.modified(jQuery(self.element).getCode());
+          self.options.changed(jQuery(self.element).getCode());
         }
       };
 

@@ -55,7 +55,7 @@
         if (!data.editable.isModified()) {
           return true;
         }
-        options.modified(data.editable.getContents());
+        options.changed(data.editable.getContents());
         data.editable.setUnmodified();
       });
       this.options.disabled = false;

@@ -996,7 +996,7 @@
         property: propertyName,
         vie: this.vie,
         decorate: this.options.decorateEditor,
-        modified: function (content) {
+        changed: function (content) {
           widget.setState('changed', propertyName);
 
           var changedProperties = {};
@@ -1249,7 +1249,7 @@
         var current = jQuery(this).html();
         if (before !== current) {
           before = current;
-          self.options.modified(current);
+          self.options.changed(current);
         }
       });
     },
@@ -1316,7 +1316,7 @@
         if (!data.editable.isModified()) {
           return true;
         }
-        options.modified(data.editable.getContents());
+        options.changed(data.editable.getContents());
         data.editable.setUnmodified();
       });
       this.options.disabled = false;
@@ -1373,7 +1373,7 @@
         self.options.deactivated();
       });
       jQuery(this.element).bind('hallomodified', function (event, data) {
-        self.options.modified(data.content);
+        self.options.changed(data.content);
         data.editable.setUnmodified();
       });
 
@@ -1472,10 +1472,10 @@
       var self = this;
       var overrides = {
         keyupCallback: function (obj, event) {
-          self.options.modified(jQuery(self.element).getCode());
+          self.options.changed(jQuery(self.element).getCode());
         },
         execCommandCallback: function (obj, command) {
-          self.options.modified(jQuery(self.element).getCode());
+          self.options.changed(jQuery(self.element).getCode());
         }
       };
 

@@ -44,7 +44,7 @@
         self.options.deactivated();
       });
       jQuery(this.element).bind('hallomodified', function (event, data) {
-        self.options.modified(data.content);
+        self.options.changed(data.content);
         data.editable.setUnmodified();
       });
 

@@ -227,7 +227,7 @@
         property: propertyName,
         vie: this.vie,
         decorate: this.options.decorateEditor,
-        modified: function (content) {
+        changed: function (content) {
           widget.setState('changed', propertyName);
 
           var changedProperties = {};

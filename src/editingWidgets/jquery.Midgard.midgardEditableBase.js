@@ -78,7 +78,7 @@
         var current = jQuery(this).html();
         if (before !== current) {
           before = current;
-          self.options.modified(current);
+          self.options.changed(current);
         }
       });
     },
