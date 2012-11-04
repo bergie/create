@@ -80,7 +80,7 @@
     // * Highlight: user is hovering over the editable (not set by Editable widget directly)
     // * Activating: an editor widget is being activated for user to edit with it (skipped for editors that activate instantly)
     // * Active: user is actually editing something inside the editable
-    // * Modified: user has made changes to the editable
+    // * Changed: user has made changes to the editable
     // * Invalid: the contents of the editable have validation errors
     setState: function (state) {
       var previous = this.options.state;
@@ -102,6 +102,10 @@
         }
         widget._doSetState(previous, current);
       });
+    },
+
+    getState: function () {
+      return this.options.state;
     },
 
     _doSetState: function (previous, current) {
@@ -210,7 +214,7 @@
         property: propertyName,
         vie: this.vie,
         modified: function (content) {
-          widget.setState('modified');
+          widget.setState('changed');
 
           var changedProperties = {};
           changedProperties[propertyName] = content;
