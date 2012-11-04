@@ -82,7 +82,7 @@
     // * Active: user is actually editing something inside the editable
     // * Changed: user has made changes to the editable
     // * Invalid: the contents of the editable have validation errors
-    setState: function (state) {
+    setState: function (state, predicate) {
       var previous = this.options.state;
       var current = state;
       if (current === previous) {
@@ -91,16 +91,16 @@
 
       if (this.options.acceptStateChange === undefined || !_.isFunction(this.options.acceptStateChange)) {
         // Skip state transition validation
-        this._doSetState(previous, current);
+        this._doSetState(previous, current, predicate);
         return;
       }
 
       var widget = this;
-      this.options.acceptStateChange(previous, current, function (accepted) {
+      this.options.acceptStateChange(previous, current, predicate, function (accepted) {
         if (!accepted) {
           return;
         }
-        widget._doSetState(previous, current);
+        widget._doSetState(previous, current, predicate);
       });
     },
 
@@ -108,7 +108,7 @@
       return this.options.state;
     },
 
-    _doSetState: function (previous, current) {
+    _doSetState: function (previous, current, predicate) {
       this.options.state = current;
       if (current === 'inactive') {
         this.disable();
@@ -120,6 +120,7 @@
         previous: previous,
         current: current,
         instance: this.options.model,
+        predicate: predicate,
         entityElement: this.element
       });
     },
@@ -214,7 +215,7 @@
         property: propertyName,
         vie: this.vie,
         modified: function (content) {
-          widget.setState('changed');
+          widget.setState('changed', propertyName);
 
           var changedProperties = {};
           changedProperties[propertyName] = content;
@@ -230,10 +231,10 @@
           });
         },
         activating: function () {
-          widget.setState('activating');
+          widget.setState('activating', propertyName);
         },
         activated: function () {
-          widget.setState('active');
+          widget.setState('active', propertyName);
           widget._trigger('activated', null, {
             property: propertyName,
             instance: widget.options.model,
@@ -242,7 +243,7 @@
           });
         },
         deactivated: function () {
-          widget.setState('candidate');
+          widget.setState('candidate', propertyName);
           widget._trigger('deactivated', null, {
             property: propertyName,
             instance: widget.options.model,
