@@ -917,7 +917,13 @@
     // * Active: user is actually editing something inside the editable
     // * Changed: user has made changes to the editable
     // * Invalid: the contents of the editable have validation errors
-    setState: function (state, predicate) {
+    //
+    // In situations where state changes are triggered for a particular property editor, the `predicate`
+    // argument will provide the name of that property.
+    //
+    // State changes may carry optional context information in a JavaScript object. The payload of these context objects is not
+    // standardized, and is meant to be set and used by the application controller
+    setState: function (state, predicate, context) {
       var previous = this.options.state;
       var current = state;
       if (current === previous) {
@@ -926,16 +932,16 @@
 
       if (this.options.acceptStateChange === undefined || !_.isFunction(this.options.acceptStateChange)) {
         // Skip state transition validation
-        this._doSetState(previous, current, predicate);
+        this._doSetState(previous, current, predicate, context);
         return;
       }
 
       var widget = this;
-      this.options.acceptStateChange(previous, current, predicate, function (accepted) {
+      this.options.acceptStateChange(previous, current, predicate, context, function (accepted) {
         if (!accepted) {
           return;
         }
-        widget._doSetState(previous, current, predicate);
+        widget._doSetState(previous, current, predicate, context);
       });
     },
 
@@ -943,7 +949,7 @@
       return this.options.state;
     },
 
-    _doSetState: function (previous, current, predicate) {
+    _doSetState: function (previous, current, predicate, context) {
       this.options.state = current;
       if (current === 'inactive') {
         this.disable();
@@ -953,7 +959,8 @@
 
       this._trigger('statechange', null, this._params(predicate, {
         previous: previous,
-        current: current
+        current: current,
+        context: context
       }));
     },
 
