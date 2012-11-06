@@ -8,13 +8,14 @@
   /*global jQuery:false _:false document:false */
   'use strict';
 
-  // # Base editing widget
+  // # Base property editor widget
   //
-  // This editing widget provides a very simplistic `contentEditable` editor
-  // that can be used as standalone, but should more usually be used as
-  // the baseclass for other editing widgets.
+  // This property editor widget provides a very simplistic `contentEditable`
+  // property editor that can be used as standalone, but should more usually be
+  // used as the base class for other property editor widgets.
+  // This property editor widget is only useful for textual properties!
   //
-  // Basic editing widgets on this is easy:
+  // Subclassing this base property editor widget is easy:
   //
   //     jQuery.widget('Namespace.MyWidget', jQuery.Create.editWidget, {
   //       // override any properties
@@ -32,23 +33,29 @@
     disable: function (disable) {
       this.element.attr('contenteditable', 'false');
     },
-    // called by the jquery ui plugin factory when creating the widget
-    // instance
+    // called by the jQuery UI plugin factory when creating the property editor
+    // widget instance
     _create: function () {
       this._registerWidget();
       this._initialize();
 
-      if (_.isFunction(this.options.decorate)) {
-        this.options.decorate({
-          editable: this.options.widget,
+      if (_.isFunction(this.options.decorate) && _.isFunction(this.options.decorateParams)) {
+        // TRICKY: we can't use this.options.decorateParams()'s 'propertyName'
+        // parameter just yet, because it will only be available after this
+        // object has been created, but we're currently in the constructor!
+        // Hence we have to duplicate part of its logic here.
+        this.options.decorate(this.options.decorateParams(null, {
+          propertyName: this.options.property,
+          propertyEditor: this,
+          propertyElement: this.element,
+          // Deprecated.
           editor: this,
           predicate: this.options.property,
-          entity: this.options.entity,
           element: this.element
-        });
+        }));
       }
     },
-    // called every time the widget is called
+    // called every time the property editor widget is called
     _init: function () {
       if (this.options.disabled) {
         this.disable();
@@ -56,7 +63,7 @@
       }
       this.enable();
     },
-    // override this function to initialize the widget functions
+    // override this function to initialize the property editor widget functions
     _initialize: function () {
       var self = this;
       this.element.bind('focus', function () {
@@ -83,7 +90,7 @@
         }
       });
     },
-    // used to register the widget name with the DOM element
+    // used to register the property editor widget name with the DOM element
     _registerWidget: function () {
       this.element.data("createWidgetName", this.widgetName);
     }

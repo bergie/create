@@ -89,7 +89,7 @@ test('Create URL callback registration', function () {
 });
 
 test('Create edit events', function () {
-  expect(12);
+  expect(27);
   var fixture = jQuery('.create-edit-events');
 
   fixture.bind('midgardcreatestatechange', function (event, data) {
@@ -98,16 +98,29 @@ test('Create edit events', function () {
   });
 
   fixture.bind('midgardeditableenable', function (event, data) {
+    // Ensure backwards compatibility.
     ok(data.instance);
     ok(data.entityElement);
+
+    ok(data.entity, 'enabled properties have the Backbone model instance for the entity');
+    ok(data.editableEntity, 'enabled properties have the EditableEntity widget object for the entity');
+    ok(data.entityElement, 'enabled properties have the DOM element for the entity');
   });
 
   // We have two properties, so this will be called twice
   fixture.bind('midgardeditableenableproperty', function (event, data) {
-    ok(data.property);
+    // Ensure backwards compatibility.
+    ok(data.predicate);
     ok(data.instance);
     ok(data.element);
     ok(data.entityElement);
+
+    ok(data.entity, 'enabled properties have the Backbone model instance for the entity');
+    ok(data.editableEntity, 'enabled properties have the EditableEntity widget object for the entity');
+    ok(data.entityElement, 'enabled properties have the DOM element for the entity');
+    ok(data.predicate, 'enabled properties have the predicate of the property');
+    ok(data.propertyEditor, 'enabled properties have the property editor for the property');
+    ok(data.propertyElement, 'enabled properties have the DOM element for the property');
   });
 
   fixture.midgardCreate({
@@ -116,7 +129,7 @@ test('Create edit events', function () {
 });
 
 test('Create state change events', function () {
-  expect(20);
+  expect(41);
   var fixture = jQuery('.create-state-events');
 
   var previous = null;
@@ -133,22 +146,40 @@ test('Create state change events', function () {
 
   // Will be called once, when we go to edit state
   fixture.bind('midgardeditableenable', function (event, data) {
+    // Ensure backwards compatibility.
     ok(data.instance, 'enabled editables provide entity instance');
     ok(data.entityElement, 'enabled editables provide the entity element');
+
+    ok(data.entity, 'enabled properties have the Backbone model instance for the entity');
+    ok(data.editableEntity, 'enabled properties have the EditableEntity widget object for the entity');
+    ok(data.entityElement, 'enabled properties have the DOM element for the entity');
   });
 
   // Will be called twice, initially and then when returning to browse state
   fixture.bind('midgardeditabledisable', function (event, data) {
+    // Ensure backwards compatibility.
     ok(data.instance, 'disabled editables provide entity instance');
     ok(data.entityElement, 'disabled editables provide the entity element');
+
+    ok(data.entity, 'enabled properties have the Backbone model instance for the entity');
+    ok(data.editableEntity, 'enabled properties have the EditableEntity widget object for the entity');
+    ok(data.entityElement, 'enabled properties have the DOM element for the entity');
   });
 
   // We have two properties, so this will be called twice
   fixture.bind('midgardeditableenableproperty', function (event, data) {
+    // Ensure backwards compatibility.
     ok(data.property, 'enabled properties have property name');
     ok(data.instance, 'enabled properties have entity instance');
     ok(data.element, 'enabled properties have property element');
     ok(data.entityElement, 'enabled properties have entity element');
+
+    ok(data.entity, 'enabled properties have the Backbone model instance for the entity');
+    ok(data.editableEntity, 'enabled properties have the EditableEntity widget object for the entity');
+    ok(data.entityElement, 'enabled properties have the DOM element for the entity');
+    ok(data.predicate, 'enabled properties have the predicate of the property');
+    ok(data.propertyEditor, 'enabled properties have the property editor for the property');
+    ok(data.propertyElement, 'enabled properties have the DOM element for the property');
   });
 
   // Start in browse state
