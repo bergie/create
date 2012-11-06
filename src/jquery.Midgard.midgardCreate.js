@@ -22,7 +22,7 @@
   jQuery.widget('Midgard.midgardCreate', {
     // ## Configuration
     //
-    // Like most jQuery UI widgets, Create accepts various options 
+    // Like most jQuery UI widgets, Create accepts various options
     // when being instantiated.
     options: {
       // Initial toolbar rendering style: `full` or `minimized`.
@@ -38,7 +38,7 @@
       highlightColor: '#67cc08',
       // Widgets to use for editing various content types.
       editorWidgets: {
-        'default': 'hallo' 
+        'default': 'hallo'
       },
       // Additional editor options.
       editorOptions: {
