@@ -8,20 +8,21 @@
   /*global jQuery:false _:false window:false VIE:false */
   'use strict';
 
-  // # Create editing widget
+  // Define Create's EditableEntity widget.
   jQuery.widget('Midgard.midgardEditable', {
     options: {
-      editables: [],
+      propertyEditors: {},
       collections: [],
       model: null,
-      editors: {
+      // the configuration (mapping and options) of property editor widgets
+      propertyEditorWidgetsConfiguration: {
         hallo: {
           widget: 'halloWidget',
           options: {}
         }
       },
-      // the available widgets by data type
-      widgets: {
+      // the available property editor widgets by data type
+      propertyEditorWidgets: {
         'default': 'hallo'
       },
       collectionWidgets: {
@@ -38,15 +39,60 @@
       language: null,
       // Current state of the Editable
       state: null,
-      // Callback function for validating changes between states. Receives the previous state, new state, possible predicate, and a callback
+      // Callback function for validating changes between states. Receives the previous state, new state, possibly property, and a callback
       acceptStateChange: true,
+      // Callback function for listening (and reacting) to state changes.
+      stateChange: null,
       // Callback function for decorating the full editable. Will be called on instantiation
-      decorate: null,
-      // Callback function for decorating a single editing widget. Will be called on editing widget instantiation.
-      decorateEditor: null
+      decorateEditableEntity: null,
+      // Callback function for decorating a single property editor widget. Will
+      // be called on editing widget instantiation.
+      decoratePropertyEditor: null,
+
+      // Deprecated.
+      editables: [], // Now `propertyEditors`.
+      editors: {}, // Now `propertyEditorWidgetsConfiguration`.
+      widgets: {} // Now `propertyEditorW
+    },
+
+    // Aids in consistently passing parameters to events and callbacks.
+    _params: function(predicate, extended) {
+      var entityParams = {
+        entity: this.options.model,
+        editableEntity: this,
+        entityElement: this.element,
+
+        // Deprecated.
+        editable: this,
+        element: this.element,
+        instance: this.options.model
+      };
+
+      var propertyParams = (predicate) ? {
+        predicate: predicate,
+        propertyEditor: this.options.propertyEditors[predicate],
+        propertyElement: this.options.propertyEditors[predicate].element,
+
+        // Deprecated.
+        property: predicate,
+        element: this.options.propertyEditors[predicate].element
+      } : {};
+
+      return _.extend(entityParams, propertyParams, extended);
     },
 
     _create: function () {
+      // Backwards compatibility:
+      // - this.options.propertyEditorWidgets used to be this.options.widgets
+      // - this.options.propertyEditorWidgetsConfiguration used to be
+      //   this.options.editors
+      if (this.options.widgets) {
+        this.options.propertyEditorWidgets = _.extend(this.options.propertyEditorWidgets, this.options.widgets);
+      }
+      if (this.options.editors) {
+        this.options.propertyEditorWidgetsConfiguration = _.extend(this.options.propertyEditorWidgetsConfiguration, this.options.editors);
+      }
+
       this.vie = this.options.vie;
       this.domService = this.vie.service(this.options.domService);
       if (!this.options.model) {
@@ -57,16 +103,23 @@
           widget.options.model = entities[0];
         });
       }
-      if (_.isFunction(this.options.decorate)) {
-        this.options.decorate({
-          editable: this,
-          element: this.element,
-          entity: this.options.model
-        });
+      if (_.isFunction(this.options.decorateEditableEntity)) {
+        this.options.decorateEditableEntity(this._params());
       }
     },
 
     _init: function () {
+      // Backwards compatibility:
+      // - this.options.propertyEditorWidgets used to be this.options.widgets
+      // - this.options.propertyEditorWidgetsConfiguration used to be
+      //   this.options.editors
+      if (this.options.widgets) {
+        this.options.propertyEditorWidgets = _.extend(this.options.propertyEditorWidgets, this.options.widgets);
+      }
+      if (this.options.editors) {
+        this.options.propertyEditorWidgetsConfiguration = _.extend(this.options.propertyEditorWidgetsConfiguration, this.options.editors);
+      }
+
       // Old way of setting the widget inactive
       if (this.options.disabled === true) {
         this.setState('inactive');
@@ -129,16 +182,13 @@
         this.enable();
       }
 
-      this._trigger('statechange', null, {
+      this._trigger('statechange', null, this._params(predicate, {
         previous: previous,
-        current: current,
-        instance: this.options.model,
-        predicate: predicate,
-        entityElement: this.element
-      });
+        current: current
+      }));
     },
 
-    findEditableElements: function (callback) {
+    findEditablePredicateElements: function (callback) {
       this.domService.findPredicateElements(this.options.model.id, jQuery(this.options.predicateSelector, this.element), false).each(callback);
     },
 
@@ -147,42 +197,39 @@
     },
 
     enable: function () {
-      var widget = this;
+      var editableEntity = this;
       if (!this.options.model) {
         return;
       }
 
-      this.findEditableElements(function () {
-        return widget._enableProperty(jQuery(this));
+      this.findEditablePredicateElements(function () {
+        editableEntity._enablePropertyEditor(jQuery(this));
       });
 
-      this._trigger('enable', null, {
-        instance: this.options.model,
-        entityElement: this.element
-      });
+      this._trigger('enable', null, this._params());
 
       _.each(this.domService.views, function (view) {
         if (view instanceof this.vie.view.Collection && this.options.model === view.owner) {
-          var property = view.collection.predicate;
+          var predicate = view.collection.predicate;
           var editableOptions = _.clone(this.options);
           editableOptions.state = null;
           var collection = this.enableCollection({
             model: this.options.model,
             collection: view.collection,
-            property: property,
-            definition: this.getAttributeDefinition(property),
+            property: predicate,
+            definition: this.getAttributeDefinition(predicate),
             view: view,
             element: view.el,
-            vie: widget.vie,
+            vie: editableEntity.vie,
             editableOptions: editableOptions
           });
-          widget.options.collections.push(collection);
+          editableEntity.options.collections.push(collection);
         }
       }, this);
     },
 
     disable: function () {
-      _.each(this.options.editables, function (editable) {
+      _.each(this.options.propertyEditors, function (editable) {
         this.disableEditor({
           widget: this,
           editable: editable,
@@ -190,7 +237,11 @@
           element: jQuery(editable)
         });
       }, this);
+      this.options.propertyEditors = {};
+
+      // Deprecated.
       this.options.editables = [];
+
       _.each(this.options.collections, function (collectionWidget) {
         var editableOptions = _.clone(this.options);
         editableOptions.state = 'inactive';
@@ -204,108 +255,89 @@
       }, this);
       this.options.collections = [];
 
-      this._trigger('disable', null, {
-        instance: this.options.model,
-        entityElement: this.element
-      });
+      this._trigger('disable', null, this._params());
     },
 
-    _enableProperty: function (element) {
+    _enablePropertyEditor: function (element) {
       var widget = this;
-      var propertyName = this.getElementPredicate(element);
-      if (!propertyName) {
+      var predicate = this.getElementPredicate(element);
+      if (!predicate) {
         return true;
       }
-      if (this.options.model.get(propertyName) instanceof Array) {
+      if (this.options.model.get(predicate) instanceof Array) {
         // For now we don't deal with multivalued properties in the editable
         return true;
       }
 
-      var editable = this.enableEditor({
+      var propertyElement = this.enablePropertyEditor({
         widget: this,
         element: element,
         entity: this.options.model,
-        property: propertyName,
+        property: predicate,
         vie: this.vie,
-        decorate: this.options.decorateEditor,
+        decorate: this.options.decoratePropertyEditor,
+        decorateParams: _.bind(this._params, this),
         changed: function (content) {
-          widget.setState('changed', propertyName);
+          widget.setState('changed', predicate);
 
           var changedProperties = {};
-          changedProperties[propertyName] = content;
+          changedProperties[predicate] = content;
           widget.options.model.set(changedProperties, {
             silent: true
           });
 
-          widget._trigger('changed', null, {
-            property: propertyName,
-            instance: widget.options.model,
-            element: element,
-            entityElement: widget.element
-          });
+          widget._trigger('changed', null, widget._params(predicate));
         },
         activating: function () {
-          widget.setState('activating', propertyName);
+          widget.setState('activating', predicate);
         },
         activated: function () {
-          widget.setState('active', propertyName);
-          widget._trigger('activated', null, {
-            property: propertyName,
-            instance: widget.options.model,
-            element: element,
-            entityElement: widget.element
-          });
+          widget.setState('active', predicate);
+          widget._trigger('activated', null, widget._params(predicate));
         },
         deactivated: function () {
-          widget.setState('candidate', propertyName);
-          widget._trigger('deactivated', null, {
-            property: propertyName,
-            instance: widget.options.model,
-            element: element,
-            entityElement: widget.element
-          });
+          widget.setState('candidate', predicate);
+          widget._trigger('deactivated', null, widget._params(predicate));
         }
       });
 
-      if (!editable) {
+      if (!propertyElement) {
         return;
       }
-      this._trigger('enableproperty', null, {
-        editable: editable,
-        property: propertyName,
-        instance: this.options.model,
-        element: element,
-        entityElement: this.element
-      });
+      var widgetType = propertyElement.data('createWidgetName');
+      this.options.propertyEditors[predicate] = propertyElement.data(widgetType);
 
-      this.options.editables.push(editable);
+      // Deprecated.
+      this.options.editables.push(propertyElement);
+
+      this._trigger('enableproperty', null, this._params(predicate));
     },
 
-    // returns the name of the widget to use for the given property
-    _editorName: function (data) {
-      if (this.options.widgets[data.property] !== undefined) {
-        // Widget configuration set for specific RDF predicate
-        return this.options.widgets[data.property];
+    // returns the name of the property editor widget to use for the given property
+    _propertyEditorName: function (data) {
+      if (this.options.propertyEditorWidgets[data.property] !== undefined) {
+        // Property editor widget configuration set for specific RDF predicate
+        return this.options.propertyEditorWidgets[data.property];
       }
 
-      // Load the widget configuration for the data type
+      // Load the property editor widget configuration for the data type
       var propertyType = 'default';
       var attributeDefinition = this.getAttributeDefinition(data.property);
       if (attributeDefinition) {
         propertyType = attributeDefinition.range[0];
       }
-      if (this.options.widgets[propertyType] !== undefined) {
-        return this.options.widgets[propertyType];
+      if (this.options.propertyEditorWidgets[propertyType] !== undefined) {
+        return this.options.propertyEditorWidgets[propertyType];
       }
-      return this.options.widgets['default'];
+      return this.options.propertyEditorWidgets['default'];
     },
 
-    _editorWidget: function (editor) {
-      return this.options.editors[editor].widget;
+    _propertyEditorWidget: function (editor) {
+      return this.options.propertyEditorWidgetsConfiguration[editor].widget;
     },
 
-    _editorOptions: function (editor) {
-      return this.options.editors[editor].options;
+    _propertyEditorOptions: function (editor) {
+      return this.options.propertyEditorWidgetsConfiguration[editor].options;
     },
 
     getAttributeDefinition: function (property) {
@@ -319,15 +351,20 @@
       return type.attributes.get(property);
     },
 
+    // Deprecated.
     enableEditor: function (data) {
-      var editorName = this._editorName(data);
+      return this.enablePropertyEditor(data);
+    },
+
+    enablePropertyEditor: function (data) {
+      var editorName = this._propertyEditorName(data);
       if (editorName === null) {
         return;
       }
 
-      var editorWidget = this._editorWidget(editorName);
+      var editorWidget = this._propertyEditorWidget(editorName);
 
-      data.editorOptions = this._editorOptions(editorName);
+      data.editorOptions = this._propertyEditorOptions(editorName);
       data.toolbarState = this.options.toolbarState;
       data.disabled = false;
 
@@ -340,7 +377,12 @@
       return jQuery(data.element);
     },
 
+    // Deprecated.
     disableEditor: function (data) {
+      return this.disablePropertyEditor(data);
+    },
+
+    disablePropertyEditor: function (data) {
       var widgetName = jQuery(data.element).data('createWidgetName');
 
       data.disabled = true;
