@@ -27,7 +27,7 @@ test('Editable instance', function () {
   ok(_.isArray(instance.domService.views)); 
 });
 
-test('Editable instance', function () {
+test('Editable state change', function () {
   var fixture = jQuery('.edit-states');
 
   var v = new VIE();
@@ -77,6 +77,56 @@ test('Editable instance', function () {
   fixture.midgardEditable('setState', 'candidate', null, {
     foo: 'bar'
   });
+});
+
+test('Editable decorators', function () {
+  var fixture = jQuery('.edit-decorators');
+
+  var v = new VIE();
+  v.use(new v.RdfaService());
+
+  stop(3);
+
+  var entityDecorator = function (data) {
+    ok(data);
+    ok(data.entity);
+    equal(data.entity.getSubjectUri(), 'decorators');
+    ok(data.editableEntity);
+    ok(data.entityElement);
+    equal(data.entityElement.get(0), fixture.get(0));
+    start();
+  };
+
+  var propertyDecorator = function (data) {
+    ok(data);
+    ok(data.predicate);
+    equal(data.predicate, 'dcterms:title');
+    ok(data.propertyEditor);
+    ok(data.propertyElement);
+    equal(data.propertyElement.get(0), jQuery('[property]', fixture).get(0));
+    start();
+  };
+
+  fixture.midgardEditable({
+    vie: v,
+    decorateEditableEntity: entityDecorator,
+    decoratePropertyEditor: propertyDecorator
+  });
+
+  fixture.one('midgardeditablestatechange', function (event, data) {
+    ok(data.entity);
+    ok(data.current);
+    equal(data.current, 'active');
+    ok(data.previous);
+    equal(data.previous, 'candidate');
+    ok(data.predicate);
+    equal(data.predicate, 'dcterms:title');
+    start();
+  });
+
+  window.setTimeout(function () {
+    jQuery('[property]', fixture).focus();
+  }, 20);
 });
 
 test('Editable collection', function() {
