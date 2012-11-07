@@ -2537,6 +2537,11 @@
       // Optionally handle entities referenced in this model first
       this.saveReferences(model);
 
+      this._trigger('saveentity', null, {
+        entity: model,
+        options: options
+      });
+
       var widget = this;
       model.save(null, _.extend({}, options, {
         success: function (m, response) {
@@ -2550,6 +2555,10 @@
           if (_.isFunction(options.success)) {
             options.success(m, response);
           }
+          widget._trigger('savedentity', null, {
+            entity: model,
+            options: options
+          });
         },
         error: function (m, response) {
           if (_.isFunction(options.error)) {
@@ -2566,6 +2575,9 @@
       }
 
       widget._trigger('save', null, {
+        entities: widget.changedModels,
+        options: options,
+        // Deprecated
         models: widget.changedModels
       });
 
@@ -2588,7 +2600,9 @@
             needed--;
             if (needed <= 0) {
               // All models were happily saved
-              widget._trigger('saved', null, {});
+              widget._trigger('saved', null, {
+                options: options
+              });
               if (options && _.isFunction(options.success)) {
                 options.success(m, response);
               }
