@@ -383,6 +383,9 @@
       data.editorOptions = this._propertyEditorOptions(editorName);
       data.toolbarState = this.options.toolbarState;
       data.disabled = false;
+      // Pass metadata that could be useful for some implementations.
+      data.editorName = editorName;
+      data.editorWidget = editorWidget;
 
       if (typeof jQuery(data.element)[editorWidget] !== 'function') {
         throw new Error(editorWidget + ' widget is not available');
