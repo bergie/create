@@ -154,7 +154,10 @@
     //
     // State changes may carry optional context information in a JavaScript object. The payload of these context objects is not
     // standardized, and is meant to be set and used by the application controller
-    setState: function (state, predicate, context) {
+    //
+    // The callback parameter is optional and will be invoked after a state change has been accepted (after the 'statechange'
+    // event) or rejected.
+    setState: function (state, predicate, context, callback) {
       var previous = this.options.state;
       var current = state;
       if (current === previous) {
@@ -164,15 +167,21 @@
       if (this.options.acceptStateChange === undefined || !_.isFunction(this.options.acceptStateChange)) {
         // Skip state transition validation
         this._doSetState(previous, current, predicate, context);
+        if (_.isFunction(callback)) {
+          callback(true);
+        }
         return;
       }
 
       var widget = this;
       this.options.acceptStateChange(previous, current, predicate, context, function (accepted) {
-        if (!accepted) {
-          return;
+        if (accepted) {
+          widget._doSetState(previous, current, predicate, context);
         }
-        widget._doSetState(previous, current, predicate, context);
+        if (_.isFunction(callback)) {
+          callback(accepted);
+        }
+        return;
       });
     },
 
@@ -374,6 +383,9 @@
       data.editorOptions = this._propertyEditorOptions(editorName);
       data.toolbarState = this.options.toolbarState;
       data.disabled = false;
+      // Pass metadata that could be useful for some implementations.
+      data.editorName = editorName;
+      data.editorWidget = editorWidget;
 
       if (typeof jQuery(data.element)[editorWidget] !== 'function') {
         throw new Error(editorWidget + ' widget is not available');
