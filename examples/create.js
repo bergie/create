@@ -184,14 +184,14 @@
       });
 
       var widget = this;
-      this.element.bind('midgardstoragesave', function () {
+      this.element.on('midgardstoragesave', function () {
         jQuery('#midgardcreate-save a').html(_.template(widget.options.templates.buttonContent, {
           label: widget.options.localize('Saving', widget.options.language),
           icon: 'upload'
         }));
       });
 
-      this.element.bind('midgardstoragesaved midgardstorageerror', function () {
+      this.element.on('midgardstoragesaved midgardstorageerror', function () {
         jQuery('#midgardcreate-save a').html(_.template(widget.options.templates.buttonContent, {
           label: widget.options.localize('Save', widget.options.language),
           icon: 'ok'
@@ -262,7 +262,7 @@
         this.setState(window.sessionStorage.getItem(stateID));
       }
 
-      this.element.bind('midgardcreatestatechange', function (event, options) {
+      this.element.on('midgardcreatestatechange', function (event, options) {
         window.sessionStorage.setItem(stateID, options.state);
       });
     },
@@ -326,26 +326,26 @@
         widget.element.midgardStorage('saveRemoteAll');
       });
 
-      this.element.bind('midgardeditablechanged midgardstorageloaded', function () {
+      this.element.on('midgardeditablechanged midgardstorageloaded', function () {
         widget.options.saveButton.button({
           disabled: false
         });
       });
 
-      this.element.bind('midgardstoragesaved', function () {
+      this.element.on('midgardstoragesaved', function () {
         widget.options.saveButton.button({
           disabled: true
         });
       });
 
-      this.element.bind('midgardeditableenable', function () {
+      this.element.on('midgardeditableenable', function () {
         widget.options.saveButton.button({
           disabled: true
         });
         widget.options.saveButton.show();
       });
 
-      this.element.bind('midgardeditabledisable', function () {
+      this.element.on('midgardeditabledisable', function () {
         widget.options.saveButton.hide();
       });
     },
@@ -356,7 +356,7 @@
         id: 'midgardcreate-edit',
         buttonContent: ''
       })));
-      jQuery('#midgardcreate-edit', this.element).bind('click', function () {
+      jQuery('#midgardcreate-edit', this.element).on('click', function () {
         if (widget.options.state === 'edit') {
           widget.setState('browse');
           return;
@@ -389,7 +389,7 @@
 
     _enableToolbar: function () {
       var widget = this;
-      this.element.bind('midgardtoolbarstatechange', function (event, options) {
+      this.element.on('midgardtoolbarstatechange', function (event, options) {
         widget.setToolbar(options.display);
         if (window.sessionStorage) {
           window.sessionStorage.setItem(widget.options.storagePrefix + 'Midgard.create.toolbar', options.display);
@@ -450,14 +450,14 @@
               }, 3000);
             };
 
-          jQuery(this).bind('midgardeditableenableproperty', highlightEditable);
+          jQuery(this).on('midgardeditableenableproperty', highlightEditable);
         }
-        jQuery(this).bind('midgardeditabledisable', function () {
-          jQuery(this).unbind('midgardeditableenableproperty', highlightEditable);
+        jQuery(this).on('midgardeditabledisable', function () {
+          jQuery(this).off('midgardeditableenableproperty', highlightEditable);
         });
 
         if (widget.options.tags) {
-          jQuery(this).bind('midgardeditableenable', function (event, options) {
+          jQuery(this).on('midgardeditableenable', function (event, options) {
             if (event.target !== element) {
               return;
             }
@@ -539,21 +539,21 @@
         }
       }
 
-      widget.options.collection.bind('add', function (model) {
+      widget.options.collection.on('add', function (model) {
         model.primaryCollection = widget.options.collection;
         widget.options.vie.entities.add(model);
         model.collection = widget.options.collection;
       });
 
       // Re-check collection constraints
-      widget.options.collection.bind('add remove reset', widget.checkCollectionConstraints, widget);
+      widget.options.collection.on('add remove reset', widget.checkCollectionConstraints, widget);
 
       widget._bindCollectionView(widget.options.view);
     },
 
     _bindCollectionView: function (view) {
       var widget = this;
-      view.bind('add', function (itemView) {
+      view.on('add', function (itemView) {
         itemView.$el.effect('slide', function () {
           widget._makeEditable(itemView);
         });
@@ -709,12 +709,12 @@
   jQuery.widget('Midgard.midgardCollectionAddBetween', jQuery.Midgard.midgardCollectionAdd, {
     _bindCollectionView: function (view) {
       var widget = this;
-      view.bind('add', function (itemView) {
+      view.on('add', function (itemView) {
         //itemView.el.effect('slide');
         widget._makeEditable(itemView);
         widget._refreshButtons();
       });
-      view.bind('remove', function () {
+      view.on('remove', function () {
         widget._refreshButtons();
       });
     },
@@ -1299,20 +1299,20 @@
     // override this function to initialize the property editor widget functions
     _initialize: function () {
       var self = this;
-      this.element.bind('focus', function () {
+      this.element.on('focus', function () {
         if (self.options.disabled) {
           return;
         }
         self.options.activated();
       });
-      this.element.bind('blur', function () {
+      this.element.on('blur', function () {
         if (self.options.disabled) {
           return;
         }
         self.options.deactivated();
       });
       var before = this.element.html();
-      this.element.bind('keyup paste', function (event) {
+      this.element.on('keyup paste', function (event) {
         if (self.options.disabled) {
           return;
         }
@@ -1487,18 +1487,18 @@
     _initialize: function () {
       jQuery(this.element).hallo(this.getHalloOptions());
       var self = this;
-      jQuery(this.element).bind('halloactivated', function (event, data) {
+      jQuery(this.element).on('halloactivated', function (event, data) {
         self.options.activated();
       });
-      jQuery(this.element).bind('hallodeactivated', function (event, data) {
+      jQuery(this.element).on('hallodeactivated', function (event, data) {
         self.options.deactivated();
       });
-      jQuery(this.element).bind('hallomodified', function (event, data) {
+      jQuery(this.element).on('hallomodified', function (event, data) {
         self.options.changed(data.content);
         data.editable.setUnmodified();
       });
 
-      jQuery(document).bind('midgardtoolbarstatechange', function(event, data) {
+      jQuery(document).on('midgardtoolbarstatechange', function(event, data) {
         // Switch between Hallo configurations when toolbar state changes
         if (data.display === self.options.toolbarState) {
           return;
@@ -1579,11 +1579,11 @@
 
     _initialize: function () {
       var self = this;
-      jQuery(this.element).bind('focus', function (event) {
+      jQuery(this.element).on('focus', function (event) {
         self.options.activated(); 
       });
       /*
-      jQuery(this.element).bind('blur', function (event) {
+      jQuery(this.element).on('blur', function (event) {
         self.options.deactivated(); 
       });
       */
@@ -1723,7 +1723,7 @@
             actions_holder.appendTo(inner);
             jQuery.each(_config.actions, function (i, opts) {
               var action = jQuery('<button name="' + opts.name + '" class="button-' + opts.name + '">' + opts.label + '</button>').button();
-              action.bind('click', function (e) {
+              action.on('click', function (e) {
                 if (_story) {
                   opts.cb(e, _story, _self);
                 } else {
@@ -1738,7 +1738,7 @@
             });
           }
 
-          _item.bind('click', function (e) {
+          _item.on('click', function (e) {
             if (_config.callbacks.onClick) {
               _config.callbacks.onClick(e, _self);
             } else {
@@ -2185,10 +2185,10 @@
       forward: 'edit_button',
       show_actions: false,
       afterShow: function (notification, story) {
-        jQuery('body').bind('midgardtoolbarstatechange', function (event, options) {
+        jQuery('body').on('midgardtoolbarstatechange', function (event, options) {
           if (options.display == 'full') {
             story.next();
-            jQuery('body').unbind('midgardtoolbarstatechange');
+            jQuery('body').off('midgardtoolbarstatechange');
           }
         });
       },
@@ -2202,10 +2202,10 @@
       content: 'This is the edit button.<br />Try it now.',
       show_actions: false,
       afterShow: function (notification, story) {
-        jQuery('body').bind('midgardcreatestatechange', function (event, options) {
+        jQuery('body').on('midgardcreatestatechange', function (event, options) {
           if (options.state == 'edit') {
             story.next();
-            jQuery('body').unbind('midgardcreatestatechange');
+            jQuery('body').off('midgardcreatestatechange');
           }
         });
       },
@@ -2324,7 +2324,7 @@
 
       this.vie = this.options.vie;
 
-      this.vie.entities.bind('add', function (model) {
+      this.vie.entities.on('add', function (model) {
         // Add the back-end URL used by Backbone.sync
         model.url = widget.options.url;
         model.toJSON = model.toJSONLD;
@@ -2358,14 +2358,14 @@
 
       var timeout = window.setInterval(doAutoSave, widget.options.autoSaveInterval);
 
-      this.element.bind('startPreventSave', function () {
+      this.element.on('startPreventSave', function () {
         if (timeout) {
           window.clearInterval(timeout);
           timeout = null;
         }
         widget.disableAutoSave();
       });
-      this.element.bind('stopPreventSave', function () {
+      this.element.on('stopPreventSave', function () {
         if (!timeout) {
           timeout = window.setInterval(doAutoSave, widget.options.autoSaveInterval);
         }
@@ -2387,18 +2387,18 @@
       this.restorables = [];
       var restorer;
 
-      widget.element.bind(widget.options.editableNs + 'changed', function (event, options) {
+      widget.element.on(widget.options.editableNs + 'changed', function (event, options) {
         if (_.indexOf(widget.changedModels, options.instance) === -1) {
           widget.changedModels.push(options.instance);
         }
         widget._saveLocal(options.instance);
       });
 
-      widget.element.bind(widget.options.editableNs + 'disable', function (event, options) {
+      widget.element.on(widget.options.editableNs + 'disable', function (event, options) {
         widget.revertChanges(options.instance);
       });
 
-      widget.element.bind(widget.options.editableNs + 'enable', function (event, options) {
+      widget.element.on(widget.options.editableNs + 'enable', function (event, options) {
         if (!options.instance._originalAttributes) {
           options.instance._originalAttributes = _.clone(options.instance.attributes);
         }
@@ -2415,7 +2415,7 @@
         });*/
       });
 
-      widget.element.bind('midgardcreatestatechange', function (event, options) {
+      widget.element.on('midgardcreatestatechange', function (event, options) {
         if (options.state === 'browse' || widget.restorables.length === 0) {
           widget.restorables = [];
           if (restorer) {
@@ -2426,7 +2426,7 @@
         restorer = widget.checkRestore();
       });
 
-      widget.element.bind('midgardstorageloaded', function (event, options) {
+      widget.element.on('midgardstorageloaded', function (event, options) {
         if (_.indexOf(widget.changedModels, options.instance) === -1) {
           widget.changedModels.push(options.instance);
         }
@@ -2821,7 +2821,7 @@
       this.vie = this.options.vie;
       this.entity = this.options.entity;
       this.element = this.options.element;
-      jQuery(this.options.entityElement).bind('midgardeditableactivated', function (event, data) {
+      jQuery(this.options.entityElement).on('midgardeditableactivated', function (event, data) {
         if (data.instance !== widget.options.entity) {
           return;
         }
@@ -2829,7 +2829,7 @@
         widget.loadTags();
       });
 
-      jQuery(this.options.entityElement).bind('midgardeditablechanged', function (event, data) {
+      jQuery(this.options.entityElement).on('midgardeditablechanged', function (event, data) {
         if (data.instance !== widget.options.entity) {
           return;
         }
@@ -2935,11 +2935,11 @@
     // and register them as tags
     _listenAnnotate: function (entityElement) {
       var widget = this;
-      entityElement.bind('annotateselect', function (event, data) {
+      entityElement.on('annotateselect', function (event, data) {
         widget.addTag(data.linkedEntity.uri, data.linkedEntity.label, data.linkedEntity.type[0]);
       });
 
-      entityElement.bind('annotateremove', function (event, data) {
+      entityElement.on('annotateremove', function (event, data) {
         widget.removeTag(data.linkedEntity.uri);
       });
     },
@@ -3010,17 +3010,17 @@
         height: 'auto',
         interactive: false,
         onAddTag: function (tag) {
-          jQuery('.suggestedTags .tag span', contentArea).unbind('click', selectSuggested);
-          jQuery('.suggestedTags .tag span', contentArea).bind('click', selectSuggested);
+          jQuery('.suggestedTags .tag span', contentArea).off('click', selectSuggested);
+          jQuery('.suggestedTags .tag span', contentArea).on('click', selectSuggested);
         },
         onRemoveTag: function (tag) {
-          jQuery('.suggestedTags .tag span', contentArea).unbind('click', selectSuggested);
-          jQuery('.suggestedTags .tag span', contentArea).bind('click', selectSuggested);
+          jQuery('.suggestedTags .tag span', contentArea).off('click', selectSuggested);
+          jQuery('.suggestedTags .tag span', contentArea).on('click', selectSuggested);
         },
         remove: false
       });
 
-      button.bind('click', function() {
+      button.on('click', function() {
         contentArea.toggle();
       });
     },
@@ -3140,14 +3140,14 @@
         }
       });
 
-      jQuery(this.element).bind('midgardcreatestatechange', function (event, options) {
+      jQuery(this.element).on('midgardcreatestatechange', function (event, options) {
         if (options.state == 'browse') {
           widget._clearWorkflows();
           widget._clearMetadata();
         }
       });
 
-      jQuery(this.element).bind('midgardworkflowschanged', function (event, options) {
+      jQuery(this.element).on('midgardworkflowschanged', function (event, options) {
         widget._clearWorkflows();
         if (options.workflows.length) {
           options.workflows.each(function (workflow) {
@@ -3248,7 +3248,7 @@
             label: workflow.get('label')
           })).button();
 
-          html.bind('click', function (evt) {
+          html.on('click', function (evt) {
             action_cb(model, workflow, final_cb);
           });
           return html;
@@ -3354,7 +3354,7 @@
       this.workflows = {};
 
       var widget = this;
-      jQuery(this.element).bind('midgardeditableactivated', function (event, options) {
+      jQuery(this.element).on('midgardeditableactivated', function (event, options) {
         widget._fetchWorkflows(options.instance);
       });
     },

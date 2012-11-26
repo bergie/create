@@ -47,7 +47,7 @@
 
       this.vie = this.options.vie;
 
-      this.vie.entities.bind('add', function (model) {
+      this.vie.entities.on('add', function (model) {
         // Add the back-end URL used by Backbone.sync
         model.url = widget.options.url;
         model.toJSON = model.toJSONLD;
@@ -81,14 +81,14 @@
 
       var timeout = window.setInterval(doAutoSave, widget.options.autoSaveInterval);
 
-      this.element.bind('startPreventSave', function () {
+      this.element.on('startPreventSave', function () {
         if (timeout) {
           window.clearInterval(timeout);
           timeout = null;
         }
         widget.disableAutoSave();
       });
-      this.element.bind('stopPreventSave', function () {
+      this.element.on('stopPreventSave', function () {
         if (!timeout) {
           timeout = window.setInterval(doAutoSave, widget.options.autoSaveInterval);
         }
@@ -110,18 +110,18 @@
       this.restorables = [];
       var restorer;
 
-      widget.element.bind(widget.options.editableNs + 'changed', function (event, options) {
+      widget.element.on(widget.options.editableNs + 'changed', function (event, options) {
         if (_.indexOf(widget.changedModels, options.instance) === -1) {
           widget.changedModels.push(options.instance);
         }
         widget._saveLocal(options.instance);
       });
 
-      widget.element.bind(widget.options.editableNs + 'disable', function (event, options) {
+      widget.element.on(widget.options.editableNs + 'disable', function (event, options) {
         widget.revertChanges(options.instance);
       });
 
-      widget.element.bind(widget.options.editableNs + 'enable', function (event, options) {
+      widget.element.on(widget.options.editableNs + 'enable', function (event, options) {
         if (!options.instance._originalAttributes) {
           options.instance._originalAttributes = _.clone(options.instance.attributes);
         }
@@ -138,7 +138,7 @@
         });*/
       });
 
-      widget.element.bind('midgardcreatestatechange', function (event, options) {
+      widget.element.on('midgardcreatestatechange', function (event, options) {
         if (options.state === 'browse' || widget.restorables.length === 0) {
           widget.restorables = [];
           if (restorer) {
@@ -149,7 +149,7 @@
         restorer = widget.checkRestore();
       });
 
-      widget.element.bind('midgardstorageloaded', function (event, options) {
+      widget.element.on('midgardstorageloaded', function (event, options) {
         if (_.indexOf(widget.changedModels, options.instance) === -1) {
           widget.changedModels.push(options.instance);
         }

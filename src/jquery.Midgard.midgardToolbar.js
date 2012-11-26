@@ -32,14 +32,14 @@
         }
       });
 
-      jQuery(this.element).bind('midgardcreatestatechange', function (event, options) {
+      jQuery(this.element).on('midgardcreatestatechange', function (event, options) {
         if (options.state == 'browse') {
           widget._clearWorkflows();
           widget._clearMetadata();
         }
       });
 
-      jQuery(this.element).bind('midgardworkflowschanged', function (event, options) {
+      jQuery(this.element).on('midgardworkflowschanged', function (event, options) {
         widget._clearWorkflows();
         if (options.workflows.length) {
           options.workflows.each(function (workflow) {

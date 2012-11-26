@@ -37,18 +37,18 @@
     _initialize: function () {
       jQuery(this.element).hallo(this.getHalloOptions());
       var self = this;
-      jQuery(this.element).bind('halloactivated', function (event, data) {
+      jQuery(this.element).on('halloactivated', function (event, data) {
         self.options.activated();
       });
-      jQuery(this.element).bind('hallodeactivated', function (event, data) {
+      jQuery(this.element).on('hallodeactivated', function (event, data) {
         self.options.deactivated();
       });
-      jQuery(this.element).bind('hallomodified', function (event, data) {
+      jQuery(this.element).on('hallomodified', function (event, data) {
         self.options.changed(data.content);
         data.editable.setUnmodified();
       });
 
-      jQuery(document).bind('midgardtoolbarstatechange', function(event, data) {
+      jQuery(document).on('midgardtoolbarstatechange', function(event, data) {
         // Switch between Hallo configurations when toolbar state changes
         if (data.display === self.options.toolbarState) {
           return;

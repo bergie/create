@@ -117,7 +117,7 @@
             actions_holder.appendTo(inner);
             jQuery.each(_config.actions, function (i, opts) {
               var action = jQuery('<button name="' + opts.name + '" class="button-' + opts.name + '">' + opts.label + '</button>').button();
-              action.bind('click', function (e) {
+              action.on('click', function (e) {
                 if (_story) {
                   opts.cb(e, _story, _self);
                 } else {
@@ -132,7 +132,7 @@
             });
           }
 
-          _item.bind('click', function (e) {
+          _item.on('click', function (e) {
             if (_config.callbacks.onClick) {
               _config.callbacks.onClick(e, _self);
             } else {
@@ -579,10 +579,10 @@
       forward: 'edit_button',
       show_actions: false,
       afterShow: function (notification, story) {
-        jQuery('body').bind('midgardtoolbarstatechange', function (event, options) {
+        jQuery('body').on('midgardtoolbarstatechange', function (event, options) {
           if (options.display == 'full') {
             story.next();
-            jQuery('body').unbind('midgardtoolbarstatechange');
+            jQuery('body').off('midgardtoolbarstatechange');
           }
         });
       },
@@ -596,10 +596,10 @@
       content: 'This is the edit button.<br />Try it now.',
       show_actions: false,
       afterShow: function (notification, story) {
-        jQuery('body').bind('midgardcreatestatechange', function (event, options) {
+        jQuery('body').on('midgardcreatestatechange', function (event, options) {
           if (options.state == 'edit') {
             story.next();
-            jQuery('body').unbind('midgardcreatestatechange');
+            jQuery('body').off('midgardcreatestatechange');
           }
         });
       },

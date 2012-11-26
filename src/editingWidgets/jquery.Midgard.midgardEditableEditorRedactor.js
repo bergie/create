@@ -32,11 +32,11 @@
 
     _initialize: function () {
       var self = this;
-      jQuery(this.element).bind('focus', function (event) {
+      jQuery(this.element).on('focus', function (event) {
         self.options.activated(); 
       });
       /*
-      jQuery(this.element).bind('blur', function (event) {
+      jQuery(this.element).on('blur', function (event) {
         self.options.deactivated(); 
       });
       */

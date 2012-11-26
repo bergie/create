@@ -66,20 +66,20 @@
     // override this function to initialize the property editor widget functions
     _initialize: function () {
       var self = this;
-      this.element.bind('focus', function () {
+      this.element.on('focus', function () {
         if (self.options.disabled) {
           return;
         }
         self.options.activated();
       });
-      this.element.bind('blur', function () {
+      this.element.on('blur', function () {
         if (self.options.disabled) {
           return;
         }
         self.options.deactivated();
       });
       var before = this.element.html();
-      this.element.bind('keyup paste', function (event) {
+      this.element.on('keyup paste', function (event) {
         if (self.options.disabled) {
           return;
         }

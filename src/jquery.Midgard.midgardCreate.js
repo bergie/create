@@ -184,14 +184,14 @@
       });
 
       var widget = this;
-      this.element.bind('midgardstoragesave', function () {
+      this.element.on('midgardstoragesave', function () {
         jQuery('#midgardcreate-save a').html(_.template(widget.options.templates.buttonContent, {
           label: widget.options.localize('Saving', widget.options.language),
           icon: 'upload'
         }));
       });
 
-      this.element.bind('midgardstoragesaved midgardstorageerror', function () {
+      this.element.on('midgardstoragesaved midgardstorageerror', function () {
         jQuery('#midgardcreate-save a').html(_.template(widget.options.templates.buttonContent, {
           label: widget.options.localize('Save', widget.options.language),
           icon: 'ok'
@@ -262,7 +262,7 @@
         this.setState(window.sessionStorage.getItem(stateID));
       }
 
-      this.element.bind('midgardcreatestatechange', function (event, options) {
+      this.element.on('midgardcreatestatechange', function (event, options) {
         window.sessionStorage.setItem(stateID, options.state);
       });
     },
@@ -326,26 +326,26 @@
         widget.element.midgardStorage('saveRemoteAll');
       });
 
-      this.element.bind('midgardeditablechanged midgardstorageloaded', function () {
+      this.element.on('midgardeditablechanged midgardstorageloaded', function () {
         widget.options.saveButton.button({
           disabled: false
         });
       });
 
-      this.element.bind('midgardstoragesaved', function () {
+      this.element.on('midgardstoragesaved', function () {
         widget.options.saveButton.button({
           disabled: true
         });
       });
 
-      this.element.bind('midgardeditableenable', function () {
+      this.element.on('midgardeditableenable', function () {
         widget.options.saveButton.button({
           disabled: true
         });
         widget.options.saveButton.show();
       });
 
-      this.element.bind('midgardeditabledisable', function () {
+      this.element.on('midgardeditabledisable', function () {
         widget.options.saveButton.hide();
       });
     },
@@ -356,7 +356,7 @@
         id: 'midgardcreate-edit',
         buttonContent: ''
       })));
-      jQuery('#midgardcreate-edit', this.element).bind('click', function () {
+      jQuery('#midgardcreate-edit', this.element).on('click', function () {
         if (widget.options.state === 'edit') {
           widget.setState('browse');
           return;
@@ -389,7 +389,7 @@
 
     _enableToolbar: function () {
       var widget = this;
-      this.element.bind('midgardtoolbarstatechange', function (event, options) {
+      this.element.on('midgardtoolbarstatechange', function (event, options) {
         widget.setToolbar(options.display);
         if (window.sessionStorage) {
           window.sessionStorage.setItem(widget.options.storagePrefix + 'Midgard.create.toolbar', options.display);
@@ -450,14 +450,14 @@
               }, 3000);
             };
 
-          jQuery(this).bind('midgardeditableenableproperty', highlightEditable);
+          jQuery(this).on('midgardeditableenableproperty', highlightEditable);
         }
-        jQuery(this).bind('midgardeditabledisable', function () {
-          jQuery(this).unbind('midgardeditableenableproperty', highlightEditable);
+        jQuery(this).on('midgardeditabledisable', function () {
+          jQuery(this).off('midgardeditableenableproperty', highlightEditable);
         });
 
         if (widget.options.tags) {
-          jQuery(this).bind('midgardeditableenable', function (event, options) {
+          jQuery(this).on('midgardeditableenable', function (event, options) {
             if (event.target !== element) {
               return;
             }

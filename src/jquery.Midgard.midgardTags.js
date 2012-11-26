@@ -35,7 +35,7 @@
       this.vie = this.options.vie;
       this.entity = this.options.entity;
       this.element = this.options.element;
-      jQuery(this.options.entityElement).bind('midgardeditableactivated', function (event, data) {
+      jQuery(this.options.entityElement).on('midgardeditableactivated', function (event, data) {
         if (data.instance !== widget.options.entity) {
           return;
         }
@@ -43,7 +43,7 @@
         widget.loadTags();
       });
 
-      jQuery(this.options.entityElement).bind('midgardeditablechanged', function (event, data) {
+      jQuery(this.options.entityElement).on('midgardeditablechanged', function (event, data) {
         if (data.instance !== widget.options.entity) {
           return;
         }
@@ -149,11 +149,11 @@
     // and register them as tags
     _listenAnnotate: function (entityElement) {
       var widget = this;
-      entityElement.bind('annotateselect', function (event, data) {
+      entityElement.on('annotateselect', function (event, data) {
         widget.addTag(data.linkedEntity.uri, data.linkedEntity.label, data.linkedEntity.type[0]);
       });
 
-      entityElement.bind('annotateremove', function (event, data) {
+      entityElement.on('annotateremove', function (event, data) {
         widget.removeTag(data.linkedEntity.uri);
       });
     },
@@ -224,17 +224,17 @@
         height: 'auto',
         interactive: false,
         onAddTag: function (tag) {
-          jQuery('.suggestedTags .tag span', contentArea).unbind('click', selectSuggested);
-          jQuery('.suggestedTags .tag span', contentArea).bind('click', selectSuggested);
+          jQuery('.suggestedTags .tag span', contentArea).off('click', selectSuggested);
+          jQuery('.suggestedTags .tag span', contentArea).on('click', selectSuggested);
         },
         onRemoveTag: function (tag) {
-          jQuery('.suggestedTags .tag span', contentArea).unbind('click', selectSuggested);
-          jQuery('.suggestedTags .tag span', contentArea).bind('click', selectSuggested);
+          jQuery('.suggestedTags .tag span', contentArea).off('click', selectSuggested);
+          jQuery('.suggestedTags .tag span', contentArea).on('click', selectSuggested);
         },
         remove: false
       });
 
-      button.bind('click', function() {
+      button.on('click', function() {
         contentArea.toggle();
       });
     },
