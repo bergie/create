@@ -2383,7 +2383,7 @@
       });
 
       widget.element.bind(widget.options.editableNs + 'disable', function (event, options) {
-        widget._restoreLocal(options.instance);
+        widget.revertChanges(options.instance);
       });
 
       widget.element.bind(widget.options.editableNs + 'enable', function (event, options) {
@@ -2440,7 +2440,7 @@
       }
 
       var doRestore = function (event, notification) {
-        widget.restoreLocal();
+        widget.restoreLocalAll();
         restorer.close();
       };
 
@@ -2494,7 +2494,7 @@
       return restorer;
     },
 
-    restoreLocal: function () {
+    restoreLocalAll: function () {
       _.each(this.restorables, function (instance) {
         this.readLocal(instance);
       }, this);
@@ -2735,7 +2735,7 @@
       collection.add(JSON.parse(local));
     },
 
-    _restoreLocal: function (model) {
+    revertChanges: function (model) {
       var widget = this;
 
       // Remove unsaved collection members
