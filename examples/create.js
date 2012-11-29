@@ -993,6 +993,10 @@
 
       this._trigger('enable', null, this._params());
 
+      if (!this.vie.view || !this.vie.view.Collection) {
+        return;
+      }
+
       _.each(this.domService.views, function (view) {
         if (view instanceof this.vie.view.Collection && this.options.model === view.owner) {
           var predicate = view.collection.predicate;
