@@ -57,6 +57,7 @@
     },
 
     activateEditors: function (data) {
+      this.element.show();
       _.each(this.options.editors, function (configuration, editor) {
         if (!this.editorElements[editor]) {
           return;
@@ -84,11 +85,6 @@
     _prepareEditorArea: function (button) {
       var contentArea = jQuery(_.template(this.options.templates.contentArea, {}));
       contentArea.hide();
-
-      var offset = button.position();
-      contentArea.css('position', 'absolute');
-      contentArea.css('left', offset.left);
-
       return contentArea;
     },
 
@@ -102,13 +98,20 @@
 
       this.element.empty();
       this.element.append(button);
-      this.element.show();
+      this.element.hide();
 
       this.contentArea = this._prepareEditorArea(button);
       button.after(this.contentArea);
 
       button.on('click', function(event) {
         event.preventDefault();
+
+        var offset = button.position();
+        widget.contentArea.css({
+          position: 'absolute',
+          left: offset.left
+        });
+
         widget.contentArea.toggle();
       });
     }

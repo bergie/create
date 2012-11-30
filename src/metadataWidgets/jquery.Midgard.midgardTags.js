@@ -12,6 +12,7 @@
     enhanced: false,
 
     options: {
+      predicate: 'skos:related',
       vie: null,
       templates: {
         tags: '<div class="create-ui-tags <%= type %>Tags"><h3><%= label %></h3><input type="text" class="tags" value="" /></div>'
@@ -27,11 +28,15 @@
     },
 
     activate: function (data) {
+      // An editable has been activated. Prepare the tag editor for the
+      // entity
+      var inputs = this._render(data.entity);
+      this.loadTags(data.entity, data.predicate, inputs);
     },
 
     // Convert to reference URI as needed
     _normalizeSubject: function(subject) {
-      if (this.entity.isReference(subject)) {
+      if (this.vie.entities.isReference(subject)) {
         return subject;
       }
         
@@ -39,12 +44,12 @@
         subject = 'urn:tag:' + subject;
       }
 
-      subject = this.entity.toReference(subject);
+      subject = this.vie.entities.toReference(subject);
       return subject;
     },
 
     _tagLabel: function (subject) {
-      subject = this.entity.fromReference(subject);
+      subject = this.vie.entities.fromReference(subject);
 
       if (subject.substr(0, 8) === 'urn:tag:') {
         subject = subject.substr(8, subject.length - 1);
@@ -60,15 +65,19 @@
     // Centralized method for adding new tags to an entity
     // regardless of whether they come from this widget
     // or Annotate.js
-    addTag: function (subject, label, type) {
+    addTag: function (entity, subject, label, type) {
       if (label === undefined) {
         label = this._tagLabel(subject);
       }
 
       subject = this._normalizeSubject(subject);
+      var tags = entity.get(this.options.predicate);
+      if (tags && tags.isCollection && tags.get(subject)) {
+        return;
+      }
 
-      if (type && !this.entity.isReference(type)) {
-        type = this.entity.toReference(type);
+      if (type && !entity.isReference(type)) {
+        type = entity.toReference(type);
       }
 
       var tagEntity = this.vie.entities.addOrUpdate({
@@ -77,33 +86,16 @@
         '@type': type
       });
 
-      var tags = this.options.entity.get(this.options.predicate);
+      var tags = entity.get(this.options.predicate);
       if (!tags) {
-        tags = new this.vie.Collection();
-        tags.vie = this.options.vie;
-        this.options.entity.set(this.options.predicate, tags);
-      } else if (!tags.isCollection) {
-        tags = new this.vie.Collection(_.map(tags, function(tag) {
-          if (tag.isEntity) {
-            return tag;
-          }
-          return {
-            '@subject': tag
-          };
-        }));
-        tags.vie = this.options.vie;
-        this.options.entity.set(this.options.predicate, tags);
+        entity.set(this.options.predicate, tagEntity);
+        return;
       }
-
       tags.addOrUpdate(tagEntity);
-
-      this.options.entityElement.trigger('midgardeditablechanged', {
-        instance: this.options.entity
-      });
     },
 
-    removeTag: function (subject) {
-      var tags = this.options.entity.get(this.options.predicate);
+    removeTag: function (entity, subject) {
+      var tags = entity.get(this.options.predicate);
       if (!tags) {
         return;
       }
@@ -115,27 +107,23 @@
       }
 
       tags.remove(subject);
-      this.options.entityElement.trigger('midgardeditablechanged', {
-        instance: this.options.entity
-      });
     },
 
     // Listen for accepted annotations from Annotate.js if that 
-    // is in use
-    // and register them as tags
-    _listenAnnotate: function (entityElement) {
+    // is in use and register them as tags
+    _listenAnnotate: function (entity, entityElement) {
       var widget = this;
       entityElement.on('annotateselect', function (event, data) {
-        widget.addTag(data.linkedEntity.uri, data.linkedEntity.label, data.linkedEntity.type[0]);
+        widget.addTag(entity, data.linkedEntity.uri, data.linkedEntity.label, data.linkedEntity.type[0]);
       });
 
       entityElement.on('annotateremove', function (event, data) {
-        widget.removeTag(data.linkedEntity.uri);
+        widget.removeTag(entity, data.linkedEntity.uri);
       });
     },
 
-    _prepareEditor: function (button) {
-      var contentArea = jQuery(_.template(this.options.templates.contentArea, {}));
+    _render: function (entity) {
+      this.element.empty();
       var articleTags = jQuery(_.template(this.options.templates.tags, {
         type: 'article',
         label: this.options.localize('Item tags', this.options.language)
@@ -146,96 +134,90 @@
       }));
 
       // Tags plugin requires IDs to exist
-      jQuery('input', articleTags).attr('id', 'articleTags-' + this.entity.cid);
-      jQuery('input', suggestedTags).attr('id', 'suggestedTags-' + this.entity.cid);
+      jQuery('input', articleTags).attr('id', 'articleTags-' + entity.cid);
+      jQuery('input', suggestedTags).attr('id', 'suggestedTags-' + entity.cid);
 
-      contentArea.append(articleTags);
-      contentArea.append(suggestedTags);
-      contentArea.hide();
+      this.element.append(articleTags);
+      this.element.append(suggestedTags);
 
-      var offset = button.position();
-      contentArea.css('position', 'absolute');
-      contentArea.css('left', offset.left);
-
-      return contentArea;
+      this._renderInputs(entity, articleTags, suggestedTags);
+      return {
+        tags: articleTags,
+        suggested: suggestedTags
+      };
     },
 
-    _renderWidget: function () {
+    _renderInputs: function (entity, articleTags, suggestedTags) {
       var widget = this;
-      var subject = this.entity.getSubject();
+      var subject = entity.getSubject();
 
-      var button = jQuery(_.template(this.options.templates.button, {
-        icon: 'tags',
-        label: this.options.localize('Tags', this.options.language)
-      }));
-
-      var parentElement = jQuery(this.options.parentElement);
-      parentElement.empty();
-      parentElement.append(button);
-      parentElement.show();
-
-      var contentArea = this._prepareEditor(button);
-      button.after(contentArea);
-
-      this.articleTags = jQuery('.articleTags input', contentArea).tagsInput({
+      articleTags.tagsInput({
         width: 'auto',
         height: 'auto',
         onAddTag: function (tag) {
-          widget.addTag(tag);
+          widget.addTag(entity, tag);
         },
         onRemoveTag: function (tag) {
-          widget.removeTag(tag);
+          widget.removeTag(entity, tag);
         },
         defaultText: this.options.localize('add a tag', this.options.language)
       });
 
       var selectSuggested = function () {
         var tag = jQuery.trim(jQuery(this).text());
-        widget.articleTags.addTag(tag);
-        widget.suggestedTags.removeTag(tag);
+        widget.addTag(entity, tag);
+        suggestedTags.removeTag(tag);
       };
 
-      this.suggestedTags = jQuery('.suggestedTags input', contentArea).tagsInput({
+      suggestedTags.tagsInput({
         width: 'auto',
         height: 'auto',
         interactive: false,
         onAddTag: function (tag) {
-          jQuery('.suggestedTags .tag span', contentArea).off('click', selectSuggested);
-          jQuery('.suggestedTags .tag span', contentArea).on('click', selectSuggested);
+          jQuery('.tag span', suggestedTags).off('click', selectSuggested);
+          jQuery('.tag span', suggestedTags).on('click', selectSuggested);
         },
         onRemoveTag: function (tag) {
-          jQuery('.suggestedTags .tag span', contentArea).off('click', selectSuggested);
-          jQuery('.suggestedTags .tag span', contentArea).on('click', selectSuggested);
+          jQuery('.tag span', suggestedTags).off('click', selectSuggested);
+          jQuery('.tag span', suggestedTags).on('click', selectSuggested);
         },
         remove: false
       });
-
-      button.on('click', function() {
-        contentArea.toggle();
-      });
     },
 
-    loadTags: function () {
+    _getTagStrings: function (tags) {
+      var tagArray = [];
+
+      if (_.isString(tags)) {
+        tagArray.push(tags);
+        return tagArray;
+      }
+
+      if (tags.isCollection) {
+        tags.each(function (tag) {
+          tagArray.push(tag.get('rdfs:label'));
+        });
+        return tagArray;
+      }
+
+      _.each(tags, function (tag) {
+        tagArray.push(this._tagLabel(tag));
+      }, this);
+      return tagArray;
+    },
+
+    loadTags: function (entity, predicate, inputs) {
       var widget = this;
 
       // Populate existing tags from entity
-      var tags = this.entity.get(this.options.predicate);
+      var tags = entity.get(this.options.predicate);
       if (tags) {
-        if (_.isString(tags)) {
-          widget.articleTags.addTag(widget._tagLabel(tags));
-        } else if (tags.isCollection) {
-          tags.each(function (tag) {
-            widget.articleTags.addTag(tag.get('rdfs:label'));
-          });
-        } else {
-          _.each(tags, function (tag) {
-            widget.articleTags.addTag(widget._tagLabel(tag));
-          });
-        }
+        var tagArray = this._getTagStrings(tags);
+        _.each(tagArray, inputs.tags.addTag, inputs.tags);
       }
 
       if (this.vie.services.stanbol) {
-        widget.enhance();
+        //widget.enhance();
       } else {
         jQuery('.suggestedTags', widget.element).hide();
       }
@@ -257,7 +239,7 @@
       return langLabel;
     },
 
-    _addEnhancement: function (enhancement) {
+    _addEnhancement: function (entity, enhancement) {
       if (!enhancement.isEntity) {
         return;
       }
@@ -267,7 +249,7 @@
         return;
       }
 
-      var tags = this.options.entity.get(this.options.predicate);
+      var tags = entity.get(this.options.predicate);
       if (tags && tags.isCollection && tags.indexOf(enhancement) !== -1) {
         return;
       }
@@ -275,7 +257,7 @@
       this.suggestedTags.addTag(label);
     },
 
-    enhance: function () {
+    enhance: function (entity, entityElement) {
       if (this.enhanced) {
         return;
       }
@@ -285,10 +267,10 @@
 
       // load suggested tags
       this.vie.analyze({
-        element: jQuery('[property]', this.options.entityElement)
+        element: jQuery('[property]', entityElement)
       }).using(['stanbol']).execute().success(function (enhancements) {
         _.each(enhancements, function (enhancement) {
-          widget._addEnhancement(enhancement);
+          widget._addEnhancement(entity, enhancement);
         });
       }).fail(function (xhr) {
         // console.log(xhr);
