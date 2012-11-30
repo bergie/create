@@ -86,7 +86,6 @@
         '@type': type
       });
 
-      var tags = entity.get(this.options.predicate);
       if (!tags) {
         entity.set(this.options.predicate, tagEntity);
         return;
