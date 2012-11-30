@@ -13,13 +13,9 @@
     editorElements: {},
     options: {
       vie: null,
-      entity: null,
-      element: null,
-      entityElement: null,
-      predicate: 'skos:related',
       templates: {
         button: '<button class="create-ui-btn"><i class="icon-<%= icon %>"></i> <%= label %></button>',
-        contentArea: '<div class="dropdown-menu"></div>',
+        contentArea: '<div class="dropdown-menu"></div>'
       },
       localize: function (id, language) {
         return window.midgardCreate.localize(id, language);
@@ -46,6 +42,15 @@
         if (!_.isFunction(editorArea[editor])) {
           throw new Error('Metadata editor widget ' + editor + ' is not available');
         }
+
+        _.extend(configuration, {
+          vie: this.options.vie,
+          language: this.options.language,
+          localize: this.options.localize,
+          createElement: this.options.createElement,
+          editableNs: this.options.editableNs
+        });
+
         editorArea[editor](configuration);
         this.editorElements[editor] = editorArea;
       }, this);
