@@ -16,10 +16,17 @@
             defaultCenter: new OpenLayers.LonLat(0, 0),
             defaultZoomLevel: 3,
             geoProperty: 'http://schema.org/geo',
+            geoCoordinateType: 'http://schema.org/GeoCoordinates',
             geoLonProperty: 'http://schema.org/longitude',
-            geoLatProperty: 'http://schema.org/latitude'
+            geoLatProperty: 'http://schema.org/latitude',
+            marker: {
+                url: 'http://www.openlayers.org/dev/img/marker.png',
+                size: {w:21, h:25},
+                offset: {w:-10, h:-25} //-(size.w / 2), -size.h
+            }
         },
         data : {},
+        coordsObj : null,
 
         /**
          * activate mapwidget
@@ -28,19 +35,33 @@
          */
         activate: function (data) {
             this.data = data;
+            this.coordsObj = null;
 
             var geo = this.data.entity.get(this.options.geoProperty);
 
             if(_.isUndefined(geo)) {
+                var types = this.data.entity.attributes['@type'];
+                if(!_.isArray(types)) {
+                    types = [types];
+                }
+
+                if(_.indexOf(types, '<' + this.options.geoCoordinateType + '>') > 0) {
+                    this.coordsObj = this.data.entity;
+                }
+            } else {
+                this.coordsObj = geo.models[0];
+            }
+
+            if(_.isNull(this.coordsObj)){
                 this.element.hide();
                 return;
             } else {
                 this.element.show();
             }
 
-            var coordsModel = geo.models[0],
-                lat = parseFloat(coordsModel.get(this.options.geoLatProperty)),
-                lon = parseFloat(coordsModel.get(this.options.geoLonProperty));
+
+            var lat = parseFloat(this.coordsObj.get(this.options.geoLatProperty)),
+                lon = parseFloat(this.coordsObj.get(this.options.geoLonProperty));
 
             this.centerMap(lon, lat);
         },
@@ -169,9 +190,15 @@
                 this.options.centermark.destroy();
             }
 
-            var size = new OpenLayers.Size(21, 25);
-            var offset = new OpenLayers.Pixel(-(size.w / 2), -size.h);
-            var icon = new OpenLayers.Icon('http://www.openlayers.org/dev/img/marker.png', size, offset);
+            var size = new OpenLayers.Size(
+                this.options.marker.size.w ,
+                this.options.marker.size.h
+            );
+            var offset = new OpenLayers.Pixel(
+                this.options.marker.offset.w ,
+                this.options.marker.offset.h
+            );
+            var icon = new OpenLayers.Icon(this.options.marker.url, size, offset);
             this.options.centermark = new OpenLayers.Marker(center, icon)
             this.options.markers.addMarker(this.options.centermark);
 
