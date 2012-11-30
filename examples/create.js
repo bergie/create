@@ -1021,11 +1021,11 @@
 
     disable: function () {
       _.each(this.options.propertyEditors, function (editable) {
-        this.disableEditor({
+        this.disablePropertyEditor({
           widget: this,
           editable: editable,
           entity: this.options.model,
-          element: jQuery(editable)
+          element: editable.element
         });
       }, this);
       this.options.propertyEditors = {};
@@ -1177,18 +1177,13 @@
     },
 
     disablePropertyEditor: function (data) {
-      var widgetName = jQuery(data.element).data('createWidgetName');
+      data.element[data.editable.widgetName]({
+        disabled: true
+      });
+      jQuery(data.element).removeClass('ui-state-disabled');
 
-      data.disabled = true;
-
-      if (widgetName) {
-        // only if there has been an editing widget registered
-        jQuery(data.element)[widgetName](data);
-        jQuery(data.element).removeClass('ui-state-disabled');
-
-        if (data.element.is(':focus')) {
-          data.element.blur();
-        }
+      if (data.element.is(':focus')) {
+        data.element.blur();
       }
     },
 
