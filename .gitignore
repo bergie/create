@@ -2,5 +2,6 @@ node_modules/
 merged/
 npm-debug.log
 .DS_Store
+.idea
 examples/*.jsbak
 examples/create-editonly*
