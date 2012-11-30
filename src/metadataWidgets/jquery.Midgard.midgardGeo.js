@@ -170,7 +170,7 @@
          */
         _init:function () {
             this.element.hide();
-            this.element.append( jQuery('<p>GEO</p>') );
+            this.element.append( jQuery('<h3>GEO</h3>') );
             this._createMap();
         },
 
