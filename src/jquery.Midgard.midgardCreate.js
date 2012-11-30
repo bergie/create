@@ -73,8 +73,9 @@
       // URL for the DBpedia instance used for finding more information
       // about annotations and tags.
       dbPediaUrl: null,
-      // Whether to enable the Tags widget.
-      tags: false,
+      // Configuration for the metadata editor. If no widgets are enabled,
+      // then the metadata editor will not be loaded.
+      metadata: {},
       // Selector for element where Create.js will place its buttons, like
       // Save and Edit/Cancel.
       buttonContainer: '.create-ui-toolbar-statustoolarea .create-ui-statustools',
@@ -107,6 +108,7 @@
       }
 
       this._enableToolbar();
+      this._enableMetadata();
       this._saveButton();
       this._editButton();
       this._prepareStorage();
@@ -138,8 +140,8 @@
       if (this.element.midgardNotifications) {
         this.element.midgardNotifications('destroy');
       }
-      if (this.options.tags) {
-        this.element.midgardTags('destroy');
+      if (!_.isEmpty(this.options.metadata)) {
+        this.element.midgardMetadata('destroy');
       }
       // TODO: use _destroy in jQuery UI 1.9 and above
       jQuery.Widget.prototype.destroy.call(this);
@@ -402,6 +404,21 @@
       });
     },
 
+    _enableMetadata: function () {
+      if (_.isEmpty(this.options.metadata)) {
+        return;
+      }
+
+      jQuery('.create-ui-tool-metadataarea', this.element).midgardMetadata({
+        vie: this.vie,
+        localize: this.options.localize,
+        language: this.options.language,
+        editors: this.options.metadata,
+        createElement: this.element,
+        editableNs: 'midgardeditable'
+      });
+    },
+
     _enableEdit: function () {
       this._setOption('state', 'edit');
       var widget = this;
@@ -455,21 +472,6 @@
         jQuery(this).on('midgardeditabledisable', function () {
           jQuery(this).off('midgardeditableenableproperty', highlightEditable);
         });
-
-        if (widget.options.tags) {
-          jQuery(this).on('midgardeditableenable', function (event, options) {
-            if (event.target !== element) {
-              return;
-            }
-            jQuery(this).midgardTags({
-              vie: widget.vie,
-              entityElement: options.entityElement,
-              entity: options.instance,
-              localize: widget.options.localize,
-              language: widget.options.language
-            });
-          });
-        }
 
         jQuery(this).midgardEditable(editableOptions);
       });
