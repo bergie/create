@@ -189,3 +189,88 @@ test('Editable collection with type', function() {
   jQuery('.midgard-create-add', fixture).click();
   stop();
 });
+
+test('Editable collection edit/cancel', function() {
+  var fixture = jQuery('#qunit-fixture .edit-edit-cancel');
+  var v = new VIE();
+  v.use(new v.RdfaService());
+  v.entities.on('add', function (entity) {
+    entity.url = function () { return entity.getSubjectUri(); };
+  });
+
+  enabled = 0;
+  fixture.bind('midgardeditableenable', function(event, options) {
+    enabled++;
+    if (enabled < 2) {
+      return;
+    }
+    equal(jQuery('[contenteditable="true"]', fixture).length, 1);
+    start();
+    v.service('rdfa').findSubjectElements(fixture).each(function () {
+      jQuery(this).midgardEditable({
+        disabled: true
+      });
+    });
+  });
+
+  var disabled = 0;
+  fixture.bind('midgardeditabledisable', function(event, options) {
+    disabled++;
+    if (disabled < 2) {
+      return;
+    }
+    start();
+    equal(jQuery('[contenteditable="true"]', fixture).length, 0);
+  });
+
+  stop(2);
+  v.service('rdfa').findSubjectElements(fixture).each(function () {
+    jQuery(this).midgardEditable({
+      disabled: false,
+      vie: v
+    });
+  });
+});
+
+test('Editable collection edit/add/cancel', function() {
+  var fixture = jQuery('#qunit-fixture .edit-add-edit-cancel');
+  var v = new VIE();
+  v.use(new v.RdfaService());
+  v.entities.on('add', function (entity) {
+    entity.url = function () { return entity.getSubjectUri(); };
+  });
+
+  equal(jQuery('[contenteditable="true"]', fixture).length, 0);
+  v.service('rdfa').findSubjectElements(fixture).each(function () {
+    jQuery(this).midgardEditable({
+      disabled: false,
+      vie: v
+    });
+  });
+  equal(jQuery('[contenteditable="true"]', fixture).length, 1);
+
+  fixture.bind('midgardeditableenable', function(event, options) {
+    ok(options.instance.isNew());
+    equal(options.instance.has('dcterms:title'), false);
+    equal(jQuery('[contenteditable="true"]', fixture).length, 2);
+    start();
+    v.service('rdfa').findSubjectElements(fixture).each(function () {
+      jQuery(this).midgardEditable({
+        disabled: true
+      });
+    });
+  });
+
+  var disabled = 0;
+  fixture.bind('midgardeditabledisable', function(event, options) {
+    disabled++;
+    if (disabled < 3) {
+      return;
+    }
+    start();
+    equal(jQuery('[contenteditable="true"]', fixture).length, 0);
+  });
+
+  jQuery('.midgard-create-add', fixture).click();
+  stop(2);
+});

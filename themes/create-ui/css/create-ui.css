@@ -500,22 +500,22 @@ body > .hallotoolbar {
 /* DROPDOWN END */
 
 /* TAGS START */
-.create-ui-tags {
+.midgardTags {
   width: 100%;
 }
 
-.create-ui-tags a {
+.midgardTags a {
   display: inline;
   font-weight: bold;
   padding: 0 5px;
 }
 
-.create-ui-tags .tagsinput {
+.midgardTags .tagsinput {
   line-height: 2em;
   width: 100% !important;
 }
 
-.create-ui-tags .tag {
+.midgardTags .tag {
   color: #ffffff;
   background-color: #82827E;
   /*background-color: rgba(0, 0, 0, .8);*/
@@ -528,11 +528,11 @@ body > .hallotoolbar {
   display: inline-block;
 }
 
-.create-ui-tags .tag a {
+.midgardTags .tag a {
   color: #ffffff;
 }
 
-.create-ui-tags input {
+.midgardTags input {
   width: 100%;
   background-color: #393939;
   color: #ffffff !important;
