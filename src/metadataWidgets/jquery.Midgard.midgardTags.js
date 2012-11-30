@@ -13,14 +13,7 @@
 
     options: {
       vie: null,
-      entity: null,
-      element: null,
-      entityElement: null,
-      parentElement: '.create-ui-tool-metadataarea',
-      predicate: 'skos:related',
       templates: {
-        button: '<button class="create-ui-btn"><i class="icon-<%= icon %>"></i> <%= label %></button>',
-        contentArea: '<div class="dropdown-menu"></div>',
         tags: '<div class="create-ui-tags <%= type %>Tags"><h3><%= label %></h3><input type="text" class="tags" value="" /></div>'
       },
       localize: function (id, language) {
@@ -30,32 +23,10 @@
     },
 
     _init: function () {
-      return;
-      var widget = this;
-
       this.vie = this.options.vie;
-      this.entity = this.options.entity;
-      this.element = this.options.element;
-      jQuery(this.options.entityElement).on('midgardeditableactivated', function (event, data) {
-        if (data.instance !== widget.options.entity) {
-          return;
-        }
-        widget._renderWidget();
-        widget.loadTags();
-      });
-
-      jQuery(this.options.entityElement).on('midgardeditablechanged', function (event, data) {
-        if (data.instance !== widget.options.entity) {
-          return;
-        }
-        widget.enhanced = false;
-      });
-
-      this._listenAnnotate(this.options.entityElement);
     },
 
     activate: function (data) {
-      console.log("ACTIVATING", data);
     },
 
     // Convert to reference URI as needed
