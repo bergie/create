@@ -1,5 +1,5 @@
 //     Create.js - On-site web editing interface
-//     (c) 2012 Tobias Herrmann, IKS Consortium
+//     (c) 2012 Martin Holzhauer
 //     Create may be freely distributed under the MIT license.
 //     For all details and documentation:
 (function (jQuery, undefined) {
@@ -14,7 +14,10 @@
             map:null,
             coordSystem:'EPSG:4326',
             defaultCenter: new OpenLayers.LonLat(0, 0),
-            defaultZoomLevel: 3
+            defaultZoomLevel: 3,
+            geoProperty: 'http://schema.org/geo',
+            geoLonProperty: 'http://schema.org/longitude',
+            geoLatProperty: 'http://schema.org/latitude'
         },
         data : {},
 
@@ -26,7 +29,7 @@
         activate: function (data) {
             this.data = data;
 
-            var geo = this.data.entity.get('http://schema.org/geo');
+            var geo = this.data.entity.get(this.options.geoProperty);
 
             if(_.isUndefined(geo)) {
                 this.element.hide();
@@ -36,8 +39,8 @@
             }
 
             var coordsModel = geo.models[0],
-                lat = parseFloat(coordsModel.get('http://schema.org/latitude')),
-                lon = parseFloat(coordsModel.get('http://schema.org/longitude'));
+                lat = parseFloat(coordsModel.get(this.options.geoLatProperty)),
+                lon = parseFloat(coordsModel.get(this.options.geoLonProperty));
 
             this.centerMap(lon, lat);
         },
@@ -48,7 +51,7 @@
          * @private
          */
         _createMap: function() {
-            if (this.options.map !== null) {
+            if (!_.isNull(this.options.map)) {
                 return;
             }
             var that = this,
@@ -132,11 +135,11 @@
          * @param lon
          */
         setCoordinates:function (lat, lon) {
-            var geo = this.data.entity.get('http://schema.org/geo'),
+            var geo = this.data.entity.get(this.options.geoProperty),
                 coordsModel = geo.models[0];
 
-            coordsModel.set('http://schema.org/latitude', lat);
-            coordsModel.set('http://schema.org/longitude', lon);
+            coordsModel.set(this.options.geoLatProperty, lat);
+            coordsModel.set(this.options.geoLonProperty, lon);
         },
 
         /**
