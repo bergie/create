@@ -37,21 +37,21 @@
         }
       }
 
-      widget.options.collection.bind('add', function (model) {
+      widget.options.collection.on('add', function (model) {
         model.primaryCollection = widget.options.collection;
         widget.options.vie.entities.add(model);
         model.collection = widget.options.collection;
       });
 
       // Re-check collection constraints
-      widget.options.collection.bind('add remove reset', widget.checkCollectionConstraints, widget);
+      widget.options.collection.on('add remove reset', widget.checkCollectionConstraints, widget);
 
       widget._bindCollectionView(widget.options.view);
     },
 
     _bindCollectionView: function (view) {
       var widget = this;
-      view.bind('add', function (itemView) {
+      view.on('add', function (itemView) {
         itemView.$el.effect('slide', function () {
           widget._makeEditable(itemView);
         });

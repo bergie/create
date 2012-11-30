@@ -22,7 +22,7 @@
             label: workflow.get('label')
           })).button();
 
-          html.bind('click', function (evt) {
+          html.on('click', function (evt) {
             action_cb(model, workflow, final_cb);
           });
           return html;
@@ -128,7 +128,7 @@
       this.workflows = {};
 
       var widget = this;
-      jQuery(this.element).bind('midgardeditableactivated', function (event, options) {
+      jQuery(this.element).on('midgardeditableactivated', function (event, options) {
         widget._fetchWorkflows(options.instance);
       });
     },

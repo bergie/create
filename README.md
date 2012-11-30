@@ -51,6 +51,8 @@ You can also generate a minified version:
 
     $ cake min
 
+Note: the `cake` command is part of the CoffeeScript distribution. You can either run it from `./node_modules/.bin/cake` or install it globally via `npm install -g coffee-script`.
+
 ## Read more
 
 * [Introducing the Midgard Create user interface](http://bergie.iki.fi/blog/introducing_the_midgard_create_user_interface/)

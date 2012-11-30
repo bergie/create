@@ -12,12 +12,12 @@
   jQuery.widget('Midgard.midgardCollectionAddBetween', jQuery.Midgard.midgardCollectionAdd, {
     _bindCollectionView: function (view) {
       var widget = this;
-      view.bind('add', function (itemView) {
+      view.on('add', function (itemView) {
         //itemView.el.effect('slide');
         widget._makeEditable(itemView);
         widget._refreshButtons();
       });
-      view.bind('remove', function () {
+      view.on('remove', function () {
         widget._refreshButtons();
       });
     },
