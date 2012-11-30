@@ -157,6 +157,10 @@ a.create-ui-toggle {
     border-color: #ffffff #ffffff #ffffff;
 }
 
+.create-ui-btn::-moz-focus-inner {
+    border: 0;
+}
+
 .create-ui-red-btn {
     background-color: #7a2626;
     background-image: -moz-linear-gradient(center top , #7a2626, #7a2626);

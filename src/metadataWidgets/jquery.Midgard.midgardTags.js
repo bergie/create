@@ -30,6 +30,7 @@
     },
 
     _init: function () {
+      return;
       var widget = this;
 
       this.vie = this.options.vie;
@@ -51,6 +52,10 @@
       });
 
       this._listenAnnotate(this.options.entityElement);
+    },
+
+    activate: function (data) {
+      console.log("ACTIVATING", data);
     },
 
     // Convert to reference URI as needed
