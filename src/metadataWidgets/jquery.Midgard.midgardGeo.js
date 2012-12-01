@@ -3,6 +3,7 @@
 //     Create may be freely distributed under the MIT license.
 //     For all details and documentation:
 (function (jQuery, undefined) {
+    /*global OpenLayers:false */
     // Run JavaScript in strict mode
     'use strict';
 
