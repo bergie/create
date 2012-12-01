@@ -84,7 +84,7 @@
             this.options.map = new OpenLayers.Map('midgardGeoMap');
 
 
-            if (this.options.layer == null) {
+            if (_.isNull(this.options.layer)) {
                 this.options.layer = new OpenLayers.Layer.OSM("OSM");
             }
 
@@ -146,7 +146,7 @@
         },
 
         disable:function () {
-            console.log('disable geo', this);
+
         },
 
         /**
@@ -171,8 +171,8 @@
         _init:function () {
             this.element.hide();
             this.element.append( jQuery('<h3>GEO</h3>') );
-            if(this.options.defaultCenter===null){
-                this.options.defaultCenter = new OpenLayers.LonLat(0, 0)
+            if(_.isNull(this.options.defaultCenter)){
+                this.options.defaultCenter = new OpenLayers.LonLat(0, 0);
             }
             this._createMap();
         },
@@ -202,7 +202,7 @@
                 this.options.marker.offset.h
             );
             var icon = new OpenLayers.Icon(this.options.marker.url, size, offset);
-            this.options.centermark = new OpenLayers.Marker(center, icon)
+            this.options.centermark = new OpenLayers.Marker(center, icon);
             this.options.markers.addMarker(this.options.centermark);
 
             this.options.map.panTo(center);
