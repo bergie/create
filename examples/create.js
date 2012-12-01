@@ -1620,7 +1620,7 @@
             layer:null,
             map:null,
             coordSystem:'EPSG:4326',
-            defaultCenter: new OpenLayers.LonLat(0, 0),
+            defaultCenter: null,
             defaultZoomLevel: 3,
             geoProperty: 'http://schema.org/geo',
             geoCoordinateType: 'http://schema.org/GeoCoordinates',
@@ -1778,6 +1778,9 @@
         _init:function () {
             this.element.hide();
             this.element.append( jQuery('<h3>GEO</h3>') );
+            if(this.options.defaultCenter===null){
+                this.options.defaultCenter = new OpenLayers.LonLat(0, 0)
+            }
             this._createMap();
         },
 
