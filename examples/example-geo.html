@@ -28,9 +28,10 @@
             return 'javascript:false;';
           },
           metadata: {
-              //midgardTags: {},
+              midgardTags: {},
               midgardGeo: {
                   coordSystem: 'EPSG:4326',
+                  defaultZoomLevel: 17,
                   defaultCenter: new OpenLayers.LonLat(13.42, 52.51),
                   marker: {
                       url: '../themes/midgard-geo/pin-selected.png',
@@ -79,9 +80,11 @@
   <body>
     <div typeof="schema:Place" about="http://example.net/blog/third_news_item">
         <h1 property="schema:name">c-base Spacestation</h1>
-        <div property="schema:description">Die Raumstation c-base geriet nach Erkenntnissen der Vereinsmitglieder einst in ein Zeitloch und stürzte aufgrund der schlagartig veränderten Bedingungen aus einer fernen Zukunft auf die Erde ab. An Bord befanden sich eine Reihe hochtechnologischer Entwicklungen und noch nicht erforschte Lebensformen.
+        <div property="schema:description">
+            Die Raumstation c-base geriet nach Erkenntnissen der Vereinsmitglieder einst in ein Zeitloch und stürzte aufgrund der schlagartig veränderten Bedingungen aus einer fernen Zukunft auf die Erde ab. An Bord befanden sich eine Reihe hochtechnologischer Entwicklungen und noch nicht erforschte Lebensformen.
             Im heutigen Berlin sind angeblich zahlreiche „Belege“ für die Existenz der Raumstation zu finden. Vor allem die Antenne der Station, die heute als Fernsehturm genutzt wird, ist seit ihrer Enttarnung durch Wissenschaftler der DDR und der Sowjetunion weithin sichtbar im Stadtbild Berlins. Andere Orte, wie die beim Absturz abgesprengte „Multimodulstation“ (derzeit der aktuelle Ort des Vereins), unterliegen gerade erst einer ausgiebigen Erforschung.
-            Das aktuelle Wissen um die c-base ist im so genannten Allmanach niedergeschrieben, der allerdings bislang nur in gedruckter Form vorliegt. Die c-pedia versucht als Online-Enzyklopädie das angesammelte Wissen auch im Internet verfügbar zu machen, steht aber derzeit noch am Anfang. Daneben wird auch die „Rekonstruktion von Artefakten der c-base“ vorangetrieben.</div>
+            Das aktuelle Wissen um die c-base ist im so genannten Allmanach niedergeschrieben, der allerdings bislang nur in gedruckter Form vorliegt. Die c-pedia versucht als Online-Enzyklopädie das angesammelte Wissen auch im Internet verfügbar zu machen, steht aber derzeit noch am Anfang. Daneben wird auch die „Rekonstruktion von Artefakten der c-base“ vorangetrieben.
+        </div>
         <div rel="schema:geo">
             <div typeof="schema:GeoCoordinates" about="blank">
                 <span property="schema:latitude">52.51301667140004</span>
