@@ -28,7 +28,9 @@ Entity editing:
   * _Invalid_: the contents of the editable have validation errors
 * The `modified` event was renamed to `changed` to follow the new states
 * New public methods `setState` and `getState` were added for manipulating the state from the application controller
-* Initial integration was added for [CKEditor](http://ckeditor.com/) 4 beta
+  * States are passed as strings corresponding to the new editing states (for example, `inactive` or `changed`)
+  * The `setState` method has an optional `predicate` parameter for targeting a particular property editor with the state change
+* Initial integration was added for [CKEditor](http://ckeditor.com/) 4
 
 Metadata editing:
 
@@ -58,6 +60,7 @@ Storage:
 * The `revertChanges` method was made public, allowing external UIs to trigger reverting entities to their original states
 * The `hasLocal` and `readLocal` methods were made public to allow manipulating localStorage from the application controller
 * The `saveRemote` method was made public, allowing the application controller to trigger saving for a single entity
+* new `save` and `saved` events are triggered for the whole set of entities being saved
 * new `saveentity` and `savedentity` events are triggered for each entity being saved
 * Options used when calling `saveRemote` are now passed on in the save-related events
 
