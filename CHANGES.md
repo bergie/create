@@ -72,7 +72,7 @@ Create.js internals:
 
 Dependencies:
 
-* [VIE](https://github.com/bergie/VIE) was updated to latest git version
+* [VIE](https://github.com/bergie/VIE) was updated to 2.1.0
 * [Hallo](https://github.com/bergie/hallo) was updated to the latest git version
 * [jQuery-Tags-Input](https://github.com/xoxco/jQuery-Tags-Input) -- used by the _midgardTags_ widget -- was updated to latest git version
 
