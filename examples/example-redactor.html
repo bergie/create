@@ -17,7 +17,10 @@
     <script src="../deps/jquery.rdfquery.min.js"></script>
     <script src="../deps/annotate-min.js"></script>
 
-    <script src="http://redactorjs.com/js/redactor/redactor.min.js"></script>
+    <!-- NOTE: You'll need to place your own licensed copy of Redactor here -->
+    <script src="./redactor.js"></script>
+    <link rel="stylesheet" href="./redactor.css" />
+
     <script src="./create.js"></script>
     <script>
       jQuery(document).ready(function () {
@@ -49,7 +52,6 @@
         options.success(model);
       };
     </script>
-    <link rel="stylesheet" href="http://redactorjs.com/js/redactor/redactor.css" />
     <link rel="stylesheet" href="./font-awesome/css/font-awesome.css"
     />
     <link rel="stylesheet" href="../themes/create-ui/css/create-ui.css"
