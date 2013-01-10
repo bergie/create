@@ -7,20 +7,20 @@ if (window.midgardCreate.locale === undefined) {
 
 window.midgardCreate.locale.fr = {
   // Session-state buttons for the main toolbar
-  'Save': 'Sauver',
-  'Saving': 'En cours',
+  'Save': 'Enregistrer',
+  'Saving': 'Enregistrement en cours',
   'Cancel': 'Annuler',
-  'Edit': 'Editer',
+  'Edit': 'Éditer',
   // Storage status messages
-  'localModification': 'Objet "<%= label %>" sur cette page ont des modifications locales',
-  'localModifications': '<%= number %> élements sur cette page ont des modifications locales',
-  'Restore': 'Récupérer',
+  'localModification': 'L\'élément "<%= label %>" comporte des modifications locales',
+  'localModifications': '<%= number %> éléments sur cette page comportent des modifications locales',
+  'Restore': 'Restaurer',
   'Ignore': 'Ignorer',
-  'saveSuccess': '"<%= label %>" est sauvegardé avec succès',
-  'saveSuccessMultiple': '<%= number %> éléments ont été sauvegardé avec succès',
-  'saveError': 'Une erreur est survenue durant la sauvegarde:<br /><%= error %>',
+  'saveSuccess': 'L\'élément "<%= label %>" a été enregistré avec succès',
+  'saveSuccessMultiple': '<%= number %> éléments ont été enregistrés avec succès',
+  'saveError': 'Une erreur est survenue durant l\'enregistrement<br /><%= error %>',
   // Tagging
-  'Item tags': 'Tags des objets',
+  'Item tags': 'Tags des éléments',
   'Suggested tags': 'Tags suggérés',
   'Tags': 'Tags',
   'add a tag': 'ajouter un tag',
