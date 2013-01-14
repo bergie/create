@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Midgard Create example</title>
+    <script src="../deps/jquery-1.7.1.min.js"></script>
+    <script src="../deps/jquery-ui-1.8.18.custom.min.js"></script>
+    <script src="../deps/underscore-min.js"></script>
+    <script src="../deps/backbone-min.js"></script>
+    <script src="../deps/vie-min.js"></script>
+
+    <!-- Tags input is needed for the Tag widget -->
+    <script src="../deps/jquery.tagsinput.min.js"></script>
+
+    <!-- rdfQuery and annotate are only needed for the Hallo
+    annotations plugin -->
+    <script src="../deps/jquery.rdfquery.min.js"></script>
+    <script src="../deps/annotate-min.js"></script>
+
+    <script src="../deps/rangy-core-1.2.3.js"></script>
+    <script src="../deps/hallo-min.js"></script>
+    <script src="http://openlayers.org/api/OpenLayers.js"></script>
+    <script src="./create.js"></script>
+    <script>
+      jQuery(document).ready(function () {
+        jQuery('body').midgardCreate({
+          url: function () {
+            return 'javascript:false;';
+          },
+          metadata: {
+              midgardTags: {},
+              midgardGeo: {
+                  coordSystem: 'EPSG:4326',
+                  defaultZoomLevel: 17,
+                  defaultCenter: new OpenLayers.LonLat(13.42, 52.51),
+                  marker: {
+                      url: '../themes/midgard-geo/pin-selected.png',
+                      size: {w:20, h:32},
+                      offset: {w:-10, h:-32}
+                  }
+              }
+          }/*,
+          stanbolUrl: 'http://dev.iks-project.eu:8081',
+          tags: true/*,
+          language: 'pt_BR'*/
+        });
+
+        // Set a simpler editor for title fields
+        jQuery('body').midgardCreate('configureEditor', 'title', 'halloWidget', {
+          plugins: {
+            halloformat: {},
+            halloblacklist: {
+              tags: ['br']
+            }
+          }
+        });
+        jQuery('body').midgardCreate('setEditorForProperty', 'schema:name', 'title');
+
+        // Disable editing of author fields
+        jQuery('body').midgardCreate('setEditorForProperty', 'dcterms:author', null);
+
+      });
+      // Fake Backbone.sync since there is no server to communicate with
+      Backbone.sync = function(method, model, options) {
+        if (console && console.log) {
+          console.log('Model contents', model.toJSONLD());
+        }
+        options.success(model);
+      };
+    </script>
+    <link rel="stylesheet" href="./font-awesome/css/font-awesome.css"
+    />
+    <link rel="stylesheet" href="../themes/create-ui/css/create-ui.css"
+    />
+    <link rel="stylesheet" href="../themes/midgard-notifications/midgardnotif.css"
+    />
+    <link rel="stylesheet" href="demo.css" />
+  </head>
+  
+  <body>
+    <div typeof="schema:Place" about="http://example.net/blog/third_news_item">
+        <h1 property="schema:name">c-base Spacestation</h1>
+        <div property="schema:description">
+            Die Raumstation c-base geriet nach Erkenntnissen der Vereinsmitglieder einst in ein Zeitloch und stürzte aufgrund der schlagartig veränderten Bedingungen aus einer fernen Zukunft auf die Erde ab. An Bord befanden sich eine Reihe hochtechnologischer Entwicklungen und noch nicht erforschte Lebensformen.
+            Im heutigen Berlin sind angeblich zahlreiche „Belege“ für die Existenz der Raumstation zu finden. Vor allem die Antenne der Station, die heute als Fernsehturm genutzt wird, ist seit ihrer Enttarnung durch Wissenschaftler der DDR und der Sowjetunion weithin sichtbar im Stadtbild Berlins. Andere Orte, wie die beim Absturz abgesprengte „Multimodulstation“ (derzeit der aktuelle Ort des Vereins), unterliegen gerade erst einer ausgiebigen Erforschung.
+            Das aktuelle Wissen um die c-base ist im so genannten Allmanach niedergeschrieben, der allerdings bislang nur in gedruckter Form vorliegt. Die c-pedia versucht als Online-Enzyklopädie das angesammelte Wissen auch im Internet verfügbar zu machen, steht aber derzeit noch am Anfang. Daneben wird auch die „Rekonstruktion von Artefakten der c-base“ vorangetrieben.
+        </div>
+        <div rel="schema:geo">
+            <div typeof="schema:GeoCoordinates" about="blank">
+                <span property="schema:latitude">52.51301667140004</span>
+                <span property="schema:longitude">13.4201287460338</span>
+            </div>
+        </div>
+    </div>
+  </body>
+</html>
