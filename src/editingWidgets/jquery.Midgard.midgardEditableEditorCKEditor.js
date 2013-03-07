@@ -33,6 +33,11 @@
       this.editor.on('afterCommandExec', function () {
         widget.options.changed(widget.editor.getData());
       });
+      this.editor.on('configLoaded', function() {
+        jQuery.each(widget.options.editorOptions, function(optionName, option) {
+          widget.editor.config[optionName] = option;
+        });
+      });
     },
 
     disable: function () {
