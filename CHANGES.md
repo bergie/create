@@ -67,6 +67,7 @@ Storage:
 Create.js internals:
 
 * The whole library has been migrated to use jQuery [`on` and `off`](http://api.jquery.com/category/events/event-handler-attachment/) methods instead of `bind` and `unbind`
+* All widgets were migrated to the *Midgard* namespace to maintain consistency
 * New build option for creating a smaller edit-only version of Create.js: `$ cake editonly`
 * The build process was improved to work also on Mac OS X
 
@@ -75,6 +76,7 @@ Dependencies:
 * [VIE](https://github.com/bergie/VIE) was updated to 2.1.0
 * [Hallo](https://github.com/bergie/hallo) was updated to the latest git version
 * [jQuery-Tags-Input](https://github.com/xoxco/jQuery-Tags-Input) -- used by the _midgardTags_ widget -- was updated to latest git version
+* jQuery was updated to version 1.9.1 and jQuery UI to version 1.10.2
 
 Localization:
 

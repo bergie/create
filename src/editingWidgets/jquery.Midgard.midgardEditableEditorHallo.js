@@ -12,7 +12,7 @@
   //
   // This widget allows editing textual content areas with the
   // [Hallo](http://hallojs.org) rich text editor.
-  jQuery.widget('Create.halloWidget', jQuery.Create.editWidget, {
+  jQuery.widget('Midgard.halloWidget', jQuery.Midgard.editWidget, {
     options: {
       editorOptions: {},
       disabled: true,

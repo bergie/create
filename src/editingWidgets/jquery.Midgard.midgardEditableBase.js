@@ -20,7 +20,7 @@
   //     jQuery.widget('Namespace.MyWidget', jQuery.Create.editWidget, {
   //       // override any properties
   //     });
-  jQuery.widget('Create.editWidget', {
+  jQuery.widget('Midgard.editWidget', {
     options: {
       disabled: false,
       vie: null

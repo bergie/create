@@ -838,7 +838,6 @@
         element: this.element,
         instance: this.options.model
       };
-
       var propertyParams = (predicate) ? {
         predicate: predicate,
         propertyEditor: this.options.propertyEditors[predicate],
@@ -1096,7 +1095,7 @@
         return;
       }
       var widgetType = propertyElement.data('createWidgetName');
-      this.options.propertyEditors[predicate] = propertyElement.data(widgetType);
+      this.options.propertyEditors[predicate] = propertyElement.data('Midgard-' + widgetType);
 
       // Deprecated.
       this.options.editables.push(propertyElement);
@@ -1254,7 +1253,7 @@
   //     jQuery.widget('Namespace.MyWidget', jQuery.Create.editWidget, {
   //       // override any properties
   //     });
-  jQuery.widget('Create.editWidget', {
+  jQuery.widget('Midgard.editWidget', {
     options: {
       disabled: false,
       vie: null
@@ -1348,7 +1347,7 @@
   //
   // Due to licensing incompatibilities, Aloha Editor needs to be installed
   // and configured separately.
-  jQuery.widget('Create.alohaWidget', jQuery.Create.editWidget, {
+  jQuery.widget('Midgard.alohaWidget', jQuery.Midgard.editWidget, {
     _initialize: function () {},
     enable: function () {
       var options = this.options;
@@ -1411,7 +1410,7 @@
   //
   // This widget allows editing textual content areas with the
   // [CKEditor](http://ckeditor.com/) rich text editor.
-  jQuery.widget('Create.ckeditorWidget', jQuery.Create.editWidget, {
+  jQuery.widget('Midgard.ckeditorWidget', jQuery.Midgard.editWidget, {
     enable: function () {
       this.element.attr('contentEditable', 'true');
       this.editor = CKEDITOR.inline(this.element.get(0));
@@ -1463,7 +1462,7 @@
   //
   // This widget allows editing textual content areas with the
   // [Hallo](http://hallojs.org) rich text editor.
-  jQuery.widget('Create.halloWidget', jQuery.Create.editWidget, {
+  jQuery.widget('Midgard.halloWidget', jQuery.Midgard.editWidget, {
     options: {
       editorOptions: {},
       disabled: true,
@@ -1560,7 +1559,7 @@
   //
   // This widget allows editing textual content areas with the
   // [Redactor](http://redactorjs.com/) rich text editor.
-  jQuery.widget('Create.redactorWidget', jQuery.Create.editWidget, {
+  jQuery.widget('Midgard.redactorWidget', jQuery.Midgard.editWidget, {
     editor: null,
 
     options: {
@@ -3979,20 +3978,20 @@ if (window.midgardCreate.locale === undefined) {
 
 window.midgardCreate.locale.fr = {
   // Session-state buttons for the main toolbar
-  'Save': 'Sauver',
-  'Saving': 'En cours',
+  'Save': 'Enregistrer',
+  'Saving': 'Enregistrement en cours',
   'Cancel': 'Annuler',
-  'Edit': 'Editer',
+  'Edit': 'Éditer',
   // Storage status messages
-  'localModification': 'Objet "<%= label %>" sur cette page ont des modifications locales',
-  'localModifications': '<%= number %> élements sur cette page ont des modifications locales',
-  'Restore': 'Récupérer',
+  'localModification': 'L\'élément "<%= label %>" comporte des modifications locales',
+  'localModifications': '<%= number %> éléments sur cette page comportent des modifications locales',
+  'Restore': 'Restaurer',
   'Ignore': 'Ignorer',
-  'saveSuccess': '"<%= label %>" est sauvegardé avec succès',
-  'saveSuccessMultiple': '<%= number %> éléments ont été sauvegardé avec succès',
-  'saveError': 'Une erreur est survenue durant la sauvegarde:<br /><%= error %>',
+  'saveSuccess': 'L\'élément "<%= label %>" a été enregistré avec succès',
+  'saveSuccessMultiple': '<%= number %> éléments ont été enregistrés avec succès',
+  'saveError': 'Une erreur est survenue durant l\'enregistrement<br /><%= error %>',
   // Tagging
-  'Item tags': 'Tags des objets',
+  'Item tags': 'Tags des éléments',
   'Suggested tags': 'Tags suggérés',
   'Tags': 'Tags',
   'add a tag': 'ajouter un tag',

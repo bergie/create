@@ -67,7 +67,6 @@
         element: this.element,
         instance: this.options.model
       };
-
       var propertyParams = (predicate) ? {
         predicate: predicate,
         propertyEditor: this.options.propertyEditors[predicate],
@@ -325,7 +324,7 @@
         return;
       }
       var widgetType = propertyElement.data('createWidgetName');
-      this.options.propertyEditors[predicate] = propertyElement.data(widgetType);
+      this.options.propertyEditors[predicate] = propertyElement.data('Midgard-' + widgetType);
 
       // Deprecated.
       this.options.editables.push(propertyElement);

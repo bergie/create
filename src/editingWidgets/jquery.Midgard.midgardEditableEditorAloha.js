@@ -16,7 +16,7 @@
   //
   // Due to licensing incompatibilities, Aloha Editor needs to be installed
   // and configured separately.
-  jQuery.widget('Create.alohaWidget', jQuery.Create.editWidget, {
+  jQuery.widget('Midgard.alohaWidget', jQuery.Midgard.editWidget, {
     _initialize: function () {},
     enable: function () {
       var options = this.options;

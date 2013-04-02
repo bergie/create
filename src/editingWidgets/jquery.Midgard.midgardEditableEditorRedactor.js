@@ -12,7 +12,7 @@
   //
   // This widget allows editing textual content areas with the
   // [Redactor](http://redactorjs.com/) rich text editor.
-  jQuery.widget('Create.redactorWidget', jQuery.Create.editWidget, {
+  jQuery.widget('Midgard.redactorWidget', jQuery.Midgard.editWidget, {
     editor: null,
 
     options: {
