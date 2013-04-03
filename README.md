@@ -18,6 +18,7 @@ Create.js is built on top for [VIE](http://viejs.org), the semantic interaction 
 * Running workflows (approval, etc.) for content items
 * Browsing and reverting content history
 * Easy rebranding of the interface with some CSS
+* Can be used as-is, or as a toolkit for a custom CMS UI
 
 ## Integrating Create with your CMS
 
