@@ -219,6 +219,10 @@
 
     setToolbar: function (state) {
       this.options.toolbar = state;
+      if (!this.element.data('Midgard-midgardToolbar')) {
+        // Toolbar not yet instantiated
+        return;
+      }
       this.element.midgardToolbar('setDisplay', state);
     },
 

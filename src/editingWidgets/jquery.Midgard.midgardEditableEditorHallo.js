@@ -54,6 +54,10 @@
           return;
         }
         self.options.toolbarState = data.display;
+        if (!self.element.data('IKS-hallo')) {
+          // Hallo not yet instantiated
+          return;
+        }
         var newOptions = self.getHalloOptions();
         self.element.hallo('changeToolbar', newOptions.parentElement, newOptions.toolbar, true);
       });

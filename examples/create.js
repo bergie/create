@@ -219,6 +219,10 @@
 
     setToolbar: function (state) {
       this.options.toolbar = state;
+      if (!this.element.data('Midgard-midgardToolbar')) {
+        // Toolbar not yet instantiated
+        return;
+      }
       this.element.midgardToolbar('setDisplay', state);
     },
 
@@ -1504,6 +1508,10 @@
           return;
         }
         self.options.toolbarState = data.display;
+        if (!self.element.data('IKS-hallo')) {
+          // Hallo not yet instantiated
+          return;
+        }
         var newOptions = self.getHalloOptions();
         self.element.hallo('changeToolbar', newOptions.parentElement, newOptions.toolbar, true);
       });
