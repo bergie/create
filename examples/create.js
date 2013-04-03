@@ -1426,6 +1426,7 @@
       });
       this.editor.on('blur', function () {
         widget.options.activated();
+        widget.options.changed(widget.editor.getData());
       });
       this.editor.on('key', function () {
         widget.options.changed(widget.editor.getData());
