@@ -7,7 +7,7 @@ test('Create widget registered', function () {
 test('Create instantiation w/o VIE', function () {
   var fixture = jQuery('.create-instance');
   fixture.midgardCreate();
-  var instance = fixture.data('midgardCreate');
+  var instance = fixture.data('Midgard-midgardCreate');
   ok(instance);
 
   // Check some of the autoinitialization
@@ -20,27 +20,27 @@ test('Create instantiation and destruction', function () {
   fixture.midgardCreate();
 
   // Check that all Create.js widgets have been instantiated
-  ok(fixture.data('midgardCreate'), 'Create instance');
-  ok(fixture.data('midgardNotifications'), 'Notifications instance');
-  ok(fixture.data('midgardWorkflows'), 'Workflows instance');
-  ok(fixture.data('midgardToolbar'), 'Toolbar instance');
-  ok(fixture.data('midgardStorage'), 'Storage instance');
+  ok(fixture.data('Midgard-midgardCreate'), 'Create instance');
+  ok(fixture.data('Midgard-midgardNotifications'), 'Notifications instance');
+  ok(fixture.data('Midgard-midgardWorkflows'), 'Workflows instance');
+  ok(fixture.data('Midgard-midgardToolbar'), 'Toolbar instance');
+  ok(fixture.data('Midgard-midgardStorage'), 'Storage instance');
 
   jQuery('[about]', fixture).each(function () {
-    ok(jQuery(this).data('midgardEditable'), 'Editable instance');
+    ok(jQuery(this).data('Midgard-midgardEditable'), 'Editable instance');
   });
 
   fixture.midgardCreate('destroy');
 
   // Check that all the widget instances have been cleaned up
-  equal(fixture.data('midgardCreate'), undefined);
-  equal(fixture.data('midgardNotifications'), undefined);
-  equal(fixture.data('midgardWorkflows'), undefined);
-  equal(fixture.data('midgardToolbar'), undefined);
-  equal(fixture.data('midgardStorage'), undefined);
+  equal(fixture.data('Midgard-midgardCreate'), undefined);
+  equal(fixture.data('Midgard-midgardNotifications'), undefined);
+  equal(fixture.data('Midgard-midgardWorkflows'), undefined);
+  equal(fixture.data('Midgard-midgardToolbar'), undefined);
+  equal(fixture.data('Midgard-midgardStorage'), undefined);
 
   jQuery('[about]', fixture).each(function () {
-    equal(jQuery(this).data('midgardEditable'), undefined);
+    equal(jQuery(this).data('Midgard-midgardEditable'), undefined);
   });
 
   /*
@@ -58,7 +58,7 @@ test('Create instantiation with VIE', function () {
     vie: v
   });
 
-  var instance = fixture.data('midgardCreate');
+  var instance = fixture.data('Midgard-midgardCreate');
   ok(instance);
 
   // Check that Create uses *our* VIE

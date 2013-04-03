@@ -14,7 +14,7 @@ test('Editable instance', function () {
     vie: v
   });
 
-  var instance = fixture.data('midgardEditable');
+  var instance = fixture.data('Midgard-midgardEditable');
   ok(instance);
 
   // Check VIE
@@ -38,7 +38,7 @@ test('Editable state change', function () {
     disabled: true
   });
 
-  var instance = fixture.data('midgardEditable');
+  var instance = fixture.data('Midgard-midgardEditable');
   ok(instance);
 
   equal(instance.getState(), 'inactive');
