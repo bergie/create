@@ -71,7 +71,6 @@ a.create-ui-toggle {
 
 .create-ui-toolbar-toolarea {
     clear: both;
-    content: "";
     display: table;
     width: 100%;
 }
