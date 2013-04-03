@@ -9,10 +9,11 @@
     "uglify-js": ">=1.2.6",
     "docco-husky": ">=0.3.2",
     "coffee-script": "1.3.x",
-    "jshint": "0.9.x"
+    "jshint": "0.9.x",
+    "phantomjs": "0.2.x"
   },
   "scripts":    {
     "pretest": "./node_modules/.bin/jshint examples/create.js",
-    "test": "phantomjs test/qunit/run.js test/index.html"
+    "test": "./node_modules/.bin/phantomjs test/qunit/run.js test/index.html"
   }
 }
