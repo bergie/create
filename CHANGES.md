@@ -63,6 +63,7 @@ Storage:
 * new `save` and `saved` events are triggered for the whole set of entities being saved
 * new `saveentity` and `savedentity` events are triggered for each entity being saved
 * Options used when calling `saveRemote` are now passed on in the save-related events
+* key prefix used with localStorage is now configurable
 
 Create.js internals:
 

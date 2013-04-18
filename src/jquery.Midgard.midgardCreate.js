@@ -184,7 +184,8 @@
         vie: this.vie,
         url: this.options.url,
         localize: this.options.localize,
-        language: this.options.language
+        language: this.options.language,
+        storagePrefix: this.options.storagePrefix
       });
 
       var widget = this;

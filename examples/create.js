@@ -179,7 +179,8 @@ See http://createjs.org for more information
         vie: this.vie,
         url: this.options.url,
         localize: this.options.localize,
-        language: this.options.language
+        language: this.options.language,
+        storagePrefix: this.options.storagePrefix
       });
 
       var widget = this;
@@ -1754,6 +1755,8 @@ See http://createjs.org for more information
     options: {
       // Whether to use localstorage
       localStorage: false,
+      // String prefix for localStorage identifiers
+      storagePrefix: '',
       removeLocalstorageOnIgnore: true,
       // VIE instance to use for storage handling
       vie: null,
@@ -2119,7 +2122,8 @@ See http://createjs.org for more information
         }
         return this._saveLocalReferences(model.primaryCollection.subject, model.primaryCollection.predicate, model);
       }
-      window.localStorage.setItem(model.getSubjectUri(), JSON.stringify(model.toJSONLD()));
+      var key = this.options.storagePrefix + model.getSubjectUri();
+      window.localStorage.setItem(key, JSON.stringify(model.toJSONLD()));
     },
 
     _getReferenceId: function (model, property) {
@@ -2136,7 +2140,7 @@ See http://createjs.org for more information
       }
 
       var widget = this;
-      var identifier = subject + ':' + predicate;
+      var identifier = this.options.storagePrefix + subject + ':' + predicate;
       var json = model.toJSONLD();
       if (window.localStorage.getItem(identifier)) {
         var referenceList = JSON.parse(window.localStorage.getItem(identifier));
@@ -2157,7 +2161,8 @@ See http://createjs.org for more information
         return false;
       }
 
-      var local = window.localStorage.getItem(model.getSubjectUri());
+      var key = this.options.storagePrefix + model.getSubjectUri();
+      var local = window.localStorage.getItem(key);
       if (!local) {
         return false;
       }
@@ -2169,8 +2174,8 @@ See http://createjs.org for more information
       if (!this.options.localStorage) {
         return false;
       }
-
-      if (!window.localStorage.getItem(model.getSubjectUri())) {
+      var key = this.options.storagePrefix + model.getSubjectUri();
+      if (!window.localStorage.getItem(key)) {
         return false;
       }
       return true;
@@ -2181,7 +2186,8 @@ See http://createjs.org for more information
         return;
       }
 
-      var local = window.localStorage.getItem(model.getSubjectUri());
+      var key = this.options.storagePrefix + model.getSubjectUri();
+      var local = window.localStorage.getItem(key);
       if (!local) {
         return;
       }
@@ -2203,7 +2209,7 @@ See http://createjs.org for more information
         return;
       }
 
-      var identifier = this._getReferenceId(model, property);
+      var identifier = this.options.storagePrefix + this._getReferenceId(model, property);
       var local = window.localStorage.getItem(identifier);
       if (!local) {
         return;
@@ -2243,8 +2249,8 @@ See http://createjs.org for more information
       if (!this.options.localStorage) {
         return;
       }
-
-      window.localStorage.removeItem(model.getSubjectUri());
+      var key = this.options.storagePrefix + model.getSubjectUri();
+      window.localStorage.removeItem(key);
     }
   });
 })(jQuery);

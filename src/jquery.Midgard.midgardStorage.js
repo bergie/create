@@ -15,6 +15,8 @@
     options: {
       // Whether to use localstorage
       localStorage: false,
+      // String prefix for localStorage identifiers
+      storagePrefix: '',
       removeLocalstorageOnIgnore: true,
       // VIE instance to use for storage handling
       vie: null,
@@ -380,7 +382,8 @@
         }
         return this._saveLocalReferences(model.primaryCollection.subject, model.primaryCollection.predicate, model);
       }
-      window.localStorage.setItem(model.getSubjectUri(), JSON.stringify(model.toJSONLD()));
+      var key = this.options.storagePrefix + model.getSubjectUri();
+      window.localStorage.setItem(key, JSON.stringify(model.toJSONLD()));
     },
 
     _getReferenceId: function (model, property) {
@@ -397,7 +400,7 @@
       }
 
       var widget = this;
-      var identifier = subject + ':' + predicate;
+      var identifier = this.options.storagePrefix + subject + ':' + predicate;
       var json = model.toJSONLD();
       if (window.localStorage.getItem(identifier)) {
         var referenceList = JSON.parse(window.localStorage.getItem(identifier));
@@ -418,7 +421,8 @@
         return false;
       }
 
-      var local = window.localStorage.getItem(model.getSubjectUri());
+      var key = this.options.storagePrefix + model.getSubjectUri();
+      var local = window.localStorage.getItem(key);
       if (!local) {
         return false;
       }
@@ -430,8 +434,8 @@
       if (!this.options.localStorage) {
         return false;
       }
-
-      if (!window.localStorage.getItem(model.getSubjectUri())) {
+      var key = this.options.storagePrefix + model.getSubjectUri();
+      if (!window.localStorage.getItem(key)) {
         return false;
       }
       return true;
@@ -442,7 +446,8 @@
         return;
       }
 
-      var local = window.localStorage.getItem(model.getSubjectUri());
+      var key = this.options.storagePrefix + model.getSubjectUri();
+      var local = window.localStorage.getItem(key);
       if (!local) {
         return;
       }
@@ -464,7 +469,7 @@
         return;
       }
 
-      var identifier = this._getReferenceId(model, property);
+      var identifier = this.options.storagePrefix + this._getReferenceId(model, property);
       var local = window.localStorage.getItem(identifier);
       if (!local) {
         return;
@@ -504,8 +509,8 @@
       if (!this.options.localStorage) {
         return;
       }
-
-      window.localStorage.removeItem(model.getSubjectUri());
+      var key = this.options.storagePrefix + model.getSubjectUri();
+      window.localStorage.removeItem(key);
     }
   });
 })(jQuery);
