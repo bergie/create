@@ -46,14 +46,19 @@ See http://createjs.org for more information
     jshint:
       all: ['src/*.js', 'src/**/*.js', 'locale/*.js']
 
+    # Unit tests
+    qunit:
+      all: ['test/*.html']
+
   # Build dependencies
   @loadNpmTasks 'grunt-contrib-concat'
   @loadNpmTasks 'grunt-contrib-uglify'
 
   # Testing dependencies
   @loadNpmTasks 'grunt-contrib-jshint'
+  @loadNpmTasks 'grunt-contrib-qunit'
 
   # Local tasks
   @registerTask 'build', ['concat:full', 'uglify:full']
   @registerTask 'editonly', ['concat:edit', 'uglify:edit']
-  @registerTask 'test', ['jshint', 'build']
+  @registerTask 'test', ['jshint', 'build', 'qunit']

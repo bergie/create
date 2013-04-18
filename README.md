@@ -105,11 +105,11 @@ Direct your browser to the `test/index.html` file to run Create's [QUnit](http:/
 
 #### Headless unit tests on PhantomJS
 
-You need a working [PhantomJS installation]. Then just run:
+PhantomJS test automation is part of the project's build configuration:
 
-    $ phantomjs test/qunit/run.js test/index.html
+    $ grunt test
 
-If you have Node.js installed, you can do this also more simply with:
+or:
 
     $ npm test
 

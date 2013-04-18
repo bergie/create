@@ -9,10 +9,10 @@
     "grunt-cli": "~0.1.7",
     "grunt-contrib-uglify": "~0.2.0",
     "grunt-contrib-concat": "~0.2.0",
-    "grunt-contrib-jshint": "~0.4.3"
+    "grunt-contrib-jshint": "~0.4.3",
+    "grunt-contrib-qunit": "~0.2.1"
   },
   "scripts": {
-    "pretest": "./node_modules/.bin/grunt test",
-    "test": "./node_modules/.bin/phantomjs test/qunit/run.js test/index.html"
+    "test": "./node_modules/.bin/grunt test"
   }
 }
