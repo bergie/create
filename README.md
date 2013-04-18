@@ -44,15 +44,15 @@ Create.js uses a build system running on [Node.js](http://nodejs.org/), so you'l
 
     $ npm install
 
-Use the supplied `Cakefile` to generate the merged JavaScript file for Create:
+Use the supplied `Gruntfile.coffee` to generate the merged JavaScript file for Create:
 
-    $ cake build
+    $ grunt build
 
-You can also generate a minified version:
+You can also generate a simplified version that only includes the inline editing features:
 
-    $ cake min
+    $ grunt editonly
 
-Note: the `cake` command is part of the CoffeeScript distribution. You can either run it from `./node_modules/.bin/cake` or install it globally via `npm install -g coffee-script`.
+Note: the `grunt` command is part of the [Grunt](http://gruntjs.com) package. You can either run it from `./node_modules/.bin/grunt` or install it globally via `npm install -g grunt-cli`.
 
 ## Read more
 

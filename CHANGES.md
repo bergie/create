@@ -78,6 +78,10 @@ Dependencies:
 * [jQuery-Tags-Input](https://github.com/xoxco/jQuery-Tags-Input) -- used by the _midgardTags_ widget -- was updated to latest git version
 * jQuery was updated to version 1.9.1 and jQuery UI to version 1.10.2
 
+Development:
+
+* The build environment of Create.js was switched to [Grunt](http://gruntjs.com)
+
 Localization:
 
 * Hebrew and Romanian translations were added

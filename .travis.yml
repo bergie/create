@@ -3,7 +3,8 @@ node_js:
   - 0.6
 
 before_script:
-  - ./node_modules/.bin/cake bam
+  - npm install grunt-cli
+  - grunt build
 
 script:
   - npm test

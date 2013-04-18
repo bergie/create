@@ -1,4 +1,4 @@
-//     Create.js 1.0.0alpha4 - On-site web editing interface
+//     Create.js - On-site web editing interface
 //     (c) 2011-2012 Henri Bergius, IKS Consortium
 //     Create may be freely distributed under the MIT license.
 //     For all details and documentation:
@@ -506,273 +506,7 @@
     }
   });
 })(jQuery);
-//     Create.js - On-site web editing interface
-//     (c) 2011-2012 Henri Bergius, IKS Consortium
-//     Create may be freely distributed under the MIT license.
-//     For all details and documentation:
-//     http://createjs.org/
-(function (jQuery, undefined) {
-  // Run JavaScript in strict mode
-  /*global jQuery:false _:false window:false console:false */
-  'use strict';
 
-  // # Widget for adding items to a collection
-  jQuery.widget('Midgard.midgardCollectionAdd', {
-    options: {
-      editingWidgets: null,
-      collection: null,
-      model: null,
-      definition: null,
-      view: null,
-      disabled: false,
-      vie: null,
-      editableOptions: null,
-      templates: {
-        button: '<button class="btn"><i class="icon-<%= icon %>"></i> <%= label %></button>'
-      }
-    },
-
-    _create: function () {
-      this.addButtons = [];
-      var widget = this;
-      if (!widget.options.collection.localStorage) {
-        try {
-          widget.options.collection.url = widget.options.model.url();
-        } catch (e) {
-          if (window.console) {
-            console.log(e);
-          }
-        }
-      }
-
-      widget.options.collection.on('add', function (model) {
-        model.primaryCollection = widget.options.collection;
-        widget.options.vie.entities.add(model);
-        model.collection = widget.options.collection;
-      });
-
-      // Re-check collection constraints
-      widget.options.collection.on('add remove reset', widget.checkCollectionConstraints, widget);
-
-      widget._bindCollectionView(widget.options.view);
-    },
-
-    _bindCollectionView: function (view) {
-      var widget = this;
-      view.on('add', function (itemView) {
-        itemView.$el.effect('slide', function () {
-          widget._makeEditable(itemView);
-        });
-      });
-    },
-
-    _makeEditable: function (itemView) {
-      this.options.editableOptions.disabled = this.options.disabled;
-      this.options.editableOptions.model = itemView.model;
-      itemView.$el.midgardEditable(this.options.editableOptions);
-    },
-
-    _init: function () {
-      if (this.options.disabled) {
-        this.disable();
-        return;
-      }
-      this.enable();
-    },
-
-    hideButtons: function () {
-      _.each(this.addButtons, function (button) {
-        button.hide();
-      });
-    },
-
-    showButtons: function () {
-      _.each(this.addButtons, function (button) {
-        button.show();
-      });
-    },
-
-    checkCollectionConstraints: function () {
-      if (this.options.disabled) {
-        return;
-      }
-
-      if (!this.options.view.canAdd()) {
-        this.hideButtons();
-        return;
-      }
-
-      if (!this.options.definition) {
-        // We have now information on the constraints applying to this collection
-        this.showButtons();
-        return;
-      }
-
-      if (!this.options.definition.max || this.options.definition.max === -1) {
-        // No maximum constraint
-        this.showButtons();
-        return;
-      }
-
-      if (this.options.collection.length < this.options.definition.max) {
-        this.showButtons();
-        return;
-      }
-      // Collection is already full by its definition
-      this.hideButtons();
-    },
-
-    enable: function () {
-      var widget = this;
-
-      var addButton = jQuery(_.template(this.options.templates.button, {
-        icon: 'plus',
-        label: this.options.editableOptions.localize('Add', this.options.editableOptions.language)
-      })).button();
-      addButton.addClass('midgard-create-add');
-      addButton.click(function () {
-        widget.addItem(addButton);
-      });
-      jQuery(widget.options.view.el).after(addButton);
-
-      widget.addButtons.push(addButton);
-      widget.checkCollectionConstraints();
-    },
-
-    disable: function () {
-      _.each(this.addButtons, function (button) {
-        button.remove();
-      });
-      this.addButtons = [];
-    },
-
-    _getTypeActions: function (options) {
-      var widget = this;
-      var actions = [];
-      _.each(this.options.definition.range, function (type) {
-        var nsType = widget.options.collection.vie.namespaces.uri(type);
-        if (!widget.options.view.canAdd(nsType)) {
-          return;
-        }
-        actions.push({
-          name: type,
-          label: type,
-          cb: function () {
-            widget.options.collection.add({
-              '@type': type
-            }, options);
-          },
-          className: 'create-ui-btn'
-        });
-      });
-      return actions;
-    },
-
-    addItem: function (button, options) {
-      if (options === undefined) {
-          options = {};
-      }
-      var addOptions = _.extend({}, options, { validate: false });
-
-      var itemData = {};
-      if (this.options.definition && this.options.definition.range) {
-        if (this.options.definition.range.length === 1) {
-          // Items can be of single type, add that
-          itemData['@type'] = this.options.definition.range[0];
-        } else {
-          // Ask user which type to add
-          jQuery('body').midgardNotifications('create', {
-            bindTo: button,
-            gravity: 'L',
-            body: this.options.editableOptions.localize('Choose type to add', this.options.editableOptions.language),
-            timeout: 0,
-            actions: this._getTypeActions(addOptions)
-          });
-          return;
-        }
-      } else {
-        // Check the view templates for possible non-Thing type to use
-        var keys = _.keys(this.options.view.templates);
-        if (keys.length == 2) {
-          itemData['@type'] = keys[0];
-        }
-      }
-      this.options.collection.add(itemData, addOptions);
-    }
-  });
-})(jQuery);
-//     Create.js - On-site web editing interface
-//     (c) 2011-2012 Henri Bergius, IKS Consortium
-//     Create may be freely distributed under the MIT license.
-//     For all details and documentation:
-//     http://createjs.org/
-(function (jQuery, undefined) {
-  // Run JavaScript in strict mode
-  /*global jQuery:false _:false window:false console:false */
-  'use strict';
-
-  // # Widget for adding items anywhere inside a collection
-  jQuery.widget('Midgard.midgardCollectionAddBetween', jQuery.Midgard.midgardCollectionAdd, {
-    _bindCollectionView: function (view) {
-      var widget = this;
-      view.on('add', function (itemView) {
-        //itemView.el.effect('slide');
-        widget._makeEditable(itemView);
-        widget._refreshButtons();
-      });
-      view.on('remove', function () {
-        widget._refreshButtons();
-      });
-    },
-
-    _refreshButtons: function () {
-      var widget = this;
-      window.setTimeout(function () {
-        widget.disable();
-        widget.enable();
-      }, 1);
-    },
-
-    prepareButton: function (index) {
-      var widget = this;
-      var addButton = jQuery(_.template(this.options.templates.button, {
-        icon: 'plus',
-        label: ''
-      })).button();
-      addButton.addClass('midgard-create-add');
-      addButton.click(function () {
-        widget.addItem(addButton, {
-          at: index
-        });
-      });
-      return addButton;
-    },
-
-    enable: function () {
-      var widget = this;
-
-      var firstAddButton = widget.prepareButton(0);
-      jQuery(widget.options.view.el).prepend(firstAddButton);
-      widget.addButtons.push(firstAddButton);
-      jQuery.each(widget.options.view.entityViews, function (cid, view) {
-        var index = widget.options.collection.indexOf(view.model);
-        var addButton = widget.prepareButton(index + 1);
-        jQuery(view.el).append(addButton);
-        widget.addButtons.push(addButton);
-      });
-
-      this.checkCollectionConstraints();
-    },
-
-    disable: function () {
-      var widget = this;
-      jQuery.each(widget.addButtons, function (idx, button) {
-        button.remove();
-      });
-      widget.addButtons = [];
-    }
-  });
-})(jQuery);
 //     Create.js - On-site web editing interface
 //     (c) 2011-2012 Henri Bergius, IKS Consortium
 //     Create may be freely distributed under the MIT license.
@@ -1235,601 +969,7 @@
     }
   });
 })(jQuery);
-//     Create.js - On-site web editing interface
-//     (c) 2012 Tobias Herrmann, IKS Consortium
-//     Create may be freely distributed under the MIT license.
-//     For all details and documentation:
-//     http://createjs.org/
-(function (jQuery, undefined) {
-  // Run JavaScript in strict mode
-  /*global jQuery:false _:false document:false */
-  'use strict';
 
-  // # Base property editor widget
-  //
-  // This property editor widget provides a very simplistic `contentEditable`
-  // property editor that can be used as standalone, but should more usually be
-  // used as the base class for other property editor widgets.
-  // This property editor widget is only useful for textual properties!
-  //
-  // Subclassing this base property editor widget is easy:
-  //
-  //     jQuery.widget('Namespace.MyWidget', jQuery.Create.editWidget, {
-  //       // override any properties
-  //     });
-  jQuery.widget('Midgard.editWidget', {
-    options: {
-      disabled: false,
-      vie: null
-    },
-    // override to enable the widget
-    enable: function () {
-      this.element.attr('contenteditable', 'true');
-    },
-    // override to disable the widget
-    disable: function (disable) {
-      this.element.attr('contenteditable', 'false');
-    },
-    // called by the jQuery UI plugin factory when creating the property editor
-    // widget instance
-    _create: function () {
-      this._registerWidget();
-      this._initialize();
-
-      if (_.isFunction(this.options.decorate) && _.isFunction(this.options.decorateParams)) {
-        // TRICKY: we can't use this.options.decorateParams()'s 'propertyName'
-        // parameter just yet, because it will only be available after this
-        // object has been created, but we're currently in the constructor!
-        // Hence we have to duplicate part of its logic here.
-        this.options.decorate(this.options.decorateParams(null, {
-          propertyName: this.options.property,
-          propertyEditor: this,
-          propertyElement: this.element,
-          // Deprecated.
-          editor: this,
-          predicate: this.options.property,
-          element: this.element
-        }));
-      }
-    },
-    // called every time the property editor widget is called
-    _init: function () {
-      if (this.options.disabled) {
-        this.disable();
-        return;
-      }
-      this.enable();
-    },
-    // override this function to initialize the property editor widget functions
-    _initialize: function () {
-      var self = this;
-      this.element.on('focus', function () {
-        if (self.options.disabled) {
-          return;
-        }
-        self.options.activated();
-      });
-      this.element.on('blur', function () {
-        if (self.options.disabled) {
-          return;
-        }
-        self.options.deactivated();
-      });
-      var before = this.element.html();
-      this.element.on('keyup paste', function (event) {
-        if (self.options.disabled) {
-          return;
-        }
-        var current = jQuery(this).html();
-        if (before !== current) {
-          before = current;
-          self.options.changed(current);
-        }
-      });
-    },
-    // used to register the property editor widget name with the DOM element
-    _registerWidget: function () {
-      this.element.data("createWidgetName", this.widgetName);
-    }
-  });
-})(jQuery);
-//     Create.js - On-site web editing interface
-//     (c) 2012 Tobias Herrmann, IKS Consortium
-//     (c) 2011 Rene Kapusta, Evo42
-//     Create may be freely distributed under the MIT license.
-//     For all details and documentation:
-//     http://createjs.org/
-(function (jQuery, undefined) {
-  // Run JavaScript in strict mode
-  /*global jQuery:false _:false document:false Aloha:false */
-  'use strict';
-
-  // # Aloha editing widget
-  //
-  // This widget allows editing textual contents using the
-  // [Aloha](http://aloha-editor.org) rich text editor.
-  //
-  // Due to licensing incompatibilities, Aloha Editor needs to be installed
-  // and configured separately.
-  jQuery.widget('Midgard.alohaWidget', jQuery.Midgard.editWidget, {
-    _initialize: function () {},
-    enable: function () {
-      var options = this.options;
-      var editable;
-      var currentElement = Aloha.jQuery(options.element.get(0)).aloha();
-      _.each(Aloha.editables, function (aloha) {
-        // Find the actual editable instance so we can hook to the events
-        // correctly
-        if (aloha.obj.get(0) === currentElement.get(0)) {
-          editable = aloha;
-        }
-      });
-      if (!editable) {
-        return;
-      }
-      editable.vieEntity = options.entity;
-
-      // Subscribe to activation and deactivation events
-      Aloha.bind('aloha-editable-activated', function (event, data) {
-        if (data.editable !== editable) {
-          return;
-        }
-        options.activated();
-      });
-      Aloha.bind('aloha-editable-deactivated', function (event, data) {
-        if (data.editable !== editable) {
-          return;
-        }
-        options.deactivated();
-      });
-
-      Aloha.bind('aloha-smart-content-changed', function (event, data) {
-        if (data.editable !== editable) {
-          return;
-        }
-        if (!data.editable.isModified()) {
-          return true;
-        }
-        options.changed(data.editable.getContents());
-        data.editable.setUnmodified();
-      });
-      this.options.disabled = false;
-    },
-    disable: function () {
-      Aloha.jQuery(this.options.element.get(0)).mahalo();
-      this.options.disabled = true;
-    }
-  });
-})(jQuery);
-//     Create.js - On-site web editing interface
-//     (c) 2012 Tobias Herrmann, IKS Consortium
-//     Create may be freely distributed under the MIT license.
-//     For all details and documentation:
-(function (jQuery, undefined) {
-  // Run JavaScript in strict mode
-  /*global jQuery:false _:false document:false CKEDITOR:false */
-  'use strict';
-
-  // # CKEditor editing widget
-  //
-  // This widget allows editing textual content areas with the
-  // [CKEditor](http://ckeditor.com/) rich text editor.
-  jQuery.widget('Midgard.ckeditorWidget', jQuery.Midgard.editWidget, {
-    enable: function () {
-      this.element.attr('contentEditable', 'true');
-      this.editor = CKEDITOR.inline(this.element.get(0));
-      this.options.disabled = false;
-
-      var widget = this;
-      this.editor.on('focus', function () {
-        widget.options.activated();
-      });
-      this.editor.on('blur', function () {
-        widget.options.activated();
-        widget.options.changed(widget.editor.getData());
-      });
-      this.editor.on('key', function () {
-        widget.options.changed(widget.editor.getData());
-      });
-      this.editor.on('paste', function () {
-        widget.options.changed(widget.editor.getData());
-      });
-      this.editor.on('afterCommandExec', function () {
-        widget.options.changed(widget.editor.getData());
-      });
-      this.editor.on('configLoaded', function() {
-        jQuery.each(widget.options.editorOptions, function(optionName, option) {
-          widget.editor.config[optionName] = option;
-        });
-      });
-    },
-
-    disable: function () {
-      if (!this.editor) {
-        return;
-      }
-      this.element.attr('contentEditable', 'false');
-      this.editor.destroy();
-      this.editor = null;
-    },
-
-    _initialize: function () {
-      CKEDITOR.disableAutoInline = true;
-    }
-  });
-})(jQuery);
-//     Create.js - On-site web editing interface
-//     (c) 2012 Tobias Herrmann, IKS Consortium
-//     Create may be freely distributed under the MIT license.
-//     For all details and documentation:
-//     http://createjs.org/
-(function (jQuery, undefined) {
-  // Run JavaScript in strict mode
-  /*global jQuery:false _:false document:false */
-  'use strict';
-
-  // # Hallo editing widget
-  //
-  // This widget allows editing textual content areas with the
-  // [Hallo](http://hallojs.org) rich text editor.
-  jQuery.widget('Midgard.halloWidget', jQuery.Midgard.editWidget, {
-    options: {
-      editorOptions: {},
-      disabled: true,
-      toolbarState: 'full',
-      vie: null,
-      entity: null
-    },
-    enable: function () {
-      jQuery(this.element).hallo({
-        editable: true
-      });
-      this.options.disabled = false;
-    },
-
-    disable: function () {
-      jQuery(this.element).hallo({
-        editable: false
-      });
-      this.options.disabled = true;
-    },
-
-    _initialize: function () {
-      jQuery(this.element).hallo(this.getHalloOptions());
-      var self = this;
-      jQuery(this.element).on('halloactivated', function (event, data) {
-        self.options.activated();
-      });
-      jQuery(this.element).on('hallodeactivated', function (event, data) {
-        self.options.deactivated();
-      });
-      jQuery(this.element).on('hallomodified', function (event, data) {
-        self.options.changed(data.content);
-        data.editable.setUnmodified();
-      });
-
-      jQuery(document).on('midgardtoolbarstatechange', function(event, data) {
-        // Switch between Hallo configurations when toolbar state changes
-        if (data.display === self.options.toolbarState) {
-          return;
-        }
-        self.options.toolbarState = data.display;
-        if (!self.element.data('IKS-hallo')) {
-          // Hallo not yet instantiated
-          return;
-        }
-        var newOptions = self.getHalloOptions();
-        self.element.hallo('changeToolbar', newOptions.parentElement, newOptions.toolbar, true);
-      });
-    },
-
-    getHalloOptions: function() {
-      var defaults = {
-        plugins: {
-          halloformat: {},
-          halloblock: {},
-          hallolists: {},
-          hallolink: {},
-          halloimage: {
-            entity: this.options.entity
-          }
-        },
-        buttonCssClass: 'create-ui-btn-small',
-        placeholder: '[' + this.options.property + ']'
-      };
-
-      if (typeof this.element.annotate === 'function' && this.options.vie.services.stanbol) {
-        // Enable Hallo Annotate plugin by default if user has annotate.js
-        // loaded and VIE has Stanbol enabled
-        defaults.plugins.halloannotate = {
-            vie: this.options.vie
-        };
-      }
-
-      if (this.options.toolbarState === 'full') {
-        // Use fixed toolbar in the Create tools area
-        defaults.parentElement = jQuery('.create-ui-toolbar-dynamictoolarea .create-ui-tool-freearea');
-        defaults.toolbar = 'halloToolbarFixed';
-      } else {
-        // Tools area minimized, use floating toolbar
-        defaults.parentElement = 'body';
-        defaults.toolbar = 'halloToolbarContextual';
-      }
-      return _.extend(defaults, this.options.editorOptions);
-    }
-  });
-})(jQuery);
-//     Create.js - On-site web editing interface
-//     (c) 2012 Henri Bergius, IKS Consortium
-//     Create may be freely distributed under the MIT license.
-//     For all details and documentation:
-//     http://createjs.org/
-(function (jQuery, undefined) {
-  // Run JavaScript in strict mode
-  /*global jQuery:false _:false document:false */
-  'use strict';
-
-  // # Redactor editing widget
-  //
-  // This widget allows editing textual content areas with the
-  // [Redactor](http://redactorjs.com/) rich text editor.
-  jQuery.widget('Midgard.redactorWidget', jQuery.Midgard.editWidget, {
-    editor: null,
-
-    options: {
-      editorOptions: {},
-      disabled: true
-    },
-
-    enable: function () {
-      jQuery(this.element).redactor(this.getRedactorOptions());
-      this.options.disabled = false;
-    },
-
-    disable: function () {
-      jQuery(this.element).destroyEditor();
-      this.options.disabled = true;
-    },
-
-    _initialize: function () {
-      var self = this;
-      jQuery(this.element).on('focus', function (event) {
-        self.options.activated(); 
-      });
-      /*
-      jQuery(this.element).on('blur', function (event) {
-        self.options.deactivated(); 
-      });
-      */
-    },
-
-    getRedactorOptions: function () {
-      var self = this;
-      var overrides = {
-        keyupCallback: function (obj, event) {
-          self.options.changed(jQuery(self.element).getCode());
-        },
-        execCommandCallback: function (obj, command) {
-          self.options.changed(jQuery(self.element).getCode());
-        }
-      };
-
-      return _.extend(self.options.editorOptions, overrides);
-    }
-  });
-})(jQuery);
-//     Create.js - On-site web editing interface
-//     (c) 2012 Martin Holzhauer
-//     Create may be freely distributed under the MIT license.
-//     For all details and documentation:
-(function (jQuery, undefined) {
-    /*global OpenLayers:false */
-    // Run JavaScript in strict mode
-    'use strict';
-
-    // This widget allows editing geocoordinates with the help of openlayers
-    // and per default layer OSM
-    jQuery.widget('Midgard.midgardGeo', {
-        options:{
-            layer:null,
-            map:null,
-            coordSystem:'EPSG:4326',
-            defaultCenter: null,
-            defaultZoomLevel: 3,
-            geoProperty: 'http://schema.org/geo',
-            geoCoordinateType: 'http://schema.org/GeoCoordinates',
-            geoLonProperty: 'http://schema.org/longitude',
-            geoLatProperty: 'http://schema.org/latitude',
-            marker: {
-                url: 'http://www.openlayers.org/dev/img/marker.png',
-                size: {w:21, h:25},
-                offset: {w:-10, h:-25} //-(size.w / 2), -size.h
-            }
-        },
-        data : {},
-        coordsObj : null,
-
-        /**
-         * activate mapwidget
-         *
-         * @param data
-         */
-        activate: function (data) {
-            this.data = data;
-            this.coordsObj = null;
-
-            var geo = this.data.entity.get(this.options.geoProperty);
-
-            if(_.isUndefined(geo)) {
-                var types = this.data.entity.attributes['@type'];
-                if(!_.isArray(types)) {
-                    types = [types];
-                }
-
-                if(_.indexOf(types, '<' + this.options.geoCoordinateType + '>') > 0) {
-                    this.coordsObj = this.data.entity;
-                }
-            } else {
-                this.coordsObj = geo.models[0];
-            }
-
-            if(_.isNull(this.coordsObj)){
-                this.element.hide();
-                return;
-            } else {
-                this.element.show();
-            }
-
-
-            var lat = parseFloat(this.coordsObj.get(this.options.geoLatProperty)),
-                lon = parseFloat(this.coordsObj.get(this.options.geoLonProperty));
-
-            this.centerMap(lon, lat);
-        },
-
-        /**
-         * create the map object
-         *
-         * @private
-         */
-        _createMap: function() {
-            if (!_.isNull(this.options.map)) {
-                return;
-            }
-            var that = this,
-                mapDiv = jQuery('<div>', {
-                id:'midgardGeoMap',
-                style:"height:200px; width:300px"
-            });
-            this.element.append(mapDiv);
-            this.options.map = new OpenLayers.Map('midgardGeoMap');
-
-
-            if (_.isNull(this.options.layer)) {
-                this.options.layer = new OpenLayers.Layer.OSM("OSM");
-            }
-
-            this.options.map.addLayer(this.options.layer);
-
-            this.options.markers = new OpenLayers.Layer.Markers("Markers");
-            this.options.map.addLayer(this.options.markers);
-
-
-            OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {
-                defaultHandlerOptions:{
-                    'single':true,
-                    'double':false,
-                    'pixelTolerance':0,
-                    'stopSingle':false,
-                    'stopDouble':false
-                },
-
-                initialize:function (options) {
-                    this.handlerOptions = OpenLayers.Util.extend(
-                        {}, this.defaultHandlerOptions
-                    );
-                    OpenLayers.Control.prototype.initialize.apply(
-                        this, arguments
-                    );
-                    this.handler = new OpenLayers.Handler.Click(
-                        this, {
-                            'click':function (e) {
-                                that.mapClick(e);
-                            }
-                        }, this.handlerOptions
-                    );
-                }
-            });
-
-
-            var click = new OpenLayers.Control.Click();
-            this.options.map.addControl(click);
-            click.activate();
-
-            var center  = this.options.defaultCenter.clone();
-            center.transform(
-                new OpenLayers.Projection(this.options.coordSystem),
-                this.options.map.getProjectionObject()
-            );
-
-            this.options.map.setCenter(
-                center, this.options.defaultZoomLevel
-            );
-        },
-
-        mapClick:function (e) {
-            var lonlat = this.options.map.getLonLatFromPixel(e.xy);
-            lonlat.transform(this.options.map.getProjectionObject(), new OpenLayers.Projection(this.options.coordSystem));
-
-            var panTo = lonlat.clone();
-            this.centerMap(panTo.lon, panTo.lat);
-            this.setCoordinates(lonlat.lat, lonlat.lon);
-        },
-
-        disable:function () {
-
-        },
-
-        /**
-         * set coordinates to the model
-         *
-         * @param lat
-         * @param lon
-         */
-        setCoordinates:function (lat, lon) {
-            var geo = this.data.entity.get(this.options.geoProperty),
-                coordsModel = geo.models[0];
-
-            coordsModel.set(this.options.geoLatProperty, lat);
-            coordsModel.set(this.options.geoLonProperty, lon);
-        },
-
-        /**
-         * widget init
-         *
-         * @private
-         */
-        _init:function () {
-            this.element.hide();
-            this.element.append( jQuery('<h3>GEO</h3>') );
-            if(_.isNull(this.options.defaultCenter)){
-                this.options.defaultCenter = new OpenLayers.LonLat(0, 0);
-            }
-            this._createMap();
-        },
-
-        /**
-         * coordinates should be given in the default coordiante system from config
-         *
-         * @param lon
-         * @param lat
-         */
-        centerMap:function (lon, lat) {
-            var center = new OpenLayers.LonLat(lon, lat).transform(
-                    new OpenLayers.Projection(this.options.coordSystem),
-                    this.options.map.getProjectionObject()
-                );
-
-            if (this.options.centermark) {
-                this.options.centermark.destroy();
-            }
-
-            var size = new OpenLayers.Size(
-                this.options.marker.size.w ,
-                this.options.marker.size.h
-            );
-            var offset = new OpenLayers.Pixel(
-                this.options.marker.offset.w ,
-                this.options.marker.offset.h
-            );
-            var icon = new OpenLayers.Icon(this.options.marker.url, size, offset);
-            this.options.centermark = new OpenLayers.Marker(center, icon);
-            this.options.markers.addMarker(this.options.centermark);
-
-            this.options.map.panTo(center);
-        }
-    });
-})(jQuery);
 //     Create.js - On-site web editing interface
 //     (c) 2012 IKS Consortium
 //     Create may be freely distributed under the MIT license.
@@ -1949,6 +1089,7 @@
     }
   });
 })(jQuery);
+
 //     Create.js - On-site web editing interface
 //     (c) 2012 Jerry Jalava, IKS Consortium
 //     Create may be freely distributed under the MIT license.
@@ -2620,6 +1761,7 @@
   });
 
 })(jQuery);
+
 //     Create.js - On-site web editing interface
 //     (c) 2011-2012 Henri Bergius, IKS Consortium
 //     Create may be freely distributed under the MIT license.
@@ -3129,6 +2271,1262 @@
     }
   });
 })(jQuery);
+
+//     Create.js - On-site web editing interface
+//     (c) 2011-2012 Henri Bergius, IKS Consortium
+//     Create may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://createjs.org/
+(function (jQuery, undefined) {
+  // Run JavaScript in strict mode
+  /*global jQuery:false _:false window:false */
+  'use strict';
+
+  jQuery.widget('Midgard.midgardToolbar', {
+    options: {
+      display: 'full',
+      templates: {
+        minimized: '<div class="create-ui-logo"><a class="create-ui-toggle" id="create-ui-toggle-toolbar"></a></div>',
+        full: '<div class="create-ui-toolbar-wrapper"><div class="create-ui-toolbar-toolarea"><%= dynamic %><%= status %></div></div>',
+        toolcontainer: '<div class="create-ui-toolbar-<%= name %>toolarea"><ul class="create-ui-<%= name %>tools"><%= content %></ul></div>',
+        toolarea: '<li class="create-ui-tool-<%= name %>area"></li>'
+      }
+    },
+
+    _create: function () {
+      this.element.append(this._getMinimized());
+      this.element.append(this._getFull());
+
+      var widget = this;
+      jQuery('.create-ui-toggle', this.element).click(function () {
+        if (widget.options.display === 'full') {
+          widget.setDisplay('minimized');
+        } else {
+          widget.setDisplay('full');
+        }
+      });
+
+      jQuery(this.element).on('midgardcreatestatechange', function (event, options) {
+        if (options.state == 'browse') {
+          widget._clearWorkflows();
+        }
+      });
+
+      jQuery(this.element).on('midgardworkflowschanged', function (event, options) {
+        widget._clearWorkflows();
+        if (options.workflows.length) {
+          options.workflows.each(function (workflow) {
+            var html = jQuery('body').data().midgardWorkflows.prepareItem(options.instance, workflow, function (err, model) {
+              widget._clearWorkflows();
+              if (err) {
+                return;
+              }
+            });
+            jQuery('.create-ui-tool-workflowarea', widget.element).append(html);
+          });
+        }
+      });
+    },
+
+    _init: function () {
+      this.setDisplay(this.options.display);
+    },
+
+    setDisplay: function (value) {
+      if (value === this.options.display) {
+        return;
+      }
+      if (value === 'minimized') {
+        this.hide();
+        this.options.display = 'minimized';
+      } else {
+        this.show();
+        this.options.display = 'full';
+      }
+      this._trigger('statechange', null, this.options);
+    },
+
+    hide: function () {
+      jQuery('div.create-ui-toolbar-wrapper').fadeToggle('fast', 'linear');
+    },
+
+    show: function () {
+      jQuery('div.create-ui-toolbar-wrapper').fadeToggle('fast', 'linear');
+    },
+
+    _getMinimized: function () {
+      return jQuery(_.template(this.options.templates.minimized, {}));
+    },
+
+    _getFull: function () {
+      return jQuery(_.template(this.options.templates.full, {
+        dynamic: _.template(this.options.templates.toolcontainer, {
+          name: 'dynamic',
+          content:
+            _.template(this.options.templates.toolarea, {
+              name: 'metadata'
+            }) +
+            _.template(this.options.templates.toolarea, {
+              name: 'workflow'
+            }) +
+            _.template(this.options.templates.toolarea, {
+              name: 'free'
+            })
+        }),
+        status: _.template(this.options.templates.toolcontainer, {
+          name: 'status',
+          content: ''
+        })
+      }));
+    },
+
+    _clearWorkflows: function () {
+      jQuery('.create-ui-tool-workflowarea', this.element).empty();
+    }
+  });
+})(jQuery);
+
+//     Create.js - On-site web editing interface
+//     (c) 2012 Jerry Jalava, IKS Consortium
+//     Create may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://createjs.org/
+(function (jQuery, undefined) {
+  // Run JavaScript in strict mode
+  /*global jQuery:false _:false window:false Backbone:false */
+  'use strict';
+
+  jQuery.widget('Midgard.midgardWorkflows', {
+    options: {
+      url: function (model) {},
+      templates: {
+        button: '<button class="create-ui-btn" id="<%= id %>"><%= label %></button>'
+      },
+      renderers: {
+        button: function (model, workflow, action_cb, final_cb) {
+          var button_id = 'midgardcreate-workflow_' + workflow.get('name');
+          var html = jQuery(_.template(this.options.templates.button, {
+            id: button_id,
+            label: workflow.get('label')
+          })).button();
+
+          html.on('click', function (evt) {
+            action_cb(model, workflow, final_cb);
+          });
+          return html;
+        }
+      },
+      action_types: {
+        backbone_save: function (model, workflow, callback) {
+          var copy_of_url = model.url;
+          var original_model = model.clone();
+          original_model.url = copy_of_url;
+
+          var action = workflow.get('action');
+          if (action.url) {
+            model.url = action.url;
+          }
+          original_model.save(null, {
+            success: function (m) {
+              model.url = copy_of_url;
+              model.change();
+              callback(null, model);
+            },
+            error: function (m, err) {
+              model.url = copy_of_url;
+              model.change();
+              callback(err, model);
+            }
+          });
+        },
+        backbone_destroy: function (model, workflow, callback) {
+          var copy_of_url = model.url;
+          var original_model = model.clone();
+          original_model.url = copy_of_url;
+
+          var action = workflow.get('action');
+          if (action.url) {
+            model.url = action.url;
+          }
+
+          model.destroy({
+            success: function (m) {
+              model.url = copy_of_url;
+              model.change();
+              callback(null, m);
+            },
+            error: function (m, err) {
+              model.url = copy_of_url;
+              model.change();
+              callback(err, model);
+            }
+          });
+        },
+        http: function (model, workflow, callback) {
+          var action = workflow.get('action');
+          if (!action.url) {
+            return callback('No action url defined!');
+          }
+
+          var wf_opts = {};
+          if (action.http) {
+            wf_opts = action.http;
+          }
+
+          var ajax_options = jQuery.extend({
+            url: action.url,
+            type: 'POST',
+            data: model.toJSON(),
+            success: function () {
+              model.fetch({
+                success: function (model) {
+                  callback(null, model);
+                },
+                error: function (model, err) {
+                  callback(err, model);
+                }
+              });
+            }
+          }, wf_opts);
+
+          jQuery.ajax(ajax_options);
+        }
+      }
+    },
+
+    _init: function () {
+      this._renderers = {};
+      this._action_types = {};
+
+      this._parseRenderersAndTypes();
+
+      this._last_instance = null;
+
+      this.ModelWorkflowModel = Backbone.Model.extend({
+        defaults: {
+          name: '',
+          label: '',
+          type: 'button',
+          action: {
+            type: 'backbone_save'
+          }
+        }
+      });
+
+      this.workflows = {};
+
+      var widget = this;
+      jQuery(this.element).on('midgardeditableactivated', function (event, options) {
+        widget._fetchWorkflows(options.instance);
+      });
+    },
+
+    _fetchWorkflows: function (model) {
+      var widget = this;
+      if (model.isNew()) {
+        widget._trigger('changed', null, {
+          instance: model,
+          workflows: []
+        });
+        return;
+      }
+
+      if (widget._last_instance == model) {
+        if (widget.workflows[model.cid]) {
+          widget._trigger('changed', null, {
+            instance: model,
+            workflows: widget.workflows[model.cid]
+          });
+        }
+        return;
+      }
+      widget._last_instance = model;
+
+      if (widget.workflows[model.cid]) {
+        widget._trigger('changed', null, {
+          instance: model,
+          workflows: widget.workflows[model.cid]
+        });
+        return;
+      }
+
+      if (widget.options.url) {
+        widget._fetchModelWorkflows(model);
+      } else {
+        var flows = new(widget._generateCollectionFor(model))([], {});
+        widget._trigger('changed', null, {
+          instance: model,
+          workflows: flows
+        });
+      }
+    },
+
+    _parseRenderersAndTypes: function () {
+      var widget = this;
+      jQuery.each(this.options.renderers, function (k, v) {
+        widget.setRenderer(k, v);
+      });
+      jQuery.each(this.options.action_types, function (k, v) {
+        widget.setActionType(k, v);
+      });
+    },
+
+    setRenderer: function (name, callbacks) {
+      this._renderers[name] = callbacks;
+    },
+    getRenderer: function (name) {
+      if (!this._renderers[name]) {
+        return false;
+      }
+
+      return this._renderers[name];
+    },
+    setActionType: function (name, callback) {
+      this._action_types[name] = callback;
+    },
+    getActionType: function (name) {
+      return this._action_types[name];
+    },
+
+    prepareItem: function (model, workflow, final_cb) {
+      var widget = this;
+
+      var renderer = this.getRenderer(workflow.get("type"));
+      var action_type_cb = this.getActionType(workflow.get("action").type);
+
+      return renderer.call(this, model, workflow, action_type_cb, function (err, m) {
+        delete widget.workflows[model.cid];
+        widget._last_instance = null;
+        if (workflow.get('action').type !== 'backbone_destroy') {
+          // Get an updated list of workflows
+          widget._fetchModelWorkflows(model);
+        }
+        final_cb(err, m);
+      });
+    },
+
+    _generateCollectionFor: function (model) {
+      var collectionSettings = {
+        model: this.ModelWorkflowModel
+      };
+      if (this.options.url) {
+        collectionSettings.url = this.options.url(model);
+      }
+      return Backbone.Collection.extend(collectionSettings);
+    },
+
+    _fetchModelWorkflows: function (model) {
+      if (model.isNew()) {
+        return;
+      }
+      var widget = this;
+
+      widget.workflows[model.cid] = new(this._generateCollectionFor(model))([], {});
+      widget.workflows[model.cid].fetch({
+        success: function (collection) {
+          widget.workflows[model.cid].reset(collection.models);
+
+          widget._trigger('changed', null, {
+            instance: model,
+            workflows: widget.workflows[model.cid]
+          });
+        },
+        error: function (model, err) {
+          //console.log('error fetching flows', err);
+        }
+      });
+    }
+  });
+})(jQuery);
+
+if (window.midgardCreate === undefined) {
+  window.midgardCreate = {};
+}
+
+window.midgardCreate.localize = function (id, language) {
+  if (!window.midgardCreate.locale) {
+    // No localization files loaded, return as-is
+    return id;
+  }
+  if (window.midgardCreate.locale[language] && window.midgardCreate.locale[language][id]) {
+    return window.midgardCreate.locale[language][id];
+  }
+  if (window.midgardCreate.locale.en[id]) {
+    return window.midgardCreate.locale.en[id];
+  }
+  return id;
+};
+
+//     Create.js - On-site web editing interface
+//     (c) 2011-2012 Henri Bergius, IKS Consortium
+//     Create may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://createjs.org/
+(function (jQuery, undefined) {
+  // Run JavaScript in strict mode
+  /*global jQuery:false _:false window:false console:false */
+  'use strict';
+
+  // # Widget for adding items to a collection
+  jQuery.widget('Midgard.midgardCollectionAdd', {
+    options: {
+      editingWidgets: null,
+      collection: null,
+      model: null,
+      definition: null,
+      view: null,
+      disabled: false,
+      vie: null,
+      editableOptions: null,
+      templates: {
+        button: '<button class="btn"><i class="icon-<%= icon %>"></i> <%= label %></button>'
+      }
+    },
+
+    _create: function () {
+      this.addButtons = [];
+      var widget = this;
+      if (!widget.options.collection.localStorage) {
+        try {
+          widget.options.collection.url = widget.options.model.url();
+        } catch (e) {
+          if (window.console) {
+            console.log(e);
+          }
+        }
+      }
+
+      widget.options.collection.on('add', function (model) {
+        model.primaryCollection = widget.options.collection;
+        widget.options.vie.entities.add(model);
+        model.collection = widget.options.collection;
+      });
+
+      // Re-check collection constraints
+      widget.options.collection.on('add remove reset', widget.checkCollectionConstraints, widget);
+
+      widget._bindCollectionView(widget.options.view);
+    },
+
+    _bindCollectionView: function (view) {
+      var widget = this;
+      view.on('add', function (itemView) {
+        itemView.$el.effect('slide', function () {
+          widget._makeEditable(itemView);
+        });
+      });
+    },
+
+    _makeEditable: function (itemView) {
+      this.options.editableOptions.disabled = this.options.disabled;
+      this.options.editableOptions.model = itemView.model;
+      itemView.$el.midgardEditable(this.options.editableOptions);
+    },
+
+    _init: function () {
+      if (this.options.disabled) {
+        this.disable();
+        return;
+      }
+      this.enable();
+    },
+
+    hideButtons: function () {
+      _.each(this.addButtons, function (button) {
+        button.hide();
+      });
+    },
+
+    showButtons: function () {
+      _.each(this.addButtons, function (button) {
+        button.show();
+      });
+    },
+
+    checkCollectionConstraints: function () {
+      if (this.options.disabled) {
+        return;
+      }
+
+      if (!this.options.view.canAdd()) {
+        this.hideButtons();
+        return;
+      }
+
+      if (!this.options.definition) {
+        // We have now information on the constraints applying to this collection
+        this.showButtons();
+        return;
+      }
+
+      if (!this.options.definition.max || this.options.definition.max === -1) {
+        // No maximum constraint
+        this.showButtons();
+        return;
+      }
+
+      if (this.options.collection.length < this.options.definition.max) {
+        this.showButtons();
+        return;
+      }
+      // Collection is already full by its definition
+      this.hideButtons();
+    },
+
+    enable: function () {
+      var widget = this;
+
+      var addButton = jQuery(_.template(this.options.templates.button, {
+        icon: 'plus',
+        label: this.options.editableOptions.localize('Add', this.options.editableOptions.language)
+      })).button();
+      addButton.addClass('midgard-create-add');
+      addButton.click(function () {
+        widget.addItem(addButton);
+      });
+      jQuery(widget.options.view.el).after(addButton);
+
+      widget.addButtons.push(addButton);
+      widget.checkCollectionConstraints();
+    },
+
+    disable: function () {
+      _.each(this.addButtons, function (button) {
+        button.remove();
+      });
+      this.addButtons = [];
+    },
+
+    _getTypeActions: function (options) {
+      var widget = this;
+      var actions = [];
+      _.each(this.options.definition.range, function (type) {
+        var nsType = widget.options.collection.vie.namespaces.uri(type);
+        if (!widget.options.view.canAdd(nsType)) {
+          return;
+        }
+        actions.push({
+          name: type,
+          label: type,
+          cb: function () {
+            widget.options.collection.add({
+              '@type': type
+            }, options);
+          },
+          className: 'create-ui-btn'
+        });
+      });
+      return actions;
+    },
+
+    addItem: function (button, options) {
+      if (options === undefined) {
+          options = {};
+      }
+      var addOptions = _.extend({}, options, { validate: false });
+
+      var itemData = {};
+      if (this.options.definition && this.options.definition.range) {
+        if (this.options.definition.range.length === 1) {
+          // Items can be of single type, add that
+          itemData['@type'] = this.options.definition.range[0];
+        } else {
+          // Ask user which type to add
+          jQuery('body').midgardNotifications('create', {
+            bindTo: button,
+            gravity: 'L',
+            body: this.options.editableOptions.localize('Choose type to add', this.options.editableOptions.language),
+            timeout: 0,
+            actions: this._getTypeActions(addOptions)
+          });
+          return;
+        }
+      } else {
+        // Check the view templates for possible non-Thing type to use
+        var keys = _.keys(this.options.view.templates);
+        if (keys.length == 2) {
+          itemData['@type'] = keys[0];
+        }
+      }
+      this.options.collection.add(itemData, addOptions);
+    }
+  });
+})(jQuery);
+
+//     Create.js - On-site web editing interface
+//     (c) 2011-2012 Henri Bergius, IKS Consortium
+//     Create may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://createjs.org/
+(function (jQuery, undefined) {
+  // Run JavaScript in strict mode
+  /*global jQuery:false _:false window:false console:false */
+  'use strict';
+
+  // # Widget for adding items anywhere inside a collection
+  jQuery.widget('Midgard.midgardCollectionAddBetween', jQuery.Midgard.midgardCollectionAdd, {
+    _bindCollectionView: function (view) {
+      var widget = this;
+      view.on('add', function (itemView) {
+        //itemView.el.effect('slide');
+        widget._makeEditable(itemView);
+        widget._refreshButtons();
+      });
+      view.on('remove', function () {
+        widget._refreshButtons();
+      });
+    },
+
+    _refreshButtons: function () {
+      var widget = this;
+      window.setTimeout(function () {
+        widget.disable();
+        widget.enable();
+      }, 1);
+    },
+
+    prepareButton: function (index) {
+      var widget = this;
+      var addButton = jQuery(_.template(this.options.templates.button, {
+        icon: 'plus',
+        label: ''
+      })).button();
+      addButton.addClass('midgard-create-add');
+      addButton.click(function () {
+        widget.addItem(addButton, {
+          at: index
+        });
+      });
+      return addButton;
+    },
+
+    enable: function () {
+      var widget = this;
+
+      var firstAddButton = widget.prepareButton(0);
+      jQuery(widget.options.view.el).prepend(firstAddButton);
+      widget.addButtons.push(firstAddButton);
+      jQuery.each(widget.options.view.entityViews, function (cid, view) {
+        var index = widget.options.collection.indexOf(view.model);
+        var addButton = widget.prepareButton(index + 1);
+        jQuery(view.el).append(addButton);
+        widget.addButtons.push(addButton);
+      });
+
+      this.checkCollectionConstraints();
+    },
+
+    disable: function () {
+      var widget = this;
+      jQuery.each(widget.addButtons, function (idx, button) {
+        button.remove();
+      });
+      widget.addButtons = [];
+    }
+  });
+})(jQuery);
+
+//     Create.js - On-site web editing interface
+//     (c) 2012 Tobias Herrmann, IKS Consortium
+//     Create may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://createjs.org/
+(function (jQuery, undefined) {
+  // Run JavaScript in strict mode
+  /*global jQuery:false _:false document:false */
+  'use strict';
+
+  // # Base property editor widget
+  //
+  // This property editor widget provides a very simplistic `contentEditable`
+  // property editor that can be used as standalone, but should more usually be
+  // used as the base class for other property editor widgets.
+  // This property editor widget is only useful for textual properties!
+  //
+  // Subclassing this base property editor widget is easy:
+  //
+  //     jQuery.widget('Namespace.MyWidget', jQuery.Create.editWidget, {
+  //       // override any properties
+  //     });
+  jQuery.widget('Midgard.editWidget', {
+    options: {
+      disabled: false,
+      vie: null
+    },
+    // override to enable the widget
+    enable: function () {
+      this.element.attr('contenteditable', 'true');
+    },
+    // override to disable the widget
+    disable: function (disable) {
+      this.element.attr('contenteditable', 'false');
+    },
+    // called by the jQuery UI plugin factory when creating the property editor
+    // widget instance
+    _create: function () {
+      this._registerWidget();
+      this._initialize();
+
+      if (_.isFunction(this.options.decorate) && _.isFunction(this.options.decorateParams)) {
+        // TRICKY: we can't use this.options.decorateParams()'s 'propertyName'
+        // parameter just yet, because it will only be available after this
+        // object has been created, but we're currently in the constructor!
+        // Hence we have to duplicate part of its logic here.
+        this.options.decorate(this.options.decorateParams(null, {
+          propertyName: this.options.property,
+          propertyEditor: this,
+          propertyElement: this.element,
+          // Deprecated.
+          editor: this,
+          predicate: this.options.property,
+          element: this.element
+        }));
+      }
+    },
+    // called every time the property editor widget is called
+    _init: function () {
+      if (this.options.disabled) {
+        this.disable();
+        return;
+      }
+      this.enable();
+    },
+    // override this function to initialize the property editor widget functions
+    _initialize: function () {
+      var self = this;
+      this.element.on('focus', function () {
+        if (self.options.disabled) {
+          return;
+        }
+        self.options.activated();
+      });
+      this.element.on('blur', function () {
+        if (self.options.disabled) {
+          return;
+        }
+        self.options.deactivated();
+      });
+      var before = this.element.html();
+      this.element.on('keyup paste', function (event) {
+        if (self.options.disabled) {
+          return;
+        }
+        var current = jQuery(this).html();
+        if (before !== current) {
+          before = current;
+          self.options.changed(current);
+        }
+      });
+    },
+    // used to register the property editor widget name with the DOM element
+    _registerWidget: function () {
+      this.element.data("createWidgetName", this.widgetName);
+    }
+  });
+})(jQuery);
+
+//     Create.js - On-site web editing interface
+//     (c) 2012 Tobias Herrmann, IKS Consortium
+//     (c) 2011 Rene Kapusta, Evo42
+//     Create may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://createjs.org/
+(function (jQuery, undefined) {
+  // Run JavaScript in strict mode
+  /*global jQuery:false _:false document:false Aloha:false */
+  'use strict';
+
+  // # Aloha editing widget
+  //
+  // This widget allows editing textual contents using the
+  // [Aloha](http://aloha-editor.org) rich text editor.
+  //
+  // Due to licensing incompatibilities, Aloha Editor needs to be installed
+  // and configured separately.
+  jQuery.widget('Midgard.alohaWidget', jQuery.Midgard.editWidget, {
+    _initialize: function () {},
+    enable: function () {
+      var options = this.options;
+      var editable;
+      var currentElement = Aloha.jQuery(options.element.get(0)).aloha();
+      _.each(Aloha.editables, function (aloha) {
+        // Find the actual editable instance so we can hook to the events
+        // correctly
+        if (aloha.obj.get(0) === currentElement.get(0)) {
+          editable = aloha;
+        }
+      });
+      if (!editable) {
+        return;
+      }
+      editable.vieEntity = options.entity;
+
+      // Subscribe to activation and deactivation events
+      Aloha.bind('aloha-editable-activated', function (event, data) {
+        if (data.editable !== editable) {
+          return;
+        }
+        options.activated();
+      });
+      Aloha.bind('aloha-editable-deactivated', function (event, data) {
+        if (data.editable !== editable) {
+          return;
+        }
+        options.deactivated();
+      });
+
+      Aloha.bind('aloha-smart-content-changed', function (event, data) {
+        if (data.editable !== editable) {
+          return;
+        }
+        if (!data.editable.isModified()) {
+          return true;
+        }
+        options.changed(data.editable.getContents());
+        data.editable.setUnmodified();
+      });
+      this.options.disabled = false;
+    },
+    disable: function () {
+      Aloha.jQuery(this.options.element.get(0)).mahalo();
+      this.options.disabled = true;
+    }
+  });
+})(jQuery);
+
+//     Create.js - On-site web editing interface
+//     (c) 2012 Tobias Herrmann, IKS Consortium
+//     Create may be freely distributed under the MIT license.
+//     For all details and documentation:
+(function (jQuery, undefined) {
+  // Run JavaScript in strict mode
+  /*global jQuery:false _:false document:false CKEDITOR:false */
+  'use strict';
+
+  // # CKEditor editing widget
+  //
+  // This widget allows editing textual content areas with the
+  // [CKEditor](http://ckeditor.com/) rich text editor.
+  jQuery.widget('Midgard.ckeditorWidget', jQuery.Midgard.editWidget, {
+    enable: function () {
+      this.element.attr('contentEditable', 'true');
+      this.editor = CKEDITOR.inline(this.element.get(0));
+      this.options.disabled = false;
+
+      var widget = this;
+      this.editor.on('focus', function () {
+        widget.options.activated();
+      });
+      this.editor.on('blur', function () {
+        widget.options.activated();
+        widget.options.changed(widget.editor.getData());
+      });
+      this.editor.on('key', function () {
+        widget.options.changed(widget.editor.getData());
+      });
+      this.editor.on('paste', function () {
+        widget.options.changed(widget.editor.getData());
+      });
+      this.editor.on('afterCommandExec', function () {
+        widget.options.changed(widget.editor.getData());
+      });
+      this.editor.on('configLoaded', function() {
+        jQuery.each(widget.options.editorOptions, function(optionName, option) {
+          widget.editor.config[optionName] = option;
+        });
+      });
+    },
+
+    disable: function () {
+      if (!this.editor) {
+        return;
+      }
+      this.element.attr('contentEditable', 'false');
+      this.editor.destroy();
+      this.editor = null;
+    },
+
+    _initialize: function () {
+      CKEDITOR.disableAutoInline = true;
+    }
+  });
+})(jQuery);
+
+//     Create.js - On-site web editing interface
+//     (c) 2012 Tobias Herrmann, IKS Consortium
+//     Create may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://createjs.org/
+(function (jQuery, undefined) {
+  // Run JavaScript in strict mode
+  /*global jQuery:false _:false document:false */
+  'use strict';
+
+  // # Hallo editing widget
+  //
+  // This widget allows editing textual content areas with the
+  // [Hallo](http://hallojs.org) rich text editor.
+  jQuery.widget('Midgard.halloWidget', jQuery.Midgard.editWidget, {
+    options: {
+      editorOptions: {},
+      disabled: true,
+      toolbarState: 'full',
+      vie: null,
+      entity: null
+    },
+    enable: function () {
+      jQuery(this.element).hallo({
+        editable: true
+      });
+      this.options.disabled = false;
+    },
+
+    disable: function () {
+      jQuery(this.element).hallo({
+        editable: false
+      });
+      this.options.disabled = true;
+    },
+
+    _initialize: function () {
+      jQuery(this.element).hallo(this.getHalloOptions());
+      var self = this;
+      jQuery(this.element).on('halloactivated', function (event, data) {
+        self.options.activated();
+      });
+      jQuery(this.element).on('hallodeactivated', function (event, data) {
+        self.options.deactivated();
+      });
+      jQuery(this.element).on('hallomodified', function (event, data) {
+        self.options.changed(data.content);
+        data.editable.setUnmodified();
+      });
+
+      jQuery(document).on('midgardtoolbarstatechange', function(event, data) {
+        // Switch between Hallo configurations when toolbar state changes
+        if (data.display === self.options.toolbarState) {
+          return;
+        }
+        self.options.toolbarState = data.display;
+        if (!self.element.data('IKS-hallo')) {
+          // Hallo not yet instantiated
+          return;
+        }
+        var newOptions = self.getHalloOptions();
+        self.element.hallo('changeToolbar', newOptions.parentElement, newOptions.toolbar, true);
+      });
+    },
+
+    getHalloOptions: function() {
+      var defaults = {
+        plugins: {
+          halloformat: {},
+          halloblock: {},
+          hallolists: {},
+          hallolink: {},
+          halloimage: {
+            entity: this.options.entity
+          }
+        },
+        buttonCssClass: 'create-ui-btn-small',
+        placeholder: '[' + this.options.property + ']'
+      };
+
+      if (typeof this.element.annotate === 'function' && this.options.vie.services.stanbol) {
+        // Enable Hallo Annotate plugin by default if user has annotate.js
+        // loaded and VIE has Stanbol enabled
+        defaults.plugins.halloannotate = {
+            vie: this.options.vie
+        };
+      }
+
+      if (this.options.toolbarState === 'full') {
+        // Use fixed toolbar in the Create tools area
+        defaults.parentElement = jQuery('.create-ui-toolbar-dynamictoolarea .create-ui-tool-freearea');
+        defaults.toolbar = 'halloToolbarFixed';
+      } else {
+        // Tools area minimized, use floating toolbar
+        defaults.parentElement = 'body';
+        defaults.toolbar = 'halloToolbarContextual';
+      }
+      return _.extend(defaults, this.options.editorOptions);
+    }
+  });
+})(jQuery);
+
+//     Create.js - On-site web editing interface
+//     (c) 2012 Henri Bergius, IKS Consortium
+//     Create may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://createjs.org/
+(function (jQuery, undefined) {
+  // Run JavaScript in strict mode
+  /*global jQuery:false _:false document:false */
+  'use strict';
+
+  // # Redactor editing widget
+  //
+  // This widget allows editing textual content areas with the
+  // [Redactor](http://redactorjs.com/) rich text editor.
+  jQuery.widget('Midgard.redactorWidget', jQuery.Midgard.editWidget, {
+    editor: null,
+
+    options: {
+      editorOptions: {},
+      disabled: true
+    },
+
+    enable: function () {
+      jQuery(this.element).redactor(this.getRedactorOptions());
+      this.options.disabled = false;
+    },
+
+    disable: function () {
+      jQuery(this.element).destroyEditor();
+      this.options.disabled = true;
+    },
+
+    _initialize: function () {
+      var self = this;
+      jQuery(this.element).on('focus', function (event) {
+        self.options.activated(); 
+      });
+      /*
+      jQuery(this.element).on('blur', function (event) {
+        self.options.deactivated(); 
+      });
+      */
+    },
+
+    getRedactorOptions: function () {
+      var self = this;
+      var overrides = {
+        keyupCallback: function (obj, event) {
+          self.options.changed(jQuery(self.element).getCode());
+        },
+        execCommandCallback: function (obj, command) {
+          self.options.changed(jQuery(self.element).getCode());
+        }
+      };
+
+      return _.extend(self.options.editorOptions, overrides);
+    }
+  });
+})(jQuery);
+
+//     Create.js - On-site web editing interface
+//     (c) 2012 Martin Holzhauer
+//     Create may be freely distributed under the MIT license.
+//     For all details and documentation:
+(function (jQuery, undefined) {
+    /*global OpenLayers:false */
+    // Run JavaScript in strict mode
+    'use strict';
+
+    // This widget allows editing geocoordinates with the help of openlayers
+    // and per default layer OSM
+    jQuery.widget('Midgard.midgardGeo', {
+        options:{
+            layer:null,
+            map:null,
+            coordSystem:'EPSG:4326',
+            defaultCenter: null,
+            defaultZoomLevel: 3,
+            geoProperty: 'http://schema.org/geo',
+            geoCoordinateType: 'http://schema.org/GeoCoordinates',
+            geoLonProperty: 'http://schema.org/longitude',
+            geoLatProperty: 'http://schema.org/latitude',
+            marker: {
+                url: 'http://www.openlayers.org/dev/img/marker.png',
+                size: {w:21, h:25},
+                offset: {w:-10, h:-25} //-(size.w / 2), -size.h
+            }
+        },
+        data : {},
+        coordsObj : null,
+
+        /**
+         * activate mapwidget
+         *
+         * @param data
+         */
+        activate: function (data) {
+            this.data = data;
+            this.coordsObj = null;
+
+            var geo = this.data.entity.get(this.options.geoProperty);
+
+            if(_.isUndefined(geo)) {
+                var types = this.data.entity.attributes['@type'];
+                if(!_.isArray(types)) {
+                    types = [types];
+                }
+
+                if(_.indexOf(types, '<' + this.options.geoCoordinateType + '>') > 0) {
+                    this.coordsObj = this.data.entity;
+                }
+            } else {
+                this.coordsObj = geo.models[0];
+            }
+
+            if(_.isNull(this.coordsObj)){
+                this.element.hide();
+                return;
+            } else {
+                this.element.show();
+            }
+
+
+            var lat = parseFloat(this.coordsObj.get(this.options.geoLatProperty)),
+                lon = parseFloat(this.coordsObj.get(this.options.geoLonProperty));
+
+            this.centerMap(lon, lat);
+        },
+
+        /**
+         * create the map object
+         *
+         * @private
+         */
+        _createMap: function() {
+            if (!_.isNull(this.options.map)) {
+                return;
+            }
+            var that = this,
+                mapDiv = jQuery('<div>', {
+                id:'midgardGeoMap',
+                style:"height:200px; width:300px"
+            });
+            this.element.append(mapDiv);
+            this.options.map = new OpenLayers.Map('midgardGeoMap');
+
+
+            if (_.isNull(this.options.layer)) {
+                this.options.layer = new OpenLayers.Layer.OSM("OSM");
+            }
+
+            this.options.map.addLayer(this.options.layer);
+
+            this.options.markers = new OpenLayers.Layer.Markers("Markers");
+            this.options.map.addLayer(this.options.markers);
+
+
+            OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {
+                defaultHandlerOptions:{
+                    'single':true,
+                    'double':false,
+                    'pixelTolerance':0,
+                    'stopSingle':false,
+                    'stopDouble':false
+                },
+
+                initialize:function (options) {
+                    this.handlerOptions = OpenLayers.Util.extend(
+                        {}, this.defaultHandlerOptions
+                    );
+                    OpenLayers.Control.prototype.initialize.apply(
+                        this, arguments
+                    );
+                    this.handler = new OpenLayers.Handler.Click(
+                        this, {
+                            'click':function (e) {
+                                that.mapClick(e);
+                            }
+                        }, this.handlerOptions
+                    );
+                }
+            });
+
+
+            var click = new OpenLayers.Control.Click();
+            this.options.map.addControl(click);
+            click.activate();
+
+            var center  = this.options.defaultCenter.clone();
+            center.transform(
+                new OpenLayers.Projection(this.options.coordSystem),
+                this.options.map.getProjectionObject()
+            );
+
+            this.options.map.setCenter(
+                center, this.options.defaultZoomLevel
+            );
+        },
+
+        mapClick:function (e) {
+            var lonlat = this.options.map.getLonLatFromPixel(e.xy);
+            lonlat.transform(this.options.map.getProjectionObject(), new OpenLayers.Projection(this.options.coordSystem));
+
+            var panTo = lonlat.clone();
+            this.centerMap(panTo.lon, panTo.lat);
+            this.setCoordinates(lonlat.lat, lonlat.lon);
+        },
+
+        disable:function () {
+
+        },
+
+        /**
+         * set coordinates to the model
+         *
+         * @param lat
+         * @param lon
+         */
+        setCoordinates:function (lat, lon) {
+            var geo = this.data.entity.get(this.options.geoProperty),
+                coordsModel = geo.models[0];
+
+            coordsModel.set(this.options.geoLatProperty, lat);
+            coordsModel.set(this.options.geoLonProperty, lon);
+        },
+
+        /**
+         * widget init
+         *
+         * @private
+         */
+        _init:function () {
+            this.element.hide();
+            this.element.append( jQuery('<h3>GEO</h3>') );
+            if(_.isNull(this.options.defaultCenter)){
+                this.options.defaultCenter = new OpenLayers.LonLat(0, 0);
+            }
+            this._createMap();
+        },
+
+        /**
+         * coordinates should be given in the default coordiante system from config
+         *
+         * @param lon
+         * @param lat
+         */
+        centerMap:function (lon, lat) {
+            var center = new OpenLayers.LonLat(lon, lat).transform(
+                    new OpenLayers.Projection(this.options.coordSystem),
+                    this.options.map.getProjectionObject()
+                );
+
+            if (this.options.centermark) {
+                this.options.centermark.destroy();
+            }
+
+            var size = new OpenLayers.Size(
+                this.options.marker.size.w ,
+                this.options.marker.size.h
+            );
+            var offset = new OpenLayers.Pixel(
+                this.options.marker.offset.w ,
+                this.options.marker.offset.h
+            );
+            var icon = new OpenLayers.Icon(this.options.marker.url, size, offset);
+            this.options.centermark = new OpenLayers.Marker(center, icon);
+            this.options.markers.addMarker(this.options.centermark);
+
+            this.options.map.panTo(center);
+        }
+    });
+})(jQuery);
+
 //     Create.js - On-site web editing interface
 //     (c) 2012 IKS Consortium
 //     Create may be freely distributed under the MIT license.
@@ -3408,371 +3806,7 @@
     }
   });
 })(jQuery);
-//     Create.js - On-site web editing interface
-//     (c) 2011-2012 Henri Bergius, IKS Consortium
-//     Create may be freely distributed under the MIT license.
-//     For all details and documentation:
-//     http://createjs.org/
-(function (jQuery, undefined) {
-  // Run JavaScript in strict mode
-  /*global jQuery:false _:false window:false */
-  'use strict';
 
-  jQuery.widget('Midgard.midgardToolbar', {
-    options: {
-      display: 'full',
-      templates: {
-        minimized: '<div class="create-ui-logo"><a class="create-ui-toggle" id="create-ui-toggle-toolbar"></a></div>',
-        full: '<div class="create-ui-toolbar-wrapper"><div class="create-ui-toolbar-toolarea"><%= dynamic %><%= status %></div></div>',
-        toolcontainer: '<div class="create-ui-toolbar-<%= name %>toolarea"><ul class="create-ui-<%= name %>tools"><%= content %></ul></div>',
-        toolarea: '<li class="create-ui-tool-<%= name %>area"></li>'
-      }
-    },
-
-    _create: function () {
-      this.element.append(this._getMinimized());
-      this.element.append(this._getFull());
-
-      var widget = this;
-      jQuery('.create-ui-toggle', this.element).click(function () {
-        if (widget.options.display === 'full') {
-          widget.setDisplay('minimized');
-        } else {
-          widget.setDisplay('full');
-        }
-      });
-
-      jQuery(this.element).on('midgardcreatestatechange', function (event, options) {
-        if (options.state == 'browse') {
-          widget._clearWorkflows();
-        }
-      });
-
-      jQuery(this.element).on('midgardworkflowschanged', function (event, options) {
-        widget._clearWorkflows();
-        if (options.workflows.length) {
-          options.workflows.each(function (workflow) {
-            var html = jQuery('body').data().midgardWorkflows.prepareItem(options.instance, workflow, function (err, model) {
-              widget._clearWorkflows();
-              if (err) {
-                return;
-              }
-            });
-            jQuery('.create-ui-tool-workflowarea', widget.element).append(html);
-          });
-        }
-      });
-    },
-
-    _init: function () {
-      this.setDisplay(this.options.display);
-    },
-
-    setDisplay: function (value) {
-      if (value === this.options.display) {
-        return;
-      }
-      if (value === 'minimized') {
-        this.hide();
-        this.options.display = 'minimized';
-      } else {
-        this.show();
-        this.options.display = 'full';
-      }
-      this._trigger('statechange', null, this.options);
-    },
-
-    hide: function () {
-      jQuery('div.create-ui-toolbar-wrapper').fadeToggle('fast', 'linear');
-    },
-
-    show: function () {
-      jQuery('div.create-ui-toolbar-wrapper').fadeToggle('fast', 'linear');
-    },
-
-    _getMinimized: function () {
-      return jQuery(_.template(this.options.templates.minimized, {}));
-    },
-
-    _getFull: function () {
-      return jQuery(_.template(this.options.templates.full, {
-        dynamic: _.template(this.options.templates.toolcontainer, {
-          name: 'dynamic',
-          content:
-            _.template(this.options.templates.toolarea, {
-              name: 'metadata'
-            }) +
-            _.template(this.options.templates.toolarea, {
-              name: 'workflow'
-            }) +
-            _.template(this.options.templates.toolarea, {
-              name: 'free'
-            })
-        }),
-        status: _.template(this.options.templates.toolcontainer, {
-          name: 'status',
-          content: ''
-        })
-      }));
-    },
-
-    _clearWorkflows: function () {
-      jQuery('.create-ui-tool-workflowarea', this.element).empty();
-    }
-  });
-})(jQuery);
-//     Create.js - On-site web editing interface
-//     (c) 2012 Jerry Jalava, IKS Consortium
-//     Create may be freely distributed under the MIT license.
-//     For all details and documentation:
-//     http://createjs.org/
-(function (jQuery, undefined) {
-  // Run JavaScript in strict mode
-  /*global jQuery:false _:false window:false Backbone:false */
-  'use strict';
-
-  jQuery.widget('Midgard.midgardWorkflows', {
-    options: {
-      url: function (model) {},
-      templates: {
-        button: '<button class="create-ui-btn" id="<%= id %>"><%= label %></button>'
-      },
-      renderers: {
-        button: function (model, workflow, action_cb, final_cb) {
-          var button_id = 'midgardcreate-workflow_' + workflow.get('name');
-          var html = jQuery(_.template(this.options.templates.button, {
-            id: button_id,
-            label: workflow.get('label')
-          })).button();
-
-          html.on('click', function (evt) {
-            action_cb(model, workflow, final_cb);
-          });
-          return html;
-        }
-      },
-      action_types: {
-        backbone_save: function (model, workflow, callback) {
-          var copy_of_url = model.url;
-          var original_model = model.clone();
-          original_model.url = copy_of_url;
-
-          var action = workflow.get('action');
-          if (action.url) {
-            model.url = action.url;
-          }
-          original_model.save(null, {
-            success: function (m) {
-              model.url = copy_of_url;
-              model.change();
-              callback(null, model);
-            },
-            error: function (m, err) {
-              model.url = copy_of_url;
-              model.change();
-              callback(err, model);
-            }
-          });
-        },
-        backbone_destroy: function (model, workflow, callback) {
-          var copy_of_url = model.url;
-          var original_model = model.clone();
-          original_model.url = copy_of_url;
-
-          var action = workflow.get('action');
-          if (action.url) {
-            model.url = action.url;
-          }
-
-          model.destroy({
-            success: function (m) {
-              model.url = copy_of_url;
-              model.change();
-              callback(null, m);
-            },
-            error: function (m, err) {
-              model.url = copy_of_url;
-              model.change();
-              callback(err, model);
-            }
-          });
-        },
-        http: function (model, workflow, callback) {
-          var action = workflow.get('action');
-          if (!action.url) {
-            return callback('No action url defined!');
-          }
-
-          var wf_opts = {};
-          if (action.http) {
-            wf_opts = action.http;
-          }
-
-          var ajax_options = jQuery.extend({
-            url: action.url,
-            type: 'POST',
-            data: model.toJSON(),
-            success: function () {
-              model.fetch({
-                success: function (model) {
-                  callback(null, model);
-                },
-                error: function (model, err) {
-                  callback(err, model);
-                }
-              });
-            }
-          }, wf_opts);
-
-          jQuery.ajax(ajax_options);
-        }
-      }
-    },
-
-    _init: function () {
-      this._renderers = {};
-      this._action_types = {};
-
-      this._parseRenderersAndTypes();
-
-      this._last_instance = null;
-
-      this.ModelWorkflowModel = Backbone.Model.extend({
-        defaults: {
-          name: '',
-          label: '',
-          type: 'button',
-          action: {
-            type: 'backbone_save'
-          }
-        }
-      });
-
-      this.workflows = {};
-
-      var widget = this;
-      jQuery(this.element).on('midgardeditableactivated', function (event, options) {
-        widget._fetchWorkflows(options.instance);
-      });
-    },
-
-    _fetchWorkflows: function (model) {
-      var widget = this;
-      if (model.isNew()) {
-        widget._trigger('changed', null, {
-          instance: model,
-          workflows: []
-        });
-        return;
-      }
-
-      if (widget._last_instance == model) {
-        if (widget.workflows[model.cid]) {
-          widget._trigger('changed', null, {
-            instance: model,
-            workflows: widget.workflows[model.cid]
-          });
-        }
-        return;
-      }
-      widget._last_instance = model;
-
-      if (widget.workflows[model.cid]) {
-        widget._trigger('changed', null, {
-          instance: model,
-          workflows: widget.workflows[model.cid]
-        });
-        return;
-      }
-
-      if (widget.options.url) {
-        widget._fetchModelWorkflows(model);
-      } else {
-        var flows = new(widget._generateCollectionFor(model))([], {});
-        widget._trigger('changed', null, {
-          instance: model,
-          workflows: flows
-        });
-      }
-    },
-
-    _parseRenderersAndTypes: function () {
-      var widget = this;
-      jQuery.each(this.options.renderers, function (k, v) {
-        widget.setRenderer(k, v);
-      });
-      jQuery.each(this.options.action_types, function (k, v) {
-        widget.setActionType(k, v);
-      });
-    },
-
-    setRenderer: function (name, callbacks) {
-      this._renderers[name] = callbacks;
-    },
-    getRenderer: function (name) {
-      if (!this._renderers[name]) {
-        return false;
-      }
-
-      return this._renderers[name];
-    },
-    setActionType: function (name, callback) {
-      this._action_types[name] = callback;
-    },
-    getActionType: function (name) {
-      return this._action_types[name];
-    },
-
-    prepareItem: function (model, workflow, final_cb) {
-      var widget = this;
-
-      var renderer = this.getRenderer(workflow.get("type"));
-      var action_type_cb = this.getActionType(workflow.get("action").type);
-
-      return renderer.call(this, model, workflow, action_type_cb, function (err, m) {
-        delete widget.workflows[model.cid];
-        widget._last_instance = null;
-        if (workflow.get('action').type !== 'backbone_destroy') {
-          // Get an updated list of workflows
-          widget._fetchModelWorkflows(model);
-        }
-        final_cb(err, m);
-      });
-    },
-
-    _generateCollectionFor: function (model) {
-      var collectionSettings = {
-        model: this.ModelWorkflowModel
-      };
-      if (this.options.url) {
-        collectionSettings.url = this.options.url(model);
-      }
-      return Backbone.Collection.extend(collectionSettings);
-    },
-
-    _fetchModelWorkflows: function (model) {
-      if (model.isNew()) {
-        return;
-      }
-      var widget = this;
-
-      widget.workflows[model.cid] = new(this._generateCollectionFor(model))([], {});
-      widget.workflows[model.cid].fetch({
-        success: function (collection) {
-          widget.workflows[model.cid].reset(collection.models);
-
-          widget._trigger('changed', null, {
-            instance: model,
-            workflows: widget.workflows[model.cid]
-          });
-        },
-        error: function (model, err) {
-          //console.log('error fetching flows', err);
-        }
-      });
-    }
-  });
-})(jQuery);
 if (window.midgardCreate === undefined) {
   window.midgardCreate = {};
 }
@@ -3803,6 +3837,7 @@ window.midgardCreate.locale.bg = {
   'Add': 'Добави',
   'Choose type to add': 'Избери тип за добавяне'
 };
+
 if (window.midgardCreate === undefined) {
   window.midgardCreate = {};
 }
@@ -3833,6 +3868,7 @@ window.midgardCreate.locale.cs = {
   'Add': 'Přidat',
   'Choose type to add': 'Vyberte typ k přidání'
 };
+
 if (window.midgardCreate === undefined) {
   window.midgardCreate = {};
 }
@@ -3863,6 +3899,7 @@ window.midgardCreate.locale.da = {
   'Add': 'Tilføj',
   'Choose type to add': 'Vælg type der skal tilføjes'
 };
+
 if (window.midgardCreate === undefined) {
   window.midgardCreate = {};
 }
@@ -3893,6 +3930,7 @@ window.midgardCreate.locale.de = {
   'Add': 'Hinzufügen',
   'Choose type to add': 'Typ zum Hinzufügen wählen'
 };
+
 if (window.midgardCreate === undefined) {
   window.midgardCreate = {};
 }
@@ -3923,6 +3961,7 @@ window.midgardCreate.locale.en = {
   'Add': 'Add',
   'Choose type to add': 'Choose type to add'
 };
+
 if (window.midgardCreate === undefined) {
   window.midgardCreate = {};
 }
@@ -3953,6 +3992,7 @@ window.midgardCreate.locale.es = {
   'Add': 'Añadir',
   'Choose type to add': 'Escoge el tipo a añadir'
 };
+
 if (window.midgardCreate === undefined) {
   window.midgardCreate = {};
 }
@@ -3983,6 +4023,7 @@ window.midgardCreate.locale.fi = {
   'Add': 'Lisää',
   'Choose type to add': 'Mitä haluat lisätä?'
 };
+
 if (window.midgardCreate === undefined) {
   window.midgardCreate = {};
 }
@@ -4013,6 +4054,7 @@ window.midgardCreate.locale.fr = {
   'Add': 'Ajouter',
   'Choose type to add': 'Choisir le type à ajouter'
 };
+
 if (window.midgardCreate === undefined) {
   window.midgardCreate = {};
 }
@@ -4043,6 +4085,7 @@ window.midgardCreate.locale.he = {
   'Add': 'הוסף',
   'Choose type to add': 'בחר סוג להוספה'
 };
+
 if (window.midgardCreate === undefined) {
   window.midgardCreate = {};
 }
@@ -4073,6 +4116,7 @@ window.midgardCreate.locale.it = {
   'Add': 'Aggiungi',
   'Choose type to add': 'Scegli il tipo da aggiungere'
 };
+
 if (window.midgardCreate === undefined) {
   window.midgardCreate = {};
 }
@@ -4103,6 +4147,7 @@ window.midgardCreate.locale.nl = {
   'Add': 'Toevoegen',
   'Choose type to add': 'Kies type om toe te voegen'
 };
+
 if (window.midgardCreate === undefined) {
   window.midgardCreate = {};
 }
@@ -4133,6 +4178,7 @@ window.midgardCreate.locale.no = {
   'Add': 'Legg til',
   'Choose type to add': 'Velg type å legge til'
 };
+
 if (window.midgardCreate === undefined) {
   window.midgardCreate = {};
 }
@@ -4163,6 +4209,7 @@ window.midgardCreate.locale.pl = {
   'Add': 'Dodaj',
   'Choose type to add': 'Wybierz typ do dodania'
 };
+
 if (window.midgardCreate === undefined) {
   window.midgardCreate = {};
 }
@@ -4193,6 +4240,7 @@ window.midgardCreate.locale.pt_BR = {
   'Add': 'Adicionar',
   'Choose type to add': 'Selecione o tipo para adicionar'
 };
+
 if (window.midgardCreate === undefined) {
   window.midgardCreate = {};
 }
@@ -4223,6 +4271,7 @@ window.midgardCreate.locale.ro = {
   'Add': 'Adăugare',
   'Choose type to add': 'Alegeți un tip pentru adăugare'
 };
+
 if (window.midgardCreate === undefined) {
   window.midgardCreate = {};
 }
@@ -4253,6 +4302,7 @@ window.midgardCreate.locale.ru = {
   'Add': 'Добавить',
   'Choose type to add': 'Выбрать тип для добавления'
 };
+
 if (window.midgardCreate === undefined) {
   window.midgardCreate = {};
 }
@@ -4282,21 +4332,4 @@ window.midgardCreate.locale.sv = {
   // Collection widgets
   'Add': 'Lägg till',
   'Choose type to add': 'Välj typ att lägga till'
-};
-if (window.midgardCreate === undefined) {
-  window.midgardCreate = {};
-}
-
-window.midgardCreate.localize = function (id, language) {
-  if (!window.midgardCreate.locale) {
-    // No localization files loaded, return as-is
-    return id;
-  }
-  if (window.midgardCreate.locale[language] && window.midgardCreate.locale[language][id]) {
-    return window.midgardCreate.locale[language][id];
-  }
-  if (window.midgardCreate.locale.en[id]) {
-    return window.midgardCreate.locale.en[id];
-  }
-  return id;
 };
