@@ -6,3 +6,4 @@ npm-debug.log
 examples/*.jsbak
 examples/create-editonly*
 examples/redactor.*
+components/
