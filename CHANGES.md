@@ -77,7 +77,7 @@ Dependencies:
 * [VIE](https://github.com/bergie/VIE) was updated to 2.1.0
 * [Hallo](https://github.com/bergie/hallo) was updated to the latest git version
 * [jQuery-Tags-Input](https://github.com/xoxco/jQuery-Tags-Input) -- used by the _midgardTags_ widget -- was updated to latest git version
-* jQuery was updated to version 1.9.1 and jQuery UI to version 1.10.2
+* jQuery was updated to version 1.9.1 and jQuery UI to version 1.10.2. Some compatibiity work still remains
 
 Development:
 
