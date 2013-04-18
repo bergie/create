@@ -8,7 +8,6 @@ See http://createjs.org for more information
   @initConfig
     pkg: @file.readJSON 'package.json'
 
-
     # Build setup: concatenate source files
     concat:
       options:
@@ -42,10 +41,19 @@ See http://createjs.org for more information
         files:
           'examples/create-editonly.min.js': ['examples/create-editonly.js']
 
+
+    # Coding standards verification
+    jshint:
+      all: ['src/*.js', 'src/**/*.js', 'locale/*.js']
+
   # Build dependencies
   @loadNpmTasks 'grunt-contrib-concat'
   @loadNpmTasks 'grunt-contrib-uglify'
 
+  # Testing dependencies
+  @loadNpmTasks 'grunt-contrib-jshint'
+
   # Local tasks
   @registerTask 'build', ['concat:full', 'uglify:full']
   @registerTask 'editonly', ['concat:edit', 'uglify:edit']
+  @registerTask 'test', ['jshint', 'build']

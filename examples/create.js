@@ -3246,10 +3246,6 @@ window.midgardCreate.localize = function (id, language) {
   });
 })(jQuery);
 
-//     Create.js - On-site web editing interface
-//     (c) 2012 Martin Holzhauer
-//     Create may be freely distributed under the MIT license.
-//     For all details and documentation:
 (function (jQuery, undefined) {
     /*global OpenLayers:false */
     // Run JavaScript in strict mode
@@ -3459,11 +3455,6 @@ window.midgardCreate.localize = function (id, language) {
     });
 })(jQuery);
 
-//     Create.js - On-site web editing interface
-//     (c) 2012 IKS Consortium
-//     Create may be freely distributed under the MIT license.
-//     For all details and documentation:
-//     http://createjs.org/
 (function (jQuery, undefined) {
   // Run JavaScript in strict mode
   /*global jQuery:false _:false window:false */
