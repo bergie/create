@@ -3,7 +3,7 @@ merged/
 npm-debug.log
 .DS_Store
 .idea
-examples/*.jsbak
 examples/create-editonly*
+examples/*.min.js
 examples/redactor.*
 components/
