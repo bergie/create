@@ -1,10 +1,7 @@
-//     Create.js - On-site web editing interface
-//     (c) 2011-2012 Henri Bergius, IKS Consortium
-//     Create may be freely distributed under the MIT license.
-//     For all details and documentation:
-//     http://createjs.org/
-
-(function (jQuery, undefined) {
+/* Create.js 1.0.0alpha4 - Inline editing toolkit
+by Henri Bergius and contributors. Available under the MIT license.
+See http://createjs.org for more information
+*/(function (jQuery, undefined) {
   // Run JavaScript in strict mode
   /*global jQuery:false _:false window:false VIE:false */
   'use strict';
@@ -507,11 +504,6 @@
   });
 })(jQuery);
 
-//     Create.js - On-site web editing interface
-//     (c) 2011-2012 Henri Bergius, IKS Consortium
-//     Create may be freely distributed under the MIT license.
-//     For all details and documentation:
-//     http://createjs.org/
 (function (jQuery, undefined) {
   // Run JavaScript in strict mode
   /*global jQuery:false _:false window:false VIE:false */
@@ -970,11 +962,6 @@
   });
 })(jQuery);
 
-//     Create.js - On-site web editing interface
-//     (c) 2012 IKS Consortium
-//     Create may be freely distributed under the MIT license.
-//     For all details and documentation:
-//     http://createjs.org/
 (function (jQuery, undefined) {
   // Run JavaScript in strict mode
   /*global jQuery:false _:false window:false */
@@ -1090,11 +1077,6 @@
   });
 })(jQuery);
 
-//     Create.js - On-site web editing interface
-//     (c) 2012 Jerry Jalava, IKS Consortium
-//     Create may be freely distributed under the MIT license.
-//     For all details and documentation:
-//     http://createjs.org/
 /*
  jQuery(this.element).data('midgardNotifications').create({body: 'Content here!'});
  jQuery(this.element).data('midgardNotifications').create({
@@ -1762,11 +1744,6 @@
 
 })(jQuery);
 
-//     Create.js - On-site web editing interface
-//     (c) 2011-2012 Henri Bergius, IKS Consortium
-//     Create may be freely distributed under the MIT license.
-//     For all details and documentation:
-//     http://createjs.org/
 (function (jQuery, undefined) {
   // Run JavaScript in strict mode
   /*global jQuery:false _:false window:false */
@@ -2272,11 +2249,6 @@
   });
 })(jQuery);
 
-//     Create.js - On-site web editing interface
-//     (c) 2011-2012 Henri Bergius, IKS Consortium
-//     Create may be freely distributed under the MIT license.
-//     For all details and documentation:
-//     http://createjs.org/
 (function (jQuery, undefined) {
   // Run JavaScript in strict mode
   /*global jQuery:false _:false window:false */
@@ -2386,11 +2358,6 @@
   });
 })(jQuery);
 
-//     Create.js - On-site web editing interface
-//     (c) 2012 Jerry Jalava, IKS Consortium
-//     Create may be freely distributed under the MIT license.
-//     For all details and documentation:
-//     http://createjs.org/
 (function (jQuery, undefined) {
   // Run JavaScript in strict mode
   /*global jQuery:false _:false window:false Backbone:false */
@@ -2657,11 +2624,6 @@ window.midgardCreate.localize = function (id, language) {
   return id;
 };
 
-//     Create.js - On-site web editing interface
-//     (c) 2011-2012 Henri Bergius, IKS Consortium
-//     Create may be freely distributed under the MIT license.
-//     For all details and documentation:
-//     http://createjs.org/
 (function (jQuery, undefined) {
   // Run JavaScript in strict mode
   /*global jQuery:false _:false window:false console:false */
@@ -2853,11 +2815,6 @@ window.midgardCreate.localize = function (id, language) {
   });
 })(jQuery);
 
-//     Create.js - On-site web editing interface
-//     (c) 2011-2012 Henri Bergius, IKS Consortium
-//     Create may be freely distributed under the MIT license.
-//     For all details and documentation:
-//     http://createjs.org/
 (function (jQuery, undefined) {
   // Run JavaScript in strict mode
   /*global jQuery:false _:false window:false console:false */
@@ -2926,11 +2883,6 @@ window.midgardCreate.localize = function (id, language) {
   });
 })(jQuery);
 
-//     Create.js - On-site web editing interface
-//     (c) 2012 Tobias Herrmann, IKS Consortium
-//     Create may be freely distributed under the MIT license.
-//     For all details and documentation:
-//     http://createjs.org/
 (function (jQuery, undefined) {
   // Run JavaScript in strict mode
   /*global jQuery:false _:false document:false */
@@ -3025,12 +2977,6 @@ window.midgardCreate.localize = function (id, language) {
   });
 })(jQuery);
 
-//     Create.js - On-site web editing interface
-//     (c) 2012 Tobias Herrmann, IKS Consortium
-//     (c) 2011 Rene Kapusta, Evo42
-//     Create may be freely distributed under the MIT license.
-//     For all details and documentation:
-//     http://createjs.org/
 (function (jQuery, undefined) {
   // Run JavaScript in strict mode
   /*global jQuery:false _:false document:false Aloha:false */
@@ -3094,10 +3040,6 @@ window.midgardCreate.localize = function (id, language) {
   });
 })(jQuery);
 
-//     Create.js - On-site web editing interface
-//     (c) 2012 Tobias Herrmann, IKS Consortium
-//     Create may be freely distributed under the MIT license.
-//     For all details and documentation:
 (function (jQuery, undefined) {
   // Run JavaScript in strict mode
   /*global jQuery:false _:false document:false CKEDITOR:false */
@@ -3152,11 +3094,6 @@ window.midgardCreate.localize = function (id, language) {
   });
 })(jQuery);
 
-//     Create.js - On-site web editing interface
-//     (c) 2012 Tobias Herrmann, IKS Consortium
-//     Create may be freely distributed under the MIT license.
-//     For all details and documentation:
-//     http://createjs.org/
 (function (jQuery, undefined) {
   // Run JavaScript in strict mode
   /*global jQuery:false _:false document:false */
@@ -3254,11 +3191,6 @@ window.midgardCreate.localize = function (id, language) {
   });
 })(jQuery);
 
-//     Create.js - On-site web editing interface
-//     (c) 2012 Henri Bergius, IKS Consortium
-//     Create may be freely distributed under the MIT license.
-//     For all details and documentation:
-//     http://createjs.org/
 (function (jQuery, undefined) {
   // Run JavaScript in strict mode
   /*global jQuery:false _:false document:false */

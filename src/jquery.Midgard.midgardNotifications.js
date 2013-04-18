@@ -1,8 +1,10 @@
+/*
 //     Create.js - On-site web editing interface
 //     (c) 2012 Jerry Jalava, IKS Consortium
 //     Create may be freely distributed under the MIT license.
 //     For all details and documentation:
 //     http://createjs.org/
+*/
 /*
  jQuery(this.element).data('midgardNotifications').create({body: 'Content here!'});
  jQuery(this.element).data('midgardNotifications').create({

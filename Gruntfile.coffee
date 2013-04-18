@@ -1,10 +1,19 @@
 module.exports = ->
+  banner = """/* Create.js <%= pkg.version %> - Inline editing toolkit
+by Henri Bergius and contributors. Available under the MIT license.
+See http://createjs.org for more information
+*/"""
+
   # Project configuration
   @initConfig
     pkg: @file.readJSON 'package.json'
 
+
     # Build setup: concatenate source files
     concat:
+      options:
+        stripBanners: true
+        banner: banner
       full:
         src: [
           'src/*.js'
@@ -24,7 +33,7 @@ module.exports = ->
     # JavaScript minification
     uglify:
       options:
-        banner: '/* Create.js <%= pkg.version %> - Inline editing toolkit. See http://createjs.org for more information */'
+        banner: banner
         report: 'min'
       full:
         files:

@@ -1,8 +1,10 @@
+/*
 //     Create.js - On-site web editing interface
 //     (c) 2012 Tobias Herrmann, IKS Consortium
 //     Create may be freely distributed under the MIT license.
 //     For all details and documentation:
 //     http://createjs.org/
+*/
 (function (jQuery, undefined) {
   // Run JavaScript in strict mode
   /*global jQuery:false _:false document:false */
