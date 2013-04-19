@@ -56,7 +56,7 @@
           return;
         }
         self.options.toolbarState = data.display;
-        if (!self.element.data('IKS-hallo')) {
+        if (!self.element.data('IKS-hallo') && !self.element.data('hallo')) {
           // Hallo not yet instantiated
           return;
         }

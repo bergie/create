@@ -44,7 +44,12 @@
         widget._clearWorkflows();
         if (options.workflows.length) {
           options.workflows.each(function (workflow) {
-            var html = jQuery('body').data().midgardWorkflows.prepareItem(options.instance, workflow, function (err, model) {
+            var workflowsInstance = jQuery('body').data('Midgard-midgardWorkflows');
+            if (!workflowsInstance) {
+              // pre-1.10 jQuery UI
+              workflowsInstance = jQuery('body').data('midgardWorkflows');
+            }
+            var html = workflowsInstance.prepareItem(options.instance, workflow, function (err, model) {
               widget._clearWorkflows();
               if (err) {
                 return;

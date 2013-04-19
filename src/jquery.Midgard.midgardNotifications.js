@@ -5,27 +5,6 @@
 //     For all details and documentation:
 //     http://createjs.org/
 */
-/*
- jQuery(this.element).data('midgardNotifications').create({body: 'Content here!'});
- jQuery(this.element).data('midgardNotifications').create({
- body: "Do you wan't to run tests now?",
-     actions: [
-         {
-             name: 'runtests', label: 'Run tests',
-             cb: function(e, notification) {
-                 alert('Running tests');
-                 notification.close();
-             }
-         },
-         {
-             name: 'cancel', label: 'Cancel',
-             cb: function(e, notification) {
-                 notification.close();
-             }
-         }
-     ]
- });
- */
 (function (jQuery, undefined) {
   // Run JavaScript in strict mode
   /*global jQuery:false _:false window:false Backbone:false document:false */

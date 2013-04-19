@@ -206,8 +206,6 @@
 
     _init: function () {
       this.setState(this.options.state);
-
-      // jQuery(this.element).data('midgardNotifications').showTutorial();
     },
 
     setState: function (state) {
@@ -222,7 +220,7 @@
 
     setToolbar: function (state) {
       this.options.toolbar = state;
-      if (!this.element.data('Midgard-midgardToolbar')) {
+      if (!this.element.data('Midgard-midgardToolbar') && !this.element.data('midgardToolbar')) {
         // Toolbar not yet instantiated
         return;
       }

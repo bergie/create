@@ -327,6 +327,10 @@
       }
       var widgetType = propertyElement.data('createWidgetName');
       this.options.propertyEditors[predicate] = propertyElement.data('Midgard-' + widgetType);
+      if (!this.options.propertyEditors[predicate]) {
+        // pre-1.10 jQuery UI
+        this.options.propertyEditors[predicate] = propertyElement.data(widgetType);
+      }
 
       // Deprecated.
       this.options.editables.push(propertyElement);

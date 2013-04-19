@@ -201,8 +201,6 @@ See http://createjs.org for more information
 
     _init: function () {
       this.setState(this.options.state);
-
-      // jQuery(this.element).data('midgardNotifications').showTutorial();
     },
 
     setState: function (state) {
@@ -217,7 +215,7 @@ See http://createjs.org for more information
 
     setToolbar: function (state) {
       this.options.toolbar = state;
-      if (!this.element.data('Midgard-midgardToolbar')) {
+      if (!this.element.data('Midgard-midgardToolbar') && !this.element.data('midgardToolbar')) {
         // Toolbar not yet instantiated
         return;
       }
@@ -827,6 +825,10 @@ See http://createjs.org for more information
       }
       var widgetType = propertyElement.data('createWidgetName');
       this.options.propertyEditors[predicate] = propertyElement.data('Midgard-' + widgetType);
+      if (!this.options.propertyEditors[predicate]) {
+        // pre-1.10 jQuery UI
+        this.options.propertyEditors[predicate] = propertyElement.data(widgetType);
+      }
 
       // Deprecated.
       this.options.editables.push(propertyElement);
@@ -1078,27 +1080,6 @@ See http://createjs.org for more information
   });
 })(jQuery);
 
-/*
- jQuery(this.element).data('midgardNotifications').create({body: 'Content here!'});
- jQuery(this.element).data('midgardNotifications').create({
- body: "Do you wan't to run tests now?",
-     actions: [
-         {
-             name: 'runtests', label: 'Run tests',
-             cb: function(e, notification) {
-                 alert('Running tests');
-                 notification.close();
-             }
-         },
-         {
-             name: 'cancel', label: 'Cancel',
-             cb: function(e, notification) {
-                 notification.close();
-             }
-         }
-     ]
- });
- */
 (function (jQuery, undefined) {
   // Run JavaScript in strict mode
   /*global jQuery:false _:false window:false Backbone:false document:false */
@@ -2294,7 +2275,12 @@ See http://createjs.org for more information
         widget._clearWorkflows();
         if (options.workflows.length) {
           options.workflows.each(function (workflow) {
-            var html = jQuery('body').data().midgardWorkflows.prepareItem(options.instance, workflow, function (err, model) {
+            var workflowsInstance = jQuery('body').data('Midgard-midgardWorkflows');
+            if (!workflowsInstance) {
+              // pre-1.10 jQuery UI
+              workflowsInstance = jQuery('body').data('midgardWorkflows');
+            }
+            var html = workflowsInstance.prepareItem(options.instance, workflow, function (err, model) {
               widget._clearWorkflows();
               if (err) {
                 return;
@@ -3151,7 +3137,7 @@ window.midgardCreate.localize = function (id, language) {
           return;
         }
         self.options.toolbarState = data.display;
-        if (!self.element.data('IKS-hallo')) {
+        if (!self.element.data('IKS-hallo') && !self.element.data('hallo')) {
           // Hallo not yet instantiated
           return;
         }
