@@ -43,3 +43,10 @@ In nutshell, you have to do the following:
 * Implement [Backbone.sync](http://documentcloud.github.com/backbone/#Sync) for your back-end
 
 [Blogsiple](https://github.com/bergie/blogsiple) is a [Node.js](http://nodejs.org/) based CMS integration testbed for Create. It may provide useful examples on how the connection between Create and a REST-capable web tool works.
+
+## Integration libraries
+
+There are libraries available for some popular programming environments to make interacting with Create.js easier:
+
+* [CreatePHP](https://github.com/flack/createphp) provides a PHP library for Create.js integration
+* [contentblocks](https://github.com/primaryobjects/contentblocks) provides a Node.js module for Create.js integration
