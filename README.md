@@ -24,6 +24,8 @@ Create.js is built on top for [VIE](http://viejs.org), the semantic interaction 
 
 Please refer to the [Create.js Integration Guide](http://createjs.org/guide/).
 
+PHP developers should also check out [CreatePHP](https://github.com/flack/createphp). For easier Node.js integration there is [contentblocks](https://github.com/primaryobjects/contentblocks).
+
 ## Future plans
 
 * Adopt the [Web Intents](http://webintents.org/) specification for better image and link handling
