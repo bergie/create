@@ -22,7 +22,7 @@ The Create.js interface was then rebuilt on top of this new VIE library by writi
 
 ![Create.js structure](/img/createjs-structure.png)
 
-* [Editable](#editable): makes an RDFa entities (as identified by `about`) editable with some editing widget (now plain contentEditable, [Aloha](http://aloha-editor.org), and [Hallo](http://hallojs.org) supported, more to come). Provides the events like "modified" of those widgets in a uniform way. Editable also deals with Collections, allowing user to add/remove items from them
+* [Editable](#editable): makes an RDFa entities (as identified by `about`) editable with some editing widget (now plain contentEditable, [Aloha](http://aloha-editor.org), [Hallo](http://hallojs.org), [Redactor](http://imperavi.com/redactor/), and [CKEditor](http://ckeditor.com/) supported, more to come). Provides the events like "modified" of those widgets in a uniform way. Editable also deals with Collections, allowing user to add/remove items from them
 * [Storage](#storage): provides localStorage save/restore capability, and keeps track of what entities ought to be saved to the back-end
 * [Workflows](#workflows): retrieves workflows that user can activate for a given entity from the back-end, and handles running them. These could be simply things like publish/unpublish and delete, or more complex workflows
 * [Notifications](#notifications): notification bubbles/dialogs that can be used for telling user what has happened ("X has been saved successfully"), or query them for what they want to do ("You have X local modifications for this page. Restore/Ignore")
