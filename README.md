@@ -7,7 +7,7 @@ Create, from the [Midgard Project](http://www.midgard-project.org/), is a compre
 
 ![Midgard Create user interface, in March 2011](http://bergie.iki.fi/files/1e045994d03c25e459911e0ab235550c1aac901c901_midgardcreate-enter-edit-state-small.png) ![Midgard Create user interface, in March 2011](http://bergie.iki.fi/files/1e04599abfee694459911e0bf1021b4fddbed1bed1b_midgardcreate-save-transition-small.png)
 
-Create.js is built on top for [VIE](http://viejs.org), the semantic interaction library powered by Backbone.js. The widgets in Create.js itself are done with the jQuery UI tools.
+Create.js is built on top of [VIE](http://viejs.org), the semantic interaction library powered by Backbone.js. The widgets in Create.js itself are done with the jQuery UI tools.
 
 ## Features
 
