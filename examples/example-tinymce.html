@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Midgard Create example with TinyMCE 4</title>
+    <script src="../deps/jquery-1.9.1.min.js"></script>
+    <script src="../deps/jquery-ui-1.10.2.min.js"></script>
+    <script src="../deps/underscore-min.js"></script>
+    <script src="../deps/backbone-min.js"></script>
+    <script src="../deps/vie-min.js"></script>
+    <script src="//www.tinymce.com/nightly/tinymce/js/tinymce/tinymce.min.js"></script>
+    <script src="./create.js"></script>
+    <script>
+      jQuery(document).ready(function () {
+        jQuery('body').midgardCreate({
+          url: function () {
+            return 'javascript:false;';
+          },
+        });
+
+        // Set a simpler editor for title fields
+        jQuery('body').midgardCreate('configureEditor', 'tinymce', 'tinymceWidget', {
+        });
+        jQuery('body').midgardCreate('setEditorForProperty', 'default', 'tinymce');
+
+        // Disable editing of author fields
+        jQuery('body').midgardCreate('setEditorForProperty', 'dcterms:author', null);
+
+      });
+      // Fake Backbone.sync since there is no server to communicate with
+      Backbone.sync = function(method, model, options) {
+        if (console && console.log) {
+          console.log('Model contents', model.toJSONLD());
+        }
+        options.success(model);
+      };
+    </script>
+    <link rel="stylesheet" href="./font-awesome/css/font-awesome.css"
+    />
+    <link rel="stylesheet" href="../themes/create-ui/css/create-ui.css"
+    />
+    <link rel="stylesheet" href="../themes/midgard-notifications/midgardnotif.css"
+    />
+    <link rel="stylesheet" href="demo.css" />
+  </head>
+  
+  <body>
+    <div xmlns:sioc="http://rdfs.org/sioc/ns#" xmlns:dcterms="http://purl.org/dc/terms/"
+    about="http://example.net/blog/" rel="dcterms:hasPart" rev="dcterms:partOf">
+      <article typeof="sioc:Post" about="http://example.net/blog/news_item">
+        <h1 property="dcterms:title">News item title</h1>
+        <div property="dcterms:author">Henri Bergius</div>
+        <div property="sioc:content">
+          <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.</p>
+          <p>Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Typi non habent claritatem insitam; est usus legentis in iis qui facit eorum claritatem. Investigationes demonstraverunt lectores legere me lius quod ii legunt saepius. Claritas est etiam processus dynamicus, qui sequitur mutationem consuetudium lectorum. Mirum est notare quam littera gothica, quam nunc putamus parum claram, anteposuerit litterarum formas humanitatis per seacula quarta decima et quinta decima. Eodem modo typi, qui nunc nobis videntur parum clari, fiant sollemnes in futurum.</p>
+        </div>
+        <ul rel="skos:related">
+          <li about="tags:foo" property="rdfs:label">Foo</a>
+        </ul>
+      </article>
+      <article typeof="sioc:Post" about="http://example.net/blog/second_news_item">
+        <h1 property="dcterms:title">Another item</h1>
+        <div property="sioc:content">
+          <p>Hello, world!</p>
+        </div>
+      </article>
+    </div>
+  </body>
+</html>
