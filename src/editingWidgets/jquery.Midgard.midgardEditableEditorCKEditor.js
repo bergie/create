@@ -27,13 +27,7 @@
         widget.options.activated();
         widget.options.changed(widget.editor.getData());
       });
-      this.editor.on('key', function () {
-        widget.options.changed(widget.editor.getData());
-      });
-      this.editor.on('paste', function () {
-        widget.options.changed(widget.editor.getData());
-      });
-      this.editor.on('afterCommandExec', function () {
+      this.editor.on('change', function () {
         widget.options.changed(widget.editor.getData());
       });
       this.editor.on('configLoaded', function() {
