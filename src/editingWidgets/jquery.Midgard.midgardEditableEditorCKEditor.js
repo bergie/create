@@ -14,6 +14,11 @@
   // This widget allows editing textual content areas with the
   // [CKEditor](http://ckeditor.com/) rich text editor.
   jQuery.widget('Midgard.ckeditorWidget', jQuery.Midgard.editWidget, {
+    options: {
+      editorOptions: {},
+      disabled: true,
+      vie: null
+    },
     enable: function () {
       this.element.attr('contentEditable', 'true');
       this.editor = CKEDITOR.inline(this.element.get(0));
