@@ -6,13 +6,14 @@
   "dependencies": {},
   "devDependencies": {
     "grunt": "~0.4.1",
-    "grunt-cli": "~0.1.7",
     "grunt-contrib-uglify": "~0.2.0",
     "grunt-contrib-concat": "~0.2.0",
     "grunt-contrib-jshint": "~0.4.3",
-    "grunt-contrib-qunit": "~0.2.1"
+    "grunt-contrib-qunit": "~0.2.1",
+    "grunt-contrib-connect": "~0.5.0",
+    "grunt-saucelabs": "~4.0.4"
   },
   "scripts": {
-    "test": "./node_modules/.bin/grunt test"
+    "test": "grunt test"
   }
 }

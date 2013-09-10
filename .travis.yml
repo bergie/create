@@ -1,11 +1,14 @@
 language: node_js
 node_js:
-  - 0.8
-
-script:
-  - npm test
-
+- 0.8
+before_script:
+- npm install -g grunt-cli
+script: grunt crossbrowser
 notifications:
   irc:
-    - "irc.freenode.org#iks"
-    - "irc.freenode.org#midgard"
+  - irc.freenode.org#iks
+  - irc.freenode.org#midgard
+env:
+  global:
+  - secure: HmsTWiwibB28awz5YIa3WmvhrDroWypjW7Hivn57Mz3tKW8J2/o30ZS06FmBROEEeaHGbVTyb0/DSfWS/mDGM8SweDXIV+xqwDLLUa/PdTgX4ROjUVofNHaHxzpUECnJJm8GV/euB8FgZNo9Wu1JBUCA/6HoLnCmlqK4cNSD5VY=
+  - secure: e43D09e2fXuDcjw+P+1mtvpAnxb4730Wbtwd3Xb+xueoBQFP/cBdKx8Qy6f+kV9SXy7eVEzDC3MbxJtdtuYGlTY7oV3f3rmA00UhHokGbgw2SnEtCgzN7Eedtskz6ybbgy0FyMoF4CMg7R5mW+sxe40DbEyS2VdD19vOdXCNF9k=

@@ -9,6 +9,8 @@ Create, from the [Midgard Project](http://www.midgard-project.org/), is a compre
 
 Create.js is built on top of [VIE](http://viejs.org), the semantic interaction library powered by Backbone.js. The widgets in Create.js itself are done with the jQuery UI tools.
 
+[![Cross-browser testing status](https://saucelabs.com/browser-matrix/create-js.svg)](https://saucelabs.com/u/create-js)
+
 ## Features
 
 * Making RDFa-annotated content on pages editable
