@@ -1,7 +1,7 @@
 Create.js ChangeLog
 ===================
 
-## 1.0.0alpha4 (git master)
+## 1.0.0alpha4 (September 10th 2013)
 
 Entity editing:
 
@@ -71,7 +71,10 @@ Create.js internals:
 
 * The whole library has been migrated to use jQuery [`on` and `off`](http://api.jquery.com/category/events/event-handler-attachment/) methods instead of `bind` and `unbind`
 * All widgets were migrated to the *Midgard* namespace to maintain consistency
-* New build option for creating a smaller edit-only version of Create.js: `$ cake editonly`
+* Switched to Grunt for builds
+* Switched to Bower for dependency handling
+* Moved built version to `dist/create.js`
+* New build option for creating a smaller edit-only version of Create.js: `$ grunt editonly`
 * The build process was improved to work also on Mac OS X
 
 Dependencies:
