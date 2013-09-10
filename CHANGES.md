@@ -1,6 +1,10 @@
 Create.js ChangeLog
 ===================
 
+## 1.0.0beta1 (git master)
+
+* The basic `editWidget` now ignores all formatting
+
 ## 1.0.0alpha4 (September 10th 2013)
 
 Entity editing:
