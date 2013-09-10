@@ -1,9 +1,10 @@
 node_modules/
+bower_components/
 merged/
 npm-debug.log
 .DS_Store
 .idea
-examples/create-editonly*
-examples/*.min.js
+dist/create-editonly*
+dist/*.min.js
 examples/redactor.*
 components/

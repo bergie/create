@@ -1,0 +1,24 @@
+{
+    "name": "components/annotate",
+    "type": "component",
+    "description": "Annotate.js jQuery UI Widget",
+    "license": "MIT",
+    "require": {
+        "components/jqueryui": ">=1.8",
+        "components/backbone": "*"
+    },
+    "extra": {
+        "component": {
+            "scripts": [
+                "annotate.js"
+            ],
+            "shim": {
+                "deps": [
+                    "jqueryui",
+                    "backbone"
+                ]
+            }
+        }
+    },
+    "minimum-stability": "dev"
+}

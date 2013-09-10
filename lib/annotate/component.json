@@ -1,0 +1,14 @@
+{
+    "name": "annotate",
+    "repo": "components/annotate",
+    "description": "Annotate.js jQuery UI Widget",
+    "license": "MIT",
+    "dependencies": {
+        "jquery-ui": "~1.9.0",
+        "backbone": "~1.0.0"
+    },
+    "scripts": [
+        "annotate.js"
+    ],
+    "main": "annotate.js"
+}

@@ -8,6 +8,10 @@ See http://createjs.org for more information
   @initConfig
     pkg: @file.readJSON 'package.json'
 
+    # Install dependencies
+    bower:
+      install: {}
+
     # Build setup: concatenate source files
     concat:
       options:
@@ -19,7 +23,7 @@ See http://createjs.org for more information
           'src/**/*.js'
           'locale/*.js'
         ]
-        dest: 'examples/create.js'
+        dest: 'dist/create.js'
       edit:
         src: [
           'src/jquery.Midgard.midgardEditable.js'
@@ -27,7 +31,7 @@ See http://createjs.org for more information
           'src/collectionWidgets/*.js'
           'src/editingWidgets/*.js'
         ]
-        dest: 'examples/create-editonly.js'
+        dest: 'dist/create-editonly.js'
 
     # JavaScript minification
     uglify:
@@ -36,10 +40,10 @@ See http://createjs.org for more information
         report: 'min'
       full:
         files:
-          'examples/create.min.js': ['examples/create.js']
+          'dist/create.min.js': ['dist/create.js']
       edit:
         files:
-          'examples/create-editonly.min.js': ['examples/create-editonly.js']
+          'dist/create-editonly.min.js': ['dist/create-editonly.js']
 
 
     # Coding standards verification
@@ -64,9 +68,6 @@ See http://createjs.org for more information
           browsers: [
               browserName: 'chrome'
             ,
-              browserName: 'firefox'
-              version: '23'
-            ,
               browserName: 'safari'
               platform: 'OS X 10.8'
               version: '6'
@@ -82,6 +83,9 @@ See http://createjs.org for more information
           tunnelTimeout: 5
           concurrency: 3
           detailedError: true
+
+  # Dependency installation
+  @loadNpmTasks 'grunt-bower-task'
 
   # Build dependencies
   @loadNpmTasks 'grunt-contrib-concat'
