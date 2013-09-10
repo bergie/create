@@ -30,7 +30,9 @@ Entity editing:
 * New public methods `setState` and `getState` were added for manipulating the state from the application controller
   * States are passed as strings corresponding to the new editing states (for example, `inactive` or `changed`)
   * The `setState` method has an optional `predicate` parameter for targeting a particular property editor with the state change
-* Initial integration was added for [CKEditor](http://ckeditor.com/) 4
+* New Rich Text Editors
+  * [CKEditor](http://ckeditor.com/) 4
+  * TinyMCE 4
 
 Metadata editing:
 
