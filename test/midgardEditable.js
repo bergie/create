@@ -198,7 +198,7 @@ test('Editable collection edit/cancel', function() {
     entity.url = function () { return entity.getSubjectUri(); };
   });
 
-  enabled = 0;
+  var enabled = 0;
   fixture.bind('midgardeditableenable', function(event, options) {
     enabled++;
     if (enabled < 2) {
