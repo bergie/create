@@ -80,12 +80,12 @@
         }
         self.options.deactivated();
       });
-      var before = this.element.html();
+      var before = this.element.text();
       this.element.on('keyup paste', function (event) {
         if (self.options.disabled) {
           return;
         }
-        var current = jQuery(this).html();
+        var current = jQuery(this).text();
         if (before !== current) {
           before = current;
           self.options.changed(current);
