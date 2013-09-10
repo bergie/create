@@ -65,6 +65,7 @@ See http://createjs.org for more information
               browserName: 'chrome'
             ,
               browserName: 'firefox'
+              version: '23'
             ,
               browserName: 'safari'
               platform: 'OS X 10.8'
