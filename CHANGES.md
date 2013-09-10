@@ -4,6 +4,7 @@ Create.js ChangeLog
 ## 1.0.0beta1 (git master)
 
 * The basic `editWidget` now ignores all formatting
+* CKEditor 4 is now configurable using Create's `editorOptions`
 
 ## 1.0.0alpha4 (September 10th 2013)
 
