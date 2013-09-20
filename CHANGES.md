@@ -5,6 +5,7 @@ Create.js ChangeLog
 
 * The basic `editWidget` now ignores all formatting
 * CKEditor 4 is now configurable using Create's `editorOptions`
+* Initial support for the [Medium Editor](http://daviferreira.github.io/medium-editor/)
 
 ## 1.0.0alpha4 (September 10th 2013)
 
