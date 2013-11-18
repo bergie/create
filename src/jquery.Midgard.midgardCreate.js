@@ -108,8 +108,11 @@
       if (!this.options.language) {
         this.options.language = jQuery('html').attr('lang');
       }
-
-      this._enableToolbar();
+      
+      if(this.options.toolbar) {
+        this._enableToolbar();
+      }
+      
       this._enableMetadata();
       this._saveButton();
       this._editButton();
