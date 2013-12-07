@@ -1838,6 +1838,9 @@ See http://createjs.org for more information
       widget.element.on(widget.options.editableNs + 'changed', function (event, options) {
         if (_.indexOf(widget.changedModels, options.instance) === -1) {
           widget.changedModels.push(options.instance);
+          options.instance.midgardStorageVersion = 1;
+        } else {
+          options.instance.midgardStorageVersion++;
         }
         widget._saveLocal(options.instance);
       });
@@ -2002,15 +2005,18 @@ See http://createjs.org for more information
         options: options
       });
 
-      var widget = this;
+      var widget = this,
+          previousVersion = model.midgardStorageVersion;
       model.save(null, _.extend({}, options, {
         success: function (m, response) {
           // From now on we're going with the values we have on server
           model._originalAttributes = _.clone(model.attributes);
           widget._removeLocal(model);
           window.setTimeout(function () {
-            // Remove the model from the list of changed models after saving
-            widget.changedModels.splice(widget.changedModels.indexOf(model), 1);
+            // Remove the model from the list of changed models after saving if no other change was made to the model
+            if (model.midgardStorageVersion == previousVersion) {
+              widget.changedModels.splice(widget.changedModels.indexOf(model), 1);
+            }
           }, 0);
           if (_.isFunction(options.success)) {
             options.success(m, response);
