@@ -36,17 +36,28 @@
       }
       editable.vieEntity = options.entity;
 
+      var checkEditableChanged;
+
+      function activeEditableChanged() {
+        if (Aloha.activeEditable.isModified()) {
+          options.changed(Aloha.activeEditable.getContents());
+          Aloha.activeEditable.setUnmodified();
+        }
+      }
+
       // Subscribe to activation and deactivation events
       Aloha.bind('aloha-editable-activated', function (event, data) {
         if (data.editable !== editable) {
           return;
         }
+        checkEditableChanged = window.setInterval(activeEditableChanged, 500);
         options.activated();
       });
       Aloha.bind('aloha-editable-deactivated', function (event, data) {
         if (data.editable !== editable) {
           return;
         }
+        window.clearInterval(checkEditableChanged);
         options.deactivated();
       });
 
