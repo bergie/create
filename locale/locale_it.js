@@ -9,7 +9,7 @@ window.midgardCreate.locale.it = {
   // Session-state buttons for the main toolbar
   'Save': 'Salva',
   'Saving': 'Salvataggio',
-  'Cancel': 'Cancella',
+  'Cancel': 'Esci',
   'Edit': 'Modifica',
   // Storage status messages
   'localModification': 'Articolo "<%= label %>" in questa pagina hanno modifiche locali',
