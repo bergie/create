@@ -2,6 +2,7 @@
     width: 280px;
     z-index: 9999;
     color: white;
+    position: relative;
 }
 * html .midgardNotifications-container {
 	position: absolute;
