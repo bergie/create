@@ -36,9 +36,11 @@
         widget.options.changed(widget.editor.getData());
       });
       this.editor.on('configLoaded', function() {
-        jQuery.each(widget.options.editorOptions, function(optionName, option) {
-          widget.editor.config[optionName] = option;
-        });
+        if (widget.options.editorOptions !== undefined) {
+          jQuery.each(widget.options.editorOptions, function(optionName, option) {
+            widget.editor.config[optionName] = option;
+          });
+        }
       });
     },
 
