@@ -73,19 +73,23 @@ See http://createjs.org for more information
               browserName: 'chrome'
             ,
               browserName: 'safari'
-              platform: 'OS X 10.8'
+              platform: 'OS X 10.9'
               version: '7'
             ,
               browserName: 'opera'
             ,
               browserName: 'internet explorer'
-              platform: 'WIN8'
+              platform: 'Windows 8.1',
               version: '11'
+            ,
+              browserName: 'firefox'
+              platform: 'Windows 7',
+              version: '33'
           ]
           build: process.env.TRAVIS_JOB_ID
           testname: 'Create.js cross-browser tests'
           tunnelTimeout: 5
-          concurrency: 3
+          concurrency: 1
           detailedError: true
 
   # Dependency installation
