@@ -103,8 +103,11 @@ See http://createjs.org for more information
       if (!this.options.language) {
         this.options.language = jQuery('html').attr('lang');
       }
-
-      this._enableToolbar();
+      
+      if(this.options.toolbar) {
+        this._enableToolbar();
+      }
+      
       this._enableMetadata();
       this._saveButton();
       this._editButton();
@@ -4116,7 +4119,7 @@ window.midgardCreate.locale.it = {
   // Session-state buttons for the main toolbar
   'Save': 'Salva',
   'Saving': 'Salvataggio',
-  'Cancel': 'Cancella',
+  'Cancel': 'Esci',
   'Edit': 'Modifica',
   // Storage status messages
   'localModification': 'Articolo "<%= label %>" in questa pagina hanno modifiche locali',
