@@ -417,6 +417,8 @@
         return;
       }
 
+      var widget = this;
+
       jQuery('.create-ui-tool-metadataarea', this.element).midgardMetadata({
         vie: this.vie,
         localize: this.options.localize,
@@ -424,6 +426,10 @@
         editors: this.options.metadata,
         createElement: this.element,
         editableNs: 'midgardeditable'
+      });
+
+      this.element.on('midgardeditabledisable', function () {
+        jQuery('.create-ui-tool-metadataarea', widget.element).hide();
       });
     },
 
