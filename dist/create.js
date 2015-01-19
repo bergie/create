@@ -412,6 +412,8 @@ See http://createjs.org for more information
         return;
       }
 
+      var widget = this;
+
       jQuery('.create-ui-tool-metadataarea', this.element).midgardMetadata({
         vie: this.vie,
         localize: this.options.localize,
@@ -419,6 +421,10 @@ See http://createjs.org for more information
         editors: this.options.metadata,
         createElement: this.element,
         editableNs: 'midgardeditable'
+      });
+
+      this.element.on('midgardeditabledisable', function () {
+        jQuery('.create-ui-tool-metadataarea', widget.element).hide();
       });
     },
 
@@ -3084,9 +3090,11 @@ window.midgardCreate.localize = function (id, language) {
         widget.options.changed(widget.editor.getData());
       });
       this.editor.on('configLoaded', function() {
-        jQuery.each(widget.options.editorOptions, function(optionName, option) {
-          widget.editor.config[optionName] = option;
-        });
+        if (widget.options.editorOptions !== undefined) {
+          jQuery.each(widget.options.editorOptions, function(optionName, option) {
+            widget.editor.config[optionName] = option;
+          });
+        }
       });
     },
 
