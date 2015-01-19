@@ -9,8 +9,12 @@ See http://createjs.org for more information
     pkg: @file.readJSON 'package.json'
 
     # Install dependencies
-    bower:
-      install: {}
+    'bower-install-simple':
+      deps:
+        options:
+          interactive: false
+          forceLatest: false
+          directory: 'bower_components'
 
     # Build setup: concatenate source files
     concat:
@@ -85,7 +89,7 @@ See http://createjs.org for more information
           detailedError: true
 
   # Dependency installation
-  @loadNpmTasks 'grunt-bower-task'
+  @loadNpmTasks 'grunt-bower-install-simple'
 
   # Build dependencies
   @loadNpmTasks 'grunt-contrib-concat'
@@ -100,7 +104,7 @@ See http://createjs.org for more information
   @loadNpmTasks 'grunt-saucelabs'
 
   # Local tasks
-  @registerTask 'build', ['concat:full', 'uglify:full']
+  @registerTask 'build', ['bower-install-simple', 'concat:full', 'uglify:full']
   @registerTask 'editonly', ['concat:edit', 'uglify:edit']
   @registerTask 'test', ['jshint', 'build', 'qunit']
   @registerTask 'crossbrowser', ['test', 'connect', 'saucelabs-qunit']
