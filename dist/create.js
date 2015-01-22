@@ -78,7 +78,7 @@ See http://createjs.org for more information
       buttonContainer: '.create-ui-toolbar-statustoolarea .create-ui-statustools',
       // Templates used for UI elements of the Create widget
       templates: {
-        buttonContent: '<%= label %> <i class="icon-<%= icon %>"></i>',
+        buttonContent: '<%= label %> <i class="fa fa-<%= icon %>"></i>',
         button: '<li id="<%= id %>"><a class="create-ui-btn"><%= buttonContent %></a></li>'
       },
       // Localization callback function. Will be run in the widget context.
@@ -985,7 +985,7 @@ See http://createjs.org for more information
     options: {
       vie: null,
       templates: {
-        button: '<button class="create-ui-btn"><i class="icon-<%= icon %>"></i> <%= label %></button>',
+        button: '<button class="create-ui-btn"><i class="fa fa-<%= icon %>"></i> <%= label %></button>',
         contentArea: '<div class="dropdown-menu"></div>'
       },
       localize: function (id, language) {

@@ -1,6 +1,6 @@
 {
   "name": "create",
-  "version": "1.0.0alpha4",
+  "version": "1.0.0beta1",
   "main": "./dist/create.js",
   "license": "MIT",
   "ignore": [
@@ -15,11 +15,11 @@
   "dependencies": {
     "jquery": "1.9.x",
     "jquery-ui": "1.10.x",
-    "vie": "2.1.x",
+    "vie": "2.2.x",
     "backbone": "1.0.0",
-    "underscore": ">=1.2.0",
+    "underscore": "1.6.0",
     "jquery.tagsinput": "1.3.x",
     "annotate": "0.0.x",
-    "hallo": "1.0.x"
+    "hallo": "1.1.x"
   }
 }

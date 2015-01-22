@@ -1,11 +1,13 @@
 Create.js ChangeLog
 ===================
 
-## 1.0.0beta1 (git master)
+## 1.0.0beta1 (January 22nd 2015)
 
 * The basic `editWidget` now ignores all formatting
 * CKEditor 4 is now configurable using Create's `editorOptions`
 * Initial support for the [Medium Editor](http://daviferreira.github.io/medium-editor/)
+* Support for Font Awesome 4.x
+* Dependencies are now installed via Bower
 
 ## 1.0.0alpha4 (September 10th 2013)
 

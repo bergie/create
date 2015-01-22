@@ -16,7 +16,7 @@
     options: {
       vie: null,
       templates: {
-        button: '<button class="create-ui-btn"><i class="icon-<%= icon %>"></i> <%= label %></button>',
+        button: '<button class="create-ui-btn"><i class="fa fa-<%= icon %>"></i> <%= label %></button>',
         contentArea: '<div class="dropdown-menu"></div>'
       },
       localize: function (id, language) {
