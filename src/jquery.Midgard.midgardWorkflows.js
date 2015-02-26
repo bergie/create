@@ -90,7 +90,7 @@
           var ajax_options = jQuery.extend({
             url: action.url,
             type: 'POST',
-            data: model.toJSON(),
+            data: JSON.stringify(model.toJSON()),
             success: function () {
               model.fetch({
                 success: function (model) {
