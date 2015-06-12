@@ -1,6 +1,5 @@
 {
   "name": "create",
-  "version": "1.0.0beta1",
   "main": "./dist/create.js",
   "license": "MIT",
   "ignore": [
