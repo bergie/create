@@ -81,10 +81,6 @@ See http://createjs.org for more information
               browserName: 'internet explorer'
               platform: 'Windows 8.1',
               version: '11'
-            ,
-              browserName: 'firefox'
-              platform: 'Windows 7',
-              version: '33'
           ]
           build: process.env.TRAVIS_JOB_ID
           testname: 'Create.js cross-browser tests'
