@@ -1,8 +1,13 @@
 {
-  "name": "create",
+  "name": "@bergie/create",
   "version": "1.0.0beta1",
   "url": "http://createjs.org/",
   "author": "Henri Bergius <henri.bergius@iki.fi>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bergie/create.git"
+  },
   "dependencies": {},
   "devDependencies": {
     "grunt": "~1.0.1",
