@@ -1,13 +1,9 @@
 language: node_js
 node_js:
-- '0.10'
+- '4.6'
 before_script:
 - npm install -g grunt-cli
 script: grunt crossbrowser
-notifications:
-  irc:
-  - irc.freenode.org#iks
-  - irc.freenode.org#midgard
 env:
   global:
   - secure: HmsTWiwibB28awz5YIa3WmvhrDroWypjW7Hivn57Mz3tKW8J2/o30ZS06FmBROEEeaHGbVTyb0/DSfWS/mDGM8SweDXIV+xqwDLLUa/PdTgX4ROjUVofNHaHxzpUECnJJm8GV/euB8FgZNo9Wu1JBUCA/6HoLnCmlqK4cNSD5VY=
