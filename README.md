@@ -1,6 +1,8 @@
 Create - On-site web editing interface [![Build Status](https://secure.travis-ci.org/bergie/create.png)](http://travis-ci.org/bergie/create)
 ======================================
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/bergie/create.svg)](https://greenkeeper.io/)
+
 ![Create logo](https://github.com/bergie/create/raw/master/design/create.png)
 
 Create, from the [Midgard Project](http://www.midgard-project.org/), is a comprehensive web editing interface for Content Management Systems. It is designed to provide a modern, fully browser-based HTML5 environment for managing content. Create can be adapted to work on almost any content management backend.
