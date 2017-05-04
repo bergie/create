@@ -1,4 +1,4 @@
-Create - On-site web editing interface [![Build Status](https://secure.travis-ci.org/bergie/create.png)](http://travis-ci.org/bergie/create)
+Create - On-site web editing interface [![Build Status](https://secure.travis-ci.org/bergie/create.png)](http://travis-ci.org/bergie/create) [![Greenkeeper badge](https://badges.greenkeeper.io/bergie/create.svg)](https://greenkeeper.io/)
 ======================================
 
 ![Create logo](https://github.com/bergie/create/raw/master/design/create.png)
@@ -120,7 +120,3 @@ or:
 #### Continuous integration
 
 Create uses [Travis](http://travis-ci.org/) for continuous integration. Simply add your fork there and every time you push you'll get the tests run. See [our Travis build page](http://travis-ci.org/#!/bergie/create) for more information.
-
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/bergie/create/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-
