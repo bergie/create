@@ -32,7 +32,7 @@
         widget.options.activated();
       });
       this.editor.on('blur', function () {
-        widget.options.activated();
+        widget.options.deactivated();
         widget.options.changed(widget.editor.getContent());
       });
       this.editor.on('change', function () {
