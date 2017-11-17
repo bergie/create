@@ -76,8 +76,6 @@ See http://createjs.org for more information
               platform: 'OS X 10.9'
               version: '7'
             ,
-              browserName: 'opera'
-            ,
               browserName: 'internet explorer'
               platform: 'Windows 8.1',
               version: '11'
