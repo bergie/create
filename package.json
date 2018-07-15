@@ -17,7 +17,7 @@
     "grunt-contrib-qunit": "~2.0.0",
     "grunt-contrib-connect": "~1.0.2",
     "grunt-saucelabs": "^9.0.0",
-    "grunt-bower-install-simple": "^1.0.2"
+    "grunt-bower-install-simple": "^1.2.6"
   },
   "scripts": {
     "test": "grunt test"
