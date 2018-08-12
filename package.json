@@ -14,7 +14,7 @@
     "grunt-contrib-uglify": "~3.4.0",
     "grunt-contrib-concat": "~1.0.1",
     "grunt-contrib-jshint": "~1.1.0",
-    "grunt-contrib-qunit": "~2.0.0",
+    "grunt-contrib-qunit": "~3.0.1",
     "grunt-contrib-connect": "~1.0.2",
     "grunt-saucelabs": "^9.0.0",
     "grunt-bower-install-simple": "^1.0.2"
