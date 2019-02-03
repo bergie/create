@@ -5,7 +5,7 @@ if (window.midgardCreate.locale === undefined) {
     window.midgardCreate.locale = {};
 }
 
-window.midgardCreate.locale.en = {
+window.midgardCreate.locale.lt = {
     // Session-state buttons for the main toolbar
     'Save': 'Saugoti',
     'Saving': 'Saugojama',
