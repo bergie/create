@@ -43,12 +43,10 @@
           original_model.save(null, {
             success: function (m) {
               model.url = copy_of_url;
-              model.change();
               callback(null, model);
             },
             error: function (m, err) {
               model.url = copy_of_url;
-              model.change();
               callback(err, model);
             }
           });
@@ -66,12 +64,10 @@
           model.destroy({
             success: function (m) {
               model.url = copy_of_url;
-              model.change();
               callback(null, m);
             },
             error: function (m, err) {
               model.url = copy_of_url;
-              model.change();
               callback(err, model);
             }
           });
