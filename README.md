@@ -38,7 +38,7 @@ PHP developers should also check out [CreatePHP](https://github.com/flack/create
 
 * [Hallo](http://bergie.github.com/hallo/) - distraction-free content editor (optionally, [Aloha Editor](http://aloha-editor.org/) or [Redactor](http://redactorjs.com/))
 * [VIE](https://github.com/bergie/vie) - editable RDFa library
-* [Backbone.js](http://documentcloud.github.com/backbone/) - client-side management of models, views, and collections
+* [Backbone.js](http://backbonejs.org/) - client-side management of models, views, and collections
 * [jQuery UI](http://jqueryui.com/) - widget and effect library
 * [Mousetrap](http://craig.is/killing/mice) - keyboard shortcuts library (optional)
 
